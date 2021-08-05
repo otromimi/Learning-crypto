@@ -3,9 +3,23 @@
 
 #include <iostream>
 
+// Local dependencies
+#include "cryptlib.h"
+#include "sha.h"
+
 int main()
 {
-    std::cout << "Hello World!\n";
+    using namespace CryptoPP;
+
+    SHA1 hash;
+    std::cout << "Name: " << hash.AlgorithmName() << std::endl;
+    std::cout << "Digest size: " << hash.DigestSize() << std::endl;
+    std::cout << "Block size: " << hash.BlockSize() << std::endl;
+    std::cout << "------------Checking for cryptolib------------\n";
+
+    std::cin.get();
+
+    return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
