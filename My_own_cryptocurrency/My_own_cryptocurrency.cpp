@@ -6,6 +6,8 @@
 // Local dependencies
 #include "cryptlib.h"
 #include "sha.h"
+#include "sqlite3.h"
+
 
 int main()
 {
@@ -16,6 +18,23 @@ int main()
     std::cout << "Digest size: " << hash.DigestSize() << std::endl;
     std::cout << "Block size: " << hash.BlockSize() << std::endl;
     std::cout << "------------Checking for cryptolib------------\n";
+
+    sqlite3* db;
+    char* zErrMsg = 0;
+    int rc;
+
+    rc = sqlite3_open("test.db", &db);
+
+    if (rc) {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return(0);
+    }
+    else {
+        fprintf(stderr, "Opened database successfully\n");
+    }
+    sqlite3_close(db);
+
+    std::cout << "------------Checking for sqlite3------------\n";
 
     std::cin.get();
 
