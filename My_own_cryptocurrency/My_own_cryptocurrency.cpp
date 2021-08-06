@@ -4,7 +4,7 @@
 #include <iostream>
 
 // Local dependencies
-#include "cryptlib.h"
+//#include "cryptlib.h"
 #include "sha.h"
 #include "sqlite3.h"
 
