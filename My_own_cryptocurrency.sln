@@ -5,6 +5,7 @@ VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "My_own_cryptocurrency", "My_own_cryptocurrency\My_own_cryptocurrency.vcxproj", "{6F191754-8510-455B-A3BF-16D861E840A4}"
 	ProjectSection(ProjectDependencies) = postProject
+		{8AE79A36-D2F4-3840-8954-0DA81E780A6D} = {8AE79A36-D2F4-3840-8954-0DA81E780A6D}
 		{C39F4B46-6E89-4074-902E-CA57073044D2} = {C39F4B46-6E89-4074-902E-CA57073044D2}
 	EndProjectSection
 EndProject
