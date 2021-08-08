@@ -20,6 +20,8 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <chrono>
+#include <cstring>
 
 
 // My own dependencies
@@ -30,81 +32,32 @@
 #include "eccrypto.h"
 #include "sqlite3.h"
 
-
-struct Txin {
-    std::string TxID;
-    int Txout_index;
-
-    // Overloading operators for <<
-    friend std::ostream& operator << (std::ostream& outstream, Txin& data) {
-        outstream << "--------Tx-in---------" << "\nTxID: " << data.TxID << \
-            "\nTx-index: " << data.Txout_index << "\n----------------------\n";
-        return outstream;
-    }
-
-    friend std::ostream& operator << (std::ostream& outstream, Txin* data) {
-        outstream << *data;
-        return outstream;
-    }
-
-};
-
-struct Txout {
-    int value;
-    CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::PublicKey publicKey;
-
-    // Overloading operators for <<
-    friend std::ostream& operator << (std::ostream& outstream, Txout& data) {
-        outstream << "--------Tx-out--------" << "\nValue: " << data.value << \
-           "\n----------------------\n";
-        return outstream;
-    }
-
-    friend std::ostream& operator << (std::ostream& outstream, Txout* data) {
-        outstream << *data;
-        return outstream;
-    }
-};
-
+void serialize(Transaction msgPacket, char* data);
 
 struct Transaction {
 
     //Fields to be hash
-    std::string hash;
-    std::vector<Txin> inputs;
-    std::vector<Txout> outputs;
-
-    // Overloading operators for <<
-    friend std::ostream &operator << (std::ostream& outstream, Transaction& data){
-        outstream << "-----Transaction: " << data.hash << "-----\n";
-        for (auto aux : data.inputs) {
-            outstream << aux;
-        }
-        outstream << "\nTxin:\n";
-        for (auto aux : data.outputs) {
-            outstream << aux;
-        }
-        outstream << "\nTout:\n";
-        
-        outstream << "\n----------------------\n";
-        return outstream;
-    }
-    
-    friend std::ostream& operator << (std::ostream& outstream, Transaction* data) {
-        outstream << *data;
-        return outstream;
-    }
-
-    // Constructor
-    Transaction() {
-        inputs.push_back(Txin());
-        outputs.push_back(Txout());
-        hash = 123;
-    }
+    unsigned int version;
+    std::vector<std::string> inputs;
+    std::string destination;
+    unsigned int value;
+    std::string owner;
+    unsigned int cashback;
+    unsigned int fee;
+    std::string tx_id;//hash
+    std::string signature;
 
 };
 
+struct Block {
+    std::vector<Transaction> transaction_list;
+    std::string father_hash;
+    std::string work_hash;
+    unsigned long nonce;
+    std::chrono::time_point<std::chrono::system_clock> time;
 
+
+};
 
 
 int main()
@@ -123,13 +76,9 @@ int main()
     sqlite3* db;
     char* zErrMsg = 0;
     int rc;
-    namespace fs = std::filesystem;
-    auto db_path = fs::current_path();
-    db_path += "/my_blockchain.db";
+      
 
-    std::cout << db_path << std::endl;
-
-    rc = sqlite3_open("/my_blockchain.db", &db);
+    rc = sqlite3_open("my_blockchain.db", &db);
     if (rc) {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         return(0);
@@ -146,9 +95,7 @@ int main()
 
     Transaction n_one;
     
-
-    std::cout << n_one << std::endl;
-  
+    //const byte* = (const byte*)n_one;
 
 
     Wallet my_wallet;
