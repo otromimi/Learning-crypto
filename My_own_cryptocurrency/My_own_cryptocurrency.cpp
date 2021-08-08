@@ -30,9 +30,11 @@
 // Local dependencies
 #include "sha.h"
 #include "eccrypto.h"
+#include "hex.h"
+#include "files.h"
 #include "sqlite3.h"
 
-void serialize(Transaction msgPacket, char* data);
+
 
 struct Transaction {
 
@@ -47,26 +49,31 @@ struct Transaction {
     std::string tx_id;//hash
     std::string signature;
 
+    /*
     // Overloading operators for <<
-    friend std::ostream &operator << (std::ostream& outstream, Transaction& data){
-        outstream << "-----Transaction: " << data.hash << "-----\n";
-        for (auto aux : data.inputs) {
-            outstream << aux;
-        }
-        outstream << "\nTxin:\n";
-        for (auto aux : data.outputs) {
-            outstream << aux;
-        }
-        outstream << "\nTout:\n";
-
-        outstream << "\n----------------------\n";
+    friend std::ostream& operator << (std::ostream& outstream, Transaction& data){
+        outstream << "-----Transaction: " << data.tx_id << "-----\n";
+        
         return outstream;
     }
 
     friend std::ostream& operator << (std::ostream& outstream, Transaction* data) {
         outstream << *data;
         return outstream;
+    }*/
+
+    std::string to_string() {
+        return "-----Transaction: " + this->tx_id + "-----\n";
     }
+
+    /*
+    std::string serialize_string(std::ostream out)
+    {
+        std::stringstream ss;
+        ss << out.rdbuf();
+        std::string myString = ss.str();
+        return myString;
+    }*/
 
 };
 
@@ -85,10 +92,10 @@ int main()
 {
 
     std::cout << "=============Checking for cryptolib=============\n";
-    CryptoPP::SHA256 hash;
-    std::cout << "Name: " << hash.AlgorithmName() << std::endl;
-    std::cout << "Digest size: " << hash.DigestSize() << std::endl;
-    std::cout << "Block size: " << hash.BlockSize() << std::endl;
+    CryptoPP::SHA256 test_hash;
+    std::cout << "Name: " << test_hash.AlgorithmName() << std::endl;
+    std::cout << "Digest size: " << test_hash.DigestSize() << std::endl;
+    std::cout << "Block size: " << test_hash.BlockSize() << std::endl;
     std::cout << "\n";
     
 
@@ -115,20 +122,49 @@ int main()
     std::cout << "=============Excution starts=============\n";
 
     Transaction n_one;
+    n_one.tx_id = "capricornio";
+
+    std::cout << n_one.to_string() << std::endl;
+    //std::string serialized_tx = n_one.serialize_string();
+
+
+
+
+
+    std::string encoded;
+    //const byte* = (const byte*) << n_one.string();
+    CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
+
+    std::string msg = n_one.to_string();
+    std::string digest;
+
+    CryptoPP::SHA256 hash;
+    hash.Update((const CryptoPP::byte*)msg.data(), msg.size());
+    digest.resize(hash.DigestSize());
+    hash.Final((CryptoPP::byte*)&digest[0]);
+
+
     
-    //const byte* = (const byte*)n_one;
 
+    std::cout << "Message: " << msg << std::endl;
 
-    Wallet my_wallet;
     
-    my_wallet.test();
 
+    CryptoPP::StringSource(digest, true, new CryptoPP::Redirector(encoder));
+    
+    std::cout << "Digest: " << encoded;
+   
+
+
+
+    
+
+
+    // Stoping execution in linux
     if (PLATFORM_NAME != "windows") {
         std::cout << "Platform: " << PLATFORM_NAME << std::endl;
         std::cin.get();
     }
-   
-    
 
     return 0;
 }
