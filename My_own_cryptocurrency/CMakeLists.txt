@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 3.8)
 
 project(My_crypto)
 
-set(SOURCE My_own_cryptocurrency.cpp)
+set(SOURCE My_own_cryptocurrency.cpp Wallet.h Wallet.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE})
 
 # target_include_directories must be added AFTER add_executable
