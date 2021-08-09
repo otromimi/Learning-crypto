@@ -31,7 +31,7 @@
 
 int main()
 {
-    if (_DEBUG) {
+    //if (_DEBUG) { //braaks in linux
         std::cout << "\n=============Checking for cryptolib=============\n";
         CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::Signer signer;
         CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::Verifier verifier;
@@ -48,7 +48,7 @@ int main()
         DB_operations blockchain_db;
 
         std::cout << "\n=============Excution starts=============\n";
-    }
+    //}
 
     Transaction n_one;
     n_one.tx_id = "capricornio";
