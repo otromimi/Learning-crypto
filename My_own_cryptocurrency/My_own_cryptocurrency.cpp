@@ -15,149 +15,51 @@
 
 
 // Standard dependencies
-#include <iostream>
 #include <filesystem>
-#include <string>
 #include <sstream>
-#include <vector>
-#include <chrono>
 #include <cstring>
 
 
 // My own dependencies
-#include "Wallet.h"
+#include "Node.h"
 
 // Local dependencies
-#include "sha.h"
-#include "eccrypto.h"
-#include "hex.h"
-#include "files.h"
-#include "sqlite3.h"
 
 
-
-struct Transaction {
-
-    //Fields to be hash
-    unsigned int version;
-    std::vector<std::string> inputs;
-    std::string destination;
-    unsigned int value;
-    std::string owner;
-    unsigned int cashback;
-    unsigned int fee;
-    std::string tx_id;//hash
-    std::string signature;
-
-    /*
-    // Overloading operators for <<
-    friend std::ostream& operator << (std::ostream& outstream, Transaction& data){
-        outstream << "-----Transaction: " << data.tx_id << "-----\n";
-        
-        return outstream;
-    }
-
-    friend std::ostream& operator << (std::ostream& outstream, Transaction* data) {
-        outstream << *data;
-        return outstream;
-    }*/
-
-    std::string to_string() {
-        return "-----Transaction: " + this->tx_id + "-----\n";
-    }
-
-    /*
-    std::string serialize_string(std::ostream out)
-    {
-        std::stringstream ss;
-        ss << out.rdbuf();
-        std::string myString = ss.str();
-        return myString;
-    }*/
-
-};
-
-struct Block {
-    std::vector<Transaction> transaction_list;
-    std::string father_hash;
-    std::string work_hash;
-    unsigned long nonce;
-    std::chrono::time_point<std::chrono::system_clock> time;
-
-
-};
+#define MY_CRYPTO_VERSION "0.0.0" //node, block, transaction
 
 
 int main()
 {
+    if (_DEBUG) {
+        std::cout << "\n=============Checking for cryptolib=============\n";
+        CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::Signer signer;
+        CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::Verifier verifier;
 
-    std::cout << "=============Checking for cryptolib=============\n";
-    CryptoPP::SHA256 test_hash;
-    std::cout << "Name: " << test_hash.AlgorithmName() << std::endl;
-    std::cout << "Digest size: " << test_hash.DigestSize() << std::endl;
-    std::cout << "Block size: " << test_hash.BlockSize() << std::endl;
-    std::cout << "\n";
-    
+        std::cout << signer.AlgorithmName() << ": " << signer.SignatureLength() << std::endl;
+        
 
+        CryptoPP::SHA256 test_hash;
+        std::cout << "Name: " << test_hash.AlgorithmName() << std::endl;
+        std::cout << "Digest size: " << test_hash.DigestSize() << std::endl;
+        std::cout << "Block size: " << test_hash.BlockSize() << std::endl;
 
-    std::cout << "=============Checking for sqlite3=============\n";
-    sqlite3* db;
-    char* zErrMsg = 0;
-    int rc;
-      
+        std::cout << "\n=============Checking for sqlite3=============\n";
+        DB_operations blockchain_db;
 
-    rc = sqlite3_open("my_blockchain.db", &db);
-    if (rc) {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        return(0);
+        std::cout << "\n=============Excution starts=============\n";
     }
-    else {
-        fprintf(stderr, "Opened database successfully\n");
-    }
-    sqlite3_close(db);
-    std::cout << "\n";
-
-
-
-    std::cout << "=============Excution starts=============\n";
 
     Transaction n_one;
     n_one.tx_id = "capricornio";
 
-    std::cout << n_one.to_string() << std::endl;
+    std::cout << n_one ;
     //std::string serialized_tx = n_one.serialize_string();
 
 
+    Node::create_tx(MY_CRYPTO_VERSION);
 
 
-
-    std::string encoded;
-    //const byte* = (const byte*) << n_one.string();
-    CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
-
-    std::string msg = n_one.to_string();
-    std::string digest;
-
-    CryptoPP::SHA256 hash;
-    hash.Update((const CryptoPP::byte*)msg.data(), msg.size());
-    digest.resize(hash.DigestSize());
-    hash.Final((CryptoPP::byte*)&digest[0]);
-
-
-    
-
-    std::cout << "Message: " << msg << std::endl;
-
-    
-
-    CryptoPP::StringSource(digest, true, new CryptoPP::Redirector(encoder));
-    
-    std::cout << "Digest: " << encoded;
-   
-
-
-
-    
 
 
     // Stoping execution in linux

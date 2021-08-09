@@ -1,5 +1,4 @@
 // Standard dependencies
-#include <string>
 #include <iostream>
 #include <iomanip>
 
@@ -48,3 +47,5 @@ void Wallet::test(){
     
   
 }
+
+
