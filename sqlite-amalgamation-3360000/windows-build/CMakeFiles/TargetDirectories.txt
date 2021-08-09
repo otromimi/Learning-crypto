@@ -1,4 +1,4 @@
-C:/Users/guill/source/repos/My_own_cryptocurrency/sqlite-amalgamation-3360000/windows-build/CMakeFiles/sqlite3.dir
-C:/Users/guill/source/repos/My_own_cryptocurrency/sqlite-amalgamation-3360000/windows-build/CMakeFiles/sqlite3-shell.dir
-C:/Users/guill/source/repos/My_own_cryptocurrency/sqlite-amalgamation-3360000/windows-build/CMakeFiles/ALL_BUILD.dir
-C:/Users/guill/source/repos/My_own_cryptocurrency/sqlite-amalgamation-3360000/windows-build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/GuillermoLerioArroyo/source/repos/My_own_cryptocurrency/sqlite-amalgamation-3360000/windows-build/CMakeFiles/sqlite3.dir
+C:/Users/GuillermoLerioArroyo/source/repos/My_own_cryptocurrency/sqlite-amalgamation-3360000/windows-build/CMakeFiles/sqlite3-shell.dir
+C:/Users/GuillermoLerioArroyo/source/repos/My_own_cryptocurrency/sqlite-amalgamation-3360000/windows-build/CMakeFiles/ALL_BUILD.dir
+C:/Users/GuillermoLerioArroyo/source/repos/My_own_cryptocurrency/sqlite-amalgamation-3360000/windows-build/CMakeFiles/ZERO_CHECK.dir

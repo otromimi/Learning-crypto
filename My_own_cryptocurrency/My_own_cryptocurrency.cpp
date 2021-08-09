@@ -33,31 +33,30 @@ int main()
 {
     //if (_DEBUG) { //braaks in linux
         std::cout << "\n=============Checking for cryptolib=============\n";
-        CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::Signer signer;
-        CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::Verifier verifier;
-
-        std::cout << signer.AlgorithmName() << ": " << signer.SignatureLength() << std::endl;
-        
-
+      
         CryptoPP::SHA256 test_hash;
         std::cout << "Name: " << test_hash.AlgorithmName() << std::endl;
         std::cout << "Digest size: " << test_hash.DigestSize() << std::endl;
         std::cout << "Block size: " << test_hash.BlockSize() << std::endl;
 
         std::cout << "\n=============Checking for sqlite3=============\n";
-        DB_operations blockchain_db;
+        //DB_operations blockchain_db;
 
         std::cout << "\n=============Excution starts=============\n";
     //}
 
-    Transaction n_one;
-    n_one.tx_id = "capricornio";
+ 
+    //Node::create_tx(MY_CRYPTO_VERSION);
 
-    std::cout << n_one ;
-    //std::string serialized_tx = n_one.serialize_string();
+    Wallet* peter = new Wallet;
+    Transaction tx;
+        
+    tx = Node::create_tx(MY_CRYPTO_VERSION);
+    std::string bin_signature = peter->sign_tx(Transaction::tx_to_json(tx));
+    //std::cout << Node::encode(bin_signature) << std::endl;
+    std::cout << peter->verify_tx_sig(bin_signature, Transaction::tx_to_json(tx)) << std::endl;
 
-
-    Node::create_tx(MY_CRYPTO_VERSION);
+    delete peter;
 
 
 

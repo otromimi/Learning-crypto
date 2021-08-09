@@ -1,6 +1,17 @@
-#include "sqlite3.h"
+#pragma once
+
+// Standard dependencies
 #include <stdio.h>
 #include <stdlib.h>
+
+// My own dependencies
+
+
+// Local dependencies
+#include "sqlite3.h"
+
+
+
 
 
 

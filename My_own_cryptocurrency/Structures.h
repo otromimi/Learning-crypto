@@ -1,10 +1,16 @@
+#pragma once
+
+// Standard dependencies
 #include <string>
 #include <vector>
 #include <chrono>
-
 #include <iostream>
 #include <sstream>
 
+// My own dependencies
+
+
+// Local dependencies
 #include "struct_mapping.h"
 
 struct Transaction {

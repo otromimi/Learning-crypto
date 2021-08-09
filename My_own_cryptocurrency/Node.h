@@ -1,3 +1,5 @@
+#pragma once
+
 // Standard dependencies
 #include <iostream>
 
@@ -13,6 +15,8 @@
 #include "hex.h"
 #include "files.h"
 
+
+
 /*
 std::string destination,
 unsigned int value,
@@ -22,25 +26,19 @@ unsigned int fee*/
 
 namespace Node{
 
-	const std::string hash_digest(const std::string serialize_tx) {
+	const std::string hash_digest(const std::string message) {
 
-		std::string encoded;
 		std::string digest;
 		CryptoPP::SHA256 hash;
-		CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
-
-		hash.Update((const CryptoPP::byte*)serialize_tx.data(), serialize_tx.size());
+		
+		hash.Update((const CryptoPP::byte*)message.data(), message.size());
 		digest.resize(hash.DigestSize());
 		hash.Final((CryptoPP::byte*)&digest[0]);
 
-		CryptoPP::StringSource(digest, true, new CryptoPP::Redirector(encoder));
-
-		//std::cout << "Message: " << serialize_tx  << "\nDigest: " << encoded << std::endl;
-
-		return encoded;
+		return digest;
 	}
 
-	const void create_tx(std::string version) {
+	const Transaction create_tx(std::string version) {
 
 		std::cout << version << std::endl;
 
@@ -68,16 +66,47 @@ namespace Node{
 		Transaction tx("carlos", destination, value, owner, cashback, fee);
 
 		// Serialization of the transaction structure in a JSON string
-		const std::string serialize_tx = Transaction::tx_to_json(tx);
+		//const std::string serialize_tx = Transaction::tx_to_json(tx);
 		//std::cout << tx << std::endl;
 
 
-		tx.tx_id = Node::hash_digest(serialize_tx);
+		//tx.tx_id = Node::hash_digest(serialize_tx);
 
-		std::cout << tx << std::endl;
+		//std::cout << tx << std::endl;
+		return tx;
 
 	}
 
+	const void create_block(Block& block) {}
+
+	const void validate_inputs(std::string input) {}
+
+	const void validate_tx(const Transaction tx) {}
+
+	const void validate_block(const Block block) {}
+
 	
+	// hexadecimal encoders and decoders (to binary)
+	std::string encode(const std::string decoded) {
+		std::string encoded;
+		CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
+		CryptoPP::StringSource(decoded, true, new CryptoPP::Redirector(encoder));
+
+		std::cout << encoded << std::endl;
+		std::cout << encoded.length() << std::endl;
+
+		return encoded;
+	}
+
+	std::string decode(const std::string encoded) {
+		std::string decoded;
+		CryptoPP::HexDecoder decoder(new CryptoPP::StringSink(decoded));
+		CryptoPP::StringSource(encoded, true, new CryptoPP::Redirector(decoder));
+
+		std::cout << encoded << std::endl;
+		std::cout << encoded.length() << std::endl;
+
+		return decoded;
+	}
 
 }
