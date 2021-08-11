@@ -21,7 +21,7 @@ struct Entity {
 
     Entity(std::string account, unsigned int value) :account(account), value(value) {}
 
-    // Overloading operators for <<
+    /// Overloading << operator
     friend std::ostream& operator << (std::ostream& outstream, Entity& data) {
         outstream << "\t" << data.account << "\t" << data.value << "\n";
 
@@ -31,18 +31,19 @@ struct Entity {
 
 struct Transaction {
 
-    //Fields to be hash
+    // Fields to be hash
     std::string version;
     std::string time;
     std::vector<std::string> inputs;
     std::vector<Entity> outputs;
-    std::string origin;
+    std::string origin; // Transation owner PK
     unsigned int fee;
     unsigned int value;
+    // Non hased fields
     std::string signature;
 
     
-    // Overloading operators for <<
+    /// Overloading << operator
     friend std::ostream& operator << (std::ostream& outstream, Transaction& data) {
         outstream << "-----Transaction: " << "-----\n" <<
             " UTC " << data.time << "\n" <<
@@ -124,6 +125,7 @@ struct Transaction {
 
 struct Block {
     
+    // Proof of work fields
     std::string father_hash;
     std::string time;
     std::string miner;
@@ -131,6 +133,7 @@ struct Block {
     std::vector<Transaction> transaction_list;
     unsigned int ID;
     unsigned int nonce;
+    // Non hased fields
     std::string work_hash;
     
 

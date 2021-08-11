@@ -17,12 +17,7 @@
 
 
 
-/*
-std::string destination,
-unsigned int value,
-std::string owner,
-unsigned int cashback,
-unsigned int fee*/
+
 
 namespace Node{
 
@@ -84,7 +79,11 @@ namespace Node{
 	const void validate_block(const Block block) {}
 
 	
-	// hexadecimal encoders and decoders (to binary)
+	/// <summary>
+	/// Encodes binary strings to hexadecimal.
+	/// </summary>
+	/// <param name="decoded">Binary string</param>
+	/// <returns>Hexadeciaml</returns>
 	std::string encode(const std::string decoded) {
 		std::string encoded;
 		CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
@@ -99,7 +98,11 @@ namespace Node{
 		return encoded;
 	}
 
-
+	/// <summary>
+	/// Decode from hexadecimal to binary.
+	/// </summary>
+	/// <param name="encoded">Hexadecimal string</param>
+	/// <returns>Binary string</returns>
 	std::string decode(const std::string encoded) {
 		std::string decoded;
 		CryptoPP::HexDecoder decoder(new CryptoPP::StringSink(decoded));
