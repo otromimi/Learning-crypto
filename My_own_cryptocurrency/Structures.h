@@ -3,9 +3,11 @@
 // Standard dependencies
 #include <string>
 #include <vector>
-#include <chrono>
 #include <iostream>
 #include <sstream>
+#include <ctime>
+
+
 
 // My own dependencies
 
@@ -13,87 +15,123 @@
 // Local dependencies
 #include "struct_mapping.h"
 
+struct Entity {
+    std::string account; // Public key of the receiver
+    unsigned int value;
+
+    Entity(std::string account, unsigned int value) :account(account), value(value) {}
+
+    // Overloading operators for <<
+    friend std::ostream& operator << (std::ostream& outstream, Entity& data) {
+        outstream << "\t" << data.account << "\t" << data.value << "\n";
+
+        return outstream;
+    }
+};
+
 struct Transaction {
 
     //Fields to be hash
     std::string version;
+    std::string time;
     std::vector<std::string> inputs;
-    std::string destination;
-    unsigned int value;
-    std::string owner;
-    unsigned int cashback;
+    std::vector<Entity> outputs;
+    std::string origin;
     unsigned int fee;
-    std::string tx_id;//hash
+    unsigned int value;
     std::string signature;
 
     
     // Overloading operators for <<
     friend std::ostream& operator << (std::ostream& outstream, Transaction& data) {
-        outstream << "-----Transaction: " << data.tx_id << "-----\n" <<
-            "Version: " + data.version << "\n" <<
-            "Inputs: " << data.inputs.size() << "\n" <<
-            "Destination: " << data.destination << "\n" <<
+        outstream << "-----Transaction: " << "-----\n" <<
+            " UTC " << data.time << "\n" <<
+            "Version: " << data.version << "\n" <<
+            "Inputs: { ";
+            for (std::string i : data.inputs) {
+                outstream << i << ", ";
+            }
+            outstream << "\b\b }\n" <<
+            "Outputs: \n";
+            for (Entity i : data.outputs) {
+                outstream << i;
+            }
+            outstream << "\n" <<
+            "Origin: " << data.origin << "\n" <<
             "Value: " << data.value << "\n" <<
-            "Owner: " << data.owner << "\n" <<
-            "Cashback: " << data.cashback << "\n" <<
             "Fee: " << data.fee << "\n" <<
-            "Signature: " << data.signature << "\n" <<
+            "\n --Sign-- \n" << data.signature << "\n" <<
             "--------------------------------------\n";
            
         return outstream;
     }
 
-    std::string to_string() {
-        return "-----Transaction: " + this->tx_id + "-----\n" +
-            "Version: " + this->version + "\n" +
-            //"Inputs: " + this->inputs.size() + "\n" +
-            "Destination: " + this->destination + "\n" +
-            "Version: " + this->version + "\n" +
-            "Version: " + this->version + "\n" +
-            "Version: " + this->version + "\n" +
-            "Version: " + this->version + "\n" +
-            "Version: " + this->version + "\n" +
-            "Version: " + this->version + "\n" +
-            "Version: " + this->version + "\n" +
-            "Version: " + this->version + "\n";
-    }
-
+   
     Transaction(){}
 
-    Transaction(std::string version,
-    std::string destination,
-    unsigned int value,
-    std::string owner,
-    unsigned int cashback,
-    unsigned int fee):
-        version(version), destination(destination), value(value), owner(owner), cashback(cashback), fee(fee){}
+    Transaction(std::string version, unsigned int value, std::string origin, unsigned int fee):
+        version(version), value(value), origin(origin), fee(fee){
 
-    static std::string tx_to_json(Transaction tx){
+        std::time_t now = std::time(0);
+        char* dt = ctime(&now);
+        //std::cout << dt << std::endl;
+
+        std::tm* utc_struct = std::gmtime(&now);
+        char* time_UTC_string = std::asctime(utc_struct);
+
+        this->time = time_UTC_string;
+
+        //std::cout << time_UTC_string << std::endl;
+    }
+
+    std::string tx_to_json() {
         struct_mapping::reg(&Transaction::version, "Version");
         struct_mapping::reg(&Transaction::inputs, "Inputs");
-        struct_mapping::reg(&Transaction::destination, "Destination");
+        struct_mapping::reg(&Transaction::outputs, "Outputs");
         struct_mapping::reg(&Transaction::value, "Value");
-        struct_mapping::reg(&Transaction::owner, "Owner");
-        struct_mapping::reg(&Transaction::cashback, "Cashback");
+        struct_mapping::reg(&Transaction::origin, "Origin");
         struct_mapping::reg(&Transaction::fee, "Fee");
-        struct_mapping::reg(&Transaction::tx_id, "Tx_ID");
+        
         
         std::ostringstream tx_json;
-        struct_mapping::map_struct_to_json(tx, tx_json);
+        struct_mapping::map_struct_to_json(*this, tx_json);
 
-        std::cout << tx_json.str() << std::endl;
+        //std::cout << tx_json.str() << std::endl;
 
         return tx_json.str();
     }
 
+    void json_to_tx(std::string tx_json) {
+        struct_mapping::reg(&Transaction::version, "Version");
+        struct_mapping::reg(&Transaction::inputs, "Inputs");
+        struct_mapping::reg(&Transaction::outputs, "Outputs");
+        struct_mapping::reg(&Transaction::value, "Value");
+        struct_mapping::reg(&Transaction::origin, "Origin");
+        struct_mapping::reg(&Transaction::fee, "Fee");
+
+        //  std::ostringstream tx_json;
+
+        std::istringstream jason_data(tx_json);
+
+        struct_mapping::map_json_to_struct(*this, jason_data);
+
+        //std::cout << tx_json.str() << std::endl;
+
+    }
+
 };
 
-struct Block {
-    std::vector<Transaction> transaction_list;
-    std::string father_hash;
-    std::string work_hash;
-    unsigned long nonce;
-    std::chrono::time_point<std::chrono::system_clock> time;
 
+struct Block {
+    
+    std::string father_hash;
+    std::string time;
+    std::string miner;
+    unsigned int reward;
+    std::vector<Transaction> transaction_list;
+    unsigned int ID;
+    unsigned int nonce;
+    std::string work_hash;
+    
 
 };

@@ -13,6 +13,7 @@
 #define PLATFORM_NAME "linux" // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHa
 #endif
 
+#define  _CRT_SECURE_NO_WARNINGS
 
 // Standard dependencies
 #include <filesystem>
@@ -24,6 +25,7 @@
 #include "Node.h"
 
 // Local dependencies
+
 
 
 #define MY_CRYPTO_VERSION "0.0.0" //node, block, transaction
@@ -48,16 +50,30 @@ int main()
  
     //Node::create_tx(MY_CRYPTO_VERSION);
 
-    Wallet* peter = new Wallet;
-    Transaction tx;
+    Wallet* wallet1 = new Wallet;
+    Transaction tx(MY_CRYPTO_VERSION, 34, "22528690697096551991720303454459505002748145553800647866671648621049075374417", 4);
+    tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
+    tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
         
-    tx = Node::create_tx(MY_CRYPTO_VERSION);
-    std::string bin_signature = peter->sign_tx(Transaction::tx_to_json(tx));
-    //std::cout << Node::encode(bin_signature) << std::endl;
-    std::cout << peter->verify_tx_sig(bin_signature, Transaction::tx_to_json(tx)) << std::endl;
+    
+    //tx = Node::create_tx(MY_CRYPTO_VERSION);
+    tx.signature = Node::encode(wallet1->sign_tx(tx.tx_to_json()));
 
-    delete peter;
+    std::cout << wallet1->verify_tx_sig(Node::decode(tx.signature), tx.tx_to_json()) << std::endl;
+    std::cout << tx << std::endl;
 
+    delete wallet1;
+
+    /*
+    std::time_t now = time(0);
+    char* dt = ctime(&now);
+    std::cout << dt << std::endl;
+
+    std::tm* utc_struct = std::gmtime(&now);
+    char* time_UTC_string = std:: asctime(utc_struct);
+
+    std::cout << time_UTC_string << std::endl;
+    */
 
 
 

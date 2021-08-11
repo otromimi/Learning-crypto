@@ -40,16 +40,15 @@ namespace Node{
 
 	const Transaction create_tx(std::string version) {
 
-		std::cout << version << std::endl;
+		//std::cout << version << std::endl;
 
 		std::string destination;
 		unsigned int value;
-		std::string owner("1330662819286567003101256740359821157367793328918");
-		unsigned int cashback;
+		std::string origin("1330662819286567003101256740359821157367793328918");
 		unsigned int fee;
 
 		std::cout << "Beneficiary: ";
-		getline(std::cin, destination);
+		getline(std::cin, origin);
 
 		std::cout << "Value: ";
 		std::string value_s;
@@ -61,9 +60,8 @@ namespace Node{
 		getline(std::cin, fee_s);
 		fee = std::stoi(fee_s);
 
-		cashback = fee + value;
 
-		Transaction tx("carlos", destination, value, owner, cashback, fee);
+		Transaction tx(version, value, origin, fee);
 
 		// Serialization of the transaction structure in a JSON string
 		//const std::string serialize_tx = Transaction::tx_to_json(tx);
@@ -90,21 +88,28 @@ namespace Node{
 	std::string encode(const std::string decoded) {
 		std::string encoded;
 		CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
-		CryptoPP::StringSource(decoded, true, new CryptoPP::Redirector(encoder));
 
-		std::cout << encoded << std::endl;
-		std::cout << encoded.length() << std::endl;
+		CryptoPP::Redirector* redirect = new CryptoPP::Redirector(encoder);
+		CryptoPP::StringSource(decoded, true, redirect);
+
+		delete redirect;
+		//std::cout << encoded << std::endl;
+		//std::cout << encoded.length() << std::endl;
 
 		return encoded;
 	}
 
+
 	std::string decode(const std::string encoded) {
 		std::string decoded;
 		CryptoPP::HexDecoder decoder(new CryptoPP::StringSink(decoded));
-		CryptoPP::StringSource(encoded, true, new CryptoPP::Redirector(decoder));
 
-		std::cout << encoded << std::endl;
-		std::cout << encoded.length() << std::endl;
+		CryptoPP::Redirector* redirect = new CryptoPP::Redirector(decoder);
+		CryptoPP::StringSource(encoded, true, redirect);
+
+		delete redirect;
+		//std::cout << encoded << std::endl;
+		//std::cout << encoded.length() << std::endl;
 
 		return decoded;
 	}

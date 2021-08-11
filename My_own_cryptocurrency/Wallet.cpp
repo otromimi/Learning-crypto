@@ -38,7 +38,7 @@ void Wallet::new_address(){
 	privateKey.Initialize(prng, ASN1::secp256k1());
 	bool result_public = privateKey.Validate(prng, 3);
 	if (!result_public) {
-		std::cout << "Error while generating new private key." << std::endl;
+		std::cerr << "Error while generating new private key." << std::endl;
 	}
 
 	// Generating public key and storing it privatly
@@ -46,10 +46,10 @@ void Wallet::new_address(){
 
 	bool result_private = publicKey.Validate(prng, 3);
 	if (!result_private) { 
-		std::cout << "Error while generating new public key." << std::endl;
+		std::cerr << "Error while generating new public key." << std::endl;
 	}
 
-	std::cout << privateKey.GetPrivateExponent() << std::endl;
+	//std::cout << privateKey.GetPrivateExponent() << std::endl;
 
 };
 
@@ -61,7 +61,7 @@ std::string Wallet::sign_tx(std::string message) {
 
 	bool result = signer.AccessKey().Validate(prng, 3);
 	if (!result) { 
-		std::cout << "Error while initializing the signer." << std::endl;
+		std::cerr << "Error while initializing the signer." << std::endl;
 	}
 
 	size_t siglen = signer.MaxSignatureLength();
@@ -92,10 +92,10 @@ bool Wallet::verify_tx_sig(std::string signature, std::string message) {
 
 	// Verification failure?
 	if (!result) {
-		std::cout << "Failed to verify signature on message" << std::endl;
+		std::cerr << "Failed to verify signature on message" << std::endl;
 	}
 	else {
-		std::cout << "All good!" << std::endl;
+		std::cerr << "All good!" << std::endl;
 	}
 
 	return result;
@@ -116,6 +116,6 @@ void Wallet::load_keys() {
 
 	
 	if (privateKey.Validate(prng, 3)) {
-		std::cout << "Keys loaded succesfully." << std::endl;
+		std::cerr << "Keys loaded succesfully." << std::endl;
 	}
 }
