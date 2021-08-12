@@ -36,7 +36,7 @@ namespace Node{
 		return digest;
 	}
 
-	const Transaction create_tx(std::string version) {
+	const Transaction create_tx() {
 
 		//std::cout << version << std::endl;
 
@@ -59,7 +59,7 @@ namespace Node{
 		fee = std::stoi(fee_s);
 
 
-		Transaction tx(version, origin, value, fee);
+		Transaction tx( origin, value, fee);
 
 		// Serialization of the transaction structure in a JSON string
 		//const std::string serialize_tx = Transaction::tx_to_json(tx);
@@ -90,13 +90,16 @@ namespace Node{
 	/// <returns>True if verification went well, false otherwise.</returns>
 	bool sign_verifier(std::string public_key, std::string signature, std::string message) {
 
+		std::string decoded_publickey = decode(public_key);
+		std::string decoded_signature = decode(signature);
+
 		CryptoPP::AutoSeededRandomPool prng;
 
 
 		CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::PublicKey publicKey;
 		publicKey.AccessGroupParameters().SetPointCompression(true);
 
-		publicKey.Load(CryptoPP::StringSource(public_key, true).Ref());
+		publicKey.Load(CryptoPP::StringSource(decoded_publickey, true).Ref());
 
 		
 		//bool key_okay = publicKey.Validate(prng, 3);
@@ -106,7 +109,7 @@ namespace Node{
 		CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::Verifier verifier(publicKey);
 		
 
-		bool result = verifier.VerifyMessage((const CryptoPP::byte*)&message[0], message.size(), (const CryptoPP::byte*)&signature[0], signature.size());
+		bool result = verifier.VerifyMessage((const CryptoPP::byte*)&message[0], message.size(), (const CryptoPP::byte*)&decoded_signature[0], decoded_signature.size());
 
 		// Verification failure?
 		if (!result) {
@@ -133,8 +136,8 @@ namespace Node{
 		CryptoPP::StringSource(decoded, true, new CryptoPP::Redirector(encoder));
 
 		//std::cout << encoded << std::endl;
-		std::cout << "binary: " << decoded.length() << std::endl;
-		std::cout << "hex: " << encoded.length() << std::endl;
+		//std::cout << "binary: " << decoded.length() << std::endl;
+		//std::cout << "hex: " << encoded.length() << std::endl;
 
 		return encoded;
 	}

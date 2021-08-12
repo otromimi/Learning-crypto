@@ -22,25 +22,50 @@ class DB_operations {
     char* zErrMsg = 0;
     int rc;
 
-    const char* transactions_table = "CREATE TABLE TRANSACTIONS("  \
-        "TX_ID          CHAR(32) PRIMARY KEY     NOT NULL," \
-        "VERSION        TEXT                     NOT NULL," \
-        "INPUTS         TEXT                     NOT NULL," \
-        "DESTINATION    CHAR(32)                 NOT NULL," \
-        "VALUE          INT                      NOT NULL," \
-        "OWNER          CHAR(32)                 NOT NULL," \
-        "CASHBACK       INT                      NOT NULL," \
-        "FEE            INT                      NOT NULL," \
-        "SIGNATURE      CHAR(32)                 NOT NULL);";
+    /*std::string version;
+    std::string time;
+    std::vector<std::string> inputs;
+    std::vector<Entity> outputs;
+    std::string origin; // Transation owner PK
+    unsigned int fee;
+    std::string signature;*/
+    
 
+    const char* transactions_table = "CREATE TABLE TRANSACTIONS("  \
+        "SIGNATURE      TEXT PRIMARY KEY         NOT NULL," \
+        "BLOCK          INT                      NOT NULL," \
+        "TIME           INT                      NOT NULL," \
+        //"INPUTS         TEXT                     NOT NULL," \//
+        //"OUTPUTS        TEXT                     NOT NULL," \//
+        "ORIGIN         TEXT                      NOT NULL," \
+        "FEE            INT                      NOT NULL);"; 
+
+    const char* outputs_table = "CREATE TABLE OUTPUTS("  \
+        "TX_ID          TEXT PRIMARY KEY         NOT NULL," \
+        "ACCOUNT        INT                      NOT NULL," \
+        "VALUE          INT                      NOT NULL);";
+
+
+    /*
+    // Proof of work fields
+    std::string father_hash;
+    std::string time;
+    std::string miner;
+    unsigned int reward;
+    std::vector<Transaction> transaction_list;
+    unsigned int ID;
+    unsigned int nonce;
+    // Non hased fields
+    std::string work_hash;*/
    
     const char* blocks_table = "CREATE TABLE BLOCKS("  \
         "BLOCK_ID       INT PRIMARY KEY          NOT NULL," \
-        "VERSION        TEXT                     NOT NULL," \
-        "WORK_HASH      CHAR(32)                 NOT NULL," \
-        "FATHER_HASH    CHAR(32)                 NOT NULL," \
+        "VERSION        INT                      NOT NULL," \
+        "WORK_HASH      TEXT                     NOT NULL," \
+        "FATHER_HASH    TEXT                     NOT NULL," \
         "NONCE          INT                      NOT NULL," \
-        "TIME           INT                      NOT NULL);";
+        "TIME           INT                      NOT NULL," \
+        "MINER          TEXT                     NOT NULL);";
 
     static int callback(void* NotUsed, int argc, char** argv, char** azColName) {
         int i;
@@ -54,15 +79,36 @@ class DB_operations {
     void create_tables() {
 
         /* Execute SQL statement */
-        rc = sqlite3_exec(db, (const char*)(std::string(transactions_table) + blocks_table).c_str(), callback, 0, &zErrMsg);
-        std::cout <<transactions_table << std::endl;
+        rc = sqlite3_exec(db, (const char*)transactions_table, callback, 0, &zErrMsg);
 
         if (rc != SQLITE_OK) {
             std::cerr << "SQL error: " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
         }
         else {
-            std::cout << "Tables created successfully" << std::endl;
+            std::cout << "Table TRANSACTIONS created successfully" << std::endl;
+        }
+
+        rc = sqlite3_exec(db, (const char*)blocks_table, callback, 0, &zErrMsg);
+
+        if (rc != SQLITE_OK) {
+            std::cerr << "SQL error: " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg);
+        }
+        else {
+            std::cout << "Tables BLOCKS created successfully" << std::endl;
+        }
+
+
+        rc = sqlite3_exec(db, (const char*)outputs_table, callback, 0, &zErrMsg);
+       
+
+        if (rc != SQLITE_OK) {
+            std::cerr << "SQL error: " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg);
+        }
+        else {
+            std::cout << "Table OUTPUTS created successfully" << std::endl;
         }
 
         
@@ -80,20 +126,30 @@ public:
             fprintf(stdout, "Opened database successfully\n");
         }
 
-        /*Create SQL statement */
-        const char* sql = transactions_table;
 
-        /* Execute SQL statement */
-        rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+        /* create tables */
+        create_tables();
+
+
+    }
+
+
+    void insert(std::string table, std::string data) {
+
+        std::string query = "INSERT INTO ";
+        query += table + " (SIGNATURE, BLOCK, TIME, ORIGIN, FEE) VALUES (" + data + "); ";
+
+
+        rc = sqlite3_exec(db, (const char*)query.c_str(), callback, 0, &zErrMsg);
+
 
         if (rc != SQLITE_OK) {
-            fprintf(stderr, "SQL error: %s\n", zErrMsg);
+            std::cerr << "SQL error: " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
         }
         else {
-            fprintf(stdout, "Table created successfully\n");
+            std::cout << "Insertion success" << std::endl;
         }
-
     }
 
 

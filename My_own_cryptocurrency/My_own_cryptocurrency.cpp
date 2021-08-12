@@ -1,6 +1,8 @@
 // My_own_cryptocurrency.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+
+
 #if defined(_WIN32)
 #define PLATFORM_NAME "windows" // Windows
 #elif defined(_WIN64)
@@ -13,7 +15,6 @@
 #define PLATFORM_NAME "linux" // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHa
 #endif
 
-#define  _CRT_SECURE_NO_WARNINGS
 
 // Standard dependencies
 #include <filesystem>
@@ -28,7 +29,7 @@
 
 
 
-#define MY_CRYPTO_VERSION "0.0.0" //node, block, transaction
+#define MY_CRYPTO_VERSION 1 
 
 
 int main()
@@ -42,7 +43,7 @@ int main()
         std::cout << "Block size: " << test_hash.BlockSize() << std::endl;
 
         std::cout << "\n=============Checking for sqlite3=============\n";
-        //DB_operations blockchain_db;
+        DB_operations blockchain_db;
 
         std::cout << "\n=============Excution starts=============\n";
     //}
@@ -51,35 +52,26 @@ int main()
     //Node::create_tx(MY_CRYPTO_VERSION);
 
     Wallet* wallet1 = new Wallet;
-    Transaction tx(MY_CRYPTO_VERSION, Node::encode(wallet1->get_publicElement()), 34, 4);
+    Transaction tx(wallet1->get_publicElement(), 34, 4);
     tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
         
     
     //tx = Node::create_tx(MY_CRYPTO_VERSION);
-    tx.signature = Node::encode(wallet1->sign_tx(tx.tx_to_json()));
+    tx.signature = wallet1->sign_tx(tx.tx_to_json());
 
     std::cout << wallet1->verify_tx_sig(tx.signature, tx.tx_to_json()) << std::endl;
     std::cout << tx << std::endl;
 
     //wallet1->get_publicElement();
 
-    bool checking = Node::sign_verifier(wallet1->get_publicElement(),decode(tx.signature), tx.tx_to_json());
-    std::cout << "chenking from node: " << checking << std::endl;
+    bool checking = Node::sign_verifier(wallet1->get_publicElement(),tx.signature, tx.tx_to_json());
+    
 
     delete wallet1;
+    
 
-    /*
-    std::time_t now = time(0);
-    char* dt = ctime(&now);
-    std::cout << dt << std::endl;
-
-    std::tm* utc_struct = std::gmtime(&now);
-    char* time_UTC_string = std:: asctime(utc_struct);
-
-    std::cout << time_UTC_string << std::endl;
-    */
-
+    blockchain_db.insert("TRANSACTIONS", tx.to_db_string());
 
 
     // Stoping execution in linux

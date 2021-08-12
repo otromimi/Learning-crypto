@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 // Standard dependencies
 #include <string>
 #include <vector>
@@ -19,6 +21,10 @@
 #include "files.h"
 #include "struct_mapping.h"
 
+
+
+
+
 /// <summary>
 /// Encodes binary strings to hexadecimal.
 /// </summary>
@@ -28,10 +34,9 @@ std::string encode(const std::string decoded) {
     std::string encoded;
     CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
     CryptoPP::StringSource(decoded, true, new CryptoPP::Redirector(encoder));
-
-    //std::cout << encoded << std::endl;
-    std::cout << "binary: " << decoded.length() << std::endl;
-    std::cout << "hex: " << encoded.length() << std::endl;
+    
+    //std::cout << "binary: " << decoded.length() << std::endl;
+    //std::cout << "hex: " << encoded.length() << std::endl;
 
     return encoded;
 }
@@ -70,8 +75,7 @@ struct Entity {
 struct Transaction {
 
     // Fields to be hash
-    std::string version;
-    std::string time;
+    long time;
     std::vector<std::string> inputs;
     std::vector<Entity> outputs;
     std::string origin; // Transation owner PK
@@ -80,74 +84,76 @@ struct Transaction {
     std::string signature;
 
     
-    /*// Overloading << operator
+
+    /// Overloading << operator
     friend std::ostream& operator << (std::ostream& outstream, Transaction& data) {
+
+        /*
+        // Passing from epoch to UTC
+        std::tm* utc_struct = std::gmtime((const time_t*)data.time);
+        char* time_UTC_string = std::asctime(utc_struct);
+        *(time_UTC_string + 24) = 0x00;
+        */
         outstream << "-----Transaction: " << "-----\n" <<
             " UTC " << data.time << "\n" <<
-            "Version: " << data.version << "\n" <<
             "Inputs: { ";
-            for (std::string i : data.inputs) {
-                outstream << i << ", ";
-            }
-            outstream << "\b\b }\n" <<
+        for (std::string i : data.inputs) {
+            outstream << i << ", ";
+        }
+        outstream << "\b\b }\n" <<
             "Outputs: \n";
-            for (Entity i : data.outputs) {
-                outstream << i;
-            }
-            outstream << "\n" <<
+        for (Entity i : data.outputs) {
+            outstream << i;
+        }
+        outstream << "\n" <<
             "Origin: " << data.origin << "\n" <<
             "Value: " << data.value << "\n" <<
             "Fee: " << data.fee << "\n" <<
             "\n --Sign-- \n" << data.signature << "\n" <<
             "--------------------------------------\n";
-           
-        return outstream;
-    }*/
 
-    friend std::ostream& operator << (std::ostream& outstream, Transaction& data) {
-        outstream << data.tx_to_json();
         return outstream;
     }
+
 
    
     Transaction(){}
 
-    explicit Transaction(std::string version, std::string origin, unsigned int value, unsigned int fee):
-        version(version), origin(origin), value(value), fee(fee){
-
+    explicit Transaction(std::string origin, unsigned int value, unsigned int fee):
+        origin(origin), value(value), fee(fee){
+        /*
         std::time_t now = std::time(0);
+        long peter = now;
         char* dt = ctime(&now);
-        //std::cout << dt << std::endl;
+
 
         std::tm* utc_struct = std::gmtime(&now);
         char* time_UTC_string = std::asctime(utc_struct);
+        *(time_UTC_string+24) = 0x00;*/
 
-        this->time = time_UTC_string;
+        this->time = std::time(0);
 
-        //std::cout << time_UTC_string << std::endl;
     }
 
     std::string tx_to_json() {
-        struct_mapping::reg(&Transaction::version, "Version");
+        
         struct_mapping::reg(&Transaction::time, "Time");
         struct_mapping::reg(&Transaction::inputs, "Inputs");
         struct_mapping::reg(&Transaction::outputs, "Outputs");
         struct_mapping::reg(&Transaction::origin, "Origin");
         struct_mapping::reg(&Transaction::value, "Value");
         struct_mapping::reg(&Transaction::fee, "Fee");
-        
-        
-        
+       
         
         std::ostringstream tx_json;
-        struct_mapping::map_struct_to_json(*this, tx_json, " ");
+        struct_mapping::map_struct_to_json(*this, tx_json);
 
 
         return tx_json.str();
     }
 
     void json_to_tx(std::string tx_json) {
-        struct_mapping::reg(&Transaction::version, "Version");
+       
         struct_mapping::reg(&Transaction::time, "Time");
         struct_mapping::reg(&Transaction::inputs, "Inputs");
         struct_mapping::reg(&Transaction::outputs, "Outputs");
@@ -163,6 +169,12 @@ struct Transaction {
 
         //std::cout << tx_json.str() << std::endl;
 
+    }
+
+    std::string to_db_string() {
+        std::ostringstream ordered_data;
+        ordered_data << "\"" << this->signature << "\"" << ", " << 123 << ", " << this->time << ", \"" << this->origin << "\"," << this->fee;
+        return ordered_data.str();
     }
 
 };

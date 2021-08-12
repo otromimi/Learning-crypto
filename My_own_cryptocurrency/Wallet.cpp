@@ -51,8 +51,30 @@ void Wallet::new_address(){
 		std::cerr << "Error while generating new public key." << std::endl;
 	}
 
-	std::cout << std::hex << publicKey.GetPublicElement().x << std::endl;
-	std::cout << std::hex << publicKey.GetPublicElement().y << std::endl;
+
+
+	AutoSeededRandomPool prng;
+	ECDSA<ECP, SHA1>::PrivateKey privateKey;
+	ECDSA<ECP, SHA1>::PublicKey publicKey;
+	privateKey.Initialize(prng, CryptoPP::ASN1::secp256r1());
+
+	const Integer& x1 = privateKey.GetPrivateExponent();
+	
+	privateKey.MakePublicKey(publicKey);
+	const ECP::Point& q = publicKey.GetPublicElement();
+	const Integer& qx = q.x;
+	const Integer& qy = q.y;
+	
+
+	publicKey.AccessGroupParameters().SetPointCompression(false);
+	ByteQueue q1;
+	publicKey.Save(q1);
+	
+
+	publicKey.AccessGroupParameters().SetPointCompression(true);
+	ByteQueue q2;
+	publicKey.Save(q2);
+	
 
 };
 
@@ -73,7 +95,11 @@ std::string Wallet::sign_tx(std::string message) {
 	siglen = signer.SignMessage(prng, (const byte*)&message[0], message.size(), (byte*)&signature[0]);
 	signature.resize(siglen);
 
-	return signature;
+	std::string encoded;
+	CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
+	CryptoPP::StringSource(signature, true, new CryptoPP::Redirector(encoder));
+
+	return encoded;
 
 	/*
 	std::string encoded;
@@ -89,9 +115,14 @@ std::string Wallet::sign_tx(std::string message) {
 // Veryfy transaction signature
 bool Wallet::verify_tx_sig(std::string signature, std::string message) {
 
+	std::string decoded_signature;
+	CryptoPP::HexDecoder decoder(new CryptoPP::StringSink(decoded_signature));
+	CryptoPP::StringSource(signature, true, new CryptoPP::Redirector(decoder));
+
+
 	ECDSA<ECP, SHA256>::Verifier verifier(publicKey);
 
-	bool result = verifier.VerifyMessage((const byte*)&message[0], message.size(), (const byte*)&signature[0], signature.size());
+	bool result = verifier.VerifyMessage((const byte*)&message[0], message.size(), (const byte*)&decoded_signature[0], decoded_signature.size());
 
 	// Verification failure?
 	if (!result) {
@@ -121,7 +152,7 @@ std::string Wallet::get_publicElement() {
 	StringSource ss3(public_k, true, new HexEncoder(new StringSink(encoded_k)));
 
 	
-	return public_k;
+	return encoded_k;
 }
 
 
