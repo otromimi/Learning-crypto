@@ -10,10 +10,48 @@
 
 
 // My own dependencies
-
+#include "Node.h"
 
 // Local dependencies
+#include "eccrypto.h"
+#include "eccrypto.h"
+#include "hex.h"
+#include "files.h"
 #include "struct_mapping.h"
+
+/// <summary>
+/// Encodes binary strings to hexadecimal.
+/// </summary>
+/// <param name="decoded">Binary string</param>
+/// <returns>Hexadeciaml</returns>
+std::string encode(const std::string decoded) {
+    std::string encoded;
+    CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
+    CryptoPP::StringSource(decoded, true, new CryptoPP::Redirector(encoder));
+
+    //std::cout << encoded << std::endl;
+    std::cout << "binary: " << decoded.length() << std::endl;
+    std::cout << "hex: " << encoded.length() << std::endl;
+
+    return encoded;
+}
+
+/// <summary>
+/// Decode from hexadecimal to binary.
+/// </summary>
+/// <param name="encoded">Hexadecimal string</param>
+/// <returns>Binary string</returns>
+std::string decode(const std::string encoded) {
+    std::string decoded;
+    CryptoPP::HexDecoder decoder(new CryptoPP::StringSink(decoded));
+    CryptoPP::StringSource(encoded, true, new CryptoPP::Redirector(decoder));
+
+    //std::cout << encoded << std::endl;
+    //std::cout << encoded.length() << std::endl;
+
+    return decoded;
+}
+
 
 struct Entity {
     std::string account; // Public key of the receiver
@@ -37,13 +75,12 @@ struct Transaction {
     std::vector<std::string> inputs;
     std::vector<Entity> outputs;
     std::string origin; // Transation owner PK
-    unsigned int fee;
     unsigned int value;
-    // Non hased fields
+    unsigned int fee;
     std::string signature;
 
     
-    /// Overloading << operator
+    /*// Overloading << operator
     friend std::ostream& operator << (std::ostream& outstream, Transaction& data) {
         outstream << "-----Transaction: " << "-----\n" <<
             " UTC " << data.time << "\n" <<
@@ -65,13 +102,18 @@ struct Transaction {
             "--------------------------------------\n";
            
         return outstream;
+    }*/
+
+    friend std::ostream& operator << (std::ostream& outstream, Transaction& data) {
+        outstream << data.tx_to_json();
+        return outstream;
     }
 
    
     Transaction(){}
 
-    Transaction(std::string version, unsigned int value, std::string origin, unsigned int fee):
-        version(version), value(value), origin(origin), fee(fee){
+    explicit Transaction(std::string version, std::string origin, unsigned int value, unsigned int fee):
+        version(version), origin(origin), value(value), fee(fee){
 
         std::time_t now = std::time(0);
         char* dt = ctime(&now);
@@ -87,27 +129,30 @@ struct Transaction {
 
     std::string tx_to_json() {
         struct_mapping::reg(&Transaction::version, "Version");
+        struct_mapping::reg(&Transaction::time, "Time");
         struct_mapping::reg(&Transaction::inputs, "Inputs");
         struct_mapping::reg(&Transaction::outputs, "Outputs");
-        struct_mapping::reg(&Transaction::value, "Value");
         struct_mapping::reg(&Transaction::origin, "Origin");
+        struct_mapping::reg(&Transaction::value, "Value");
         struct_mapping::reg(&Transaction::fee, "Fee");
         
         
+        
+        
         std::ostringstream tx_json;
-        struct_mapping::map_struct_to_json(*this, tx_json);
+        struct_mapping::map_struct_to_json(*this, tx_json, " ");
 
-        //std::cout << tx_json.str() << std::endl;
 
         return tx_json.str();
     }
 
     void json_to_tx(std::string tx_json) {
         struct_mapping::reg(&Transaction::version, "Version");
+        struct_mapping::reg(&Transaction::time, "Time");
         struct_mapping::reg(&Transaction::inputs, "Inputs");
         struct_mapping::reg(&Transaction::outputs, "Outputs");
-        struct_mapping::reg(&Transaction::value, "Value");
         struct_mapping::reg(&Transaction::origin, "Origin");
+        struct_mapping::reg(&Transaction::value, "Value");
         struct_mapping::reg(&Transaction::fee, "Fee");
 
         //  std::ostringstream tx_json;
@@ -138,3 +183,4 @@ struct Block {
     
 
 };
+

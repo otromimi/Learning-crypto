@@ -7,6 +7,7 @@
 // My dependencies
 #include "Wallet.h"
 
+
 // Local dependencies
 #include "cryptlib.h"
 #include "eccrypto.h"
@@ -35,21 +36,23 @@ Wallet::~Wallet() {
 void Wallet::new_address(){
 
 	// Generating private key and storing it privately
+	// Passing random seed and eliptic curve to be use
 	privateKey.Initialize(prng, ASN1::secp256k1());
-	bool result_public = privateKey.Validate(prng, 3);
-	if (!result_public) {
+	bool result_private = privateKey.Validate(prng, 3);
+	if (!result_private) {
 		std::cerr << "Error while generating new private key." << std::endl;
 	}
 
 	// Generating public key and storing it privatly
 	privateKey.MakePublicKey(publicKey);
 
-	bool result_private = publicKey.Validate(prng, 3);
-	if (!result_private) { 
+	bool result_public = publicKey.Validate(prng, 3);
+	if (!result_public) { 
 		std::cerr << "Error while generating new public key." << std::endl;
 	}
 
-	//std::cout << privateKey.GetPrivateExponent() << std::endl;
+	std::cout << std::hex << publicKey.GetPublicElement().x << std::endl;
+	std::cout << std::hex << publicKey.GetPublicElement().y << std::endl;
 
 };
 
@@ -98,7 +101,27 @@ bool Wallet::verify_tx_sig(std::string signature, std::string message) {
 		std::cerr << "All good!" << std::endl;
 	}
 
+
+
 	return result;
+}
+
+std::string Wallet::get_publicElement() {
+
+	
+	publicKey.AccessGroupParameters().SetPointCompression(true);
+
+	// Save the public keys
+	std::string public_k;
+	publicKey.Save(StringSink(public_k).Ref());
+	
+	//////////////////////////////////////////////////////////////////////
+	// Print some stuff about them
+	std::string encoded_k;
+	StringSource ss3(public_k, true, new HexEncoder(new StringSink(encoded_k)));
+
+	
+	return public_k;
 }
 
 

@@ -51,7 +51,7 @@ int main()
     //Node::create_tx(MY_CRYPTO_VERSION);
 
     Wallet* wallet1 = new Wallet;
-    Transaction tx(MY_CRYPTO_VERSION, 34, "22528690697096551991720303454459505002748145553800647866671648621049075374417", 4);
+    Transaction tx(MY_CRYPTO_VERSION, Node::encode(wallet1->get_publicElement()), 34, 4);
     tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
         
@@ -59,8 +59,13 @@ int main()
     //tx = Node::create_tx(MY_CRYPTO_VERSION);
     tx.signature = Node::encode(wallet1->sign_tx(tx.tx_to_json()));
 
-    std::cout << wallet1->verify_tx_sig(Node::decode(tx.signature), tx.tx_to_json()) << std::endl;
+    std::cout << wallet1->verify_tx_sig(tx.signature, tx.tx_to_json()) << std::endl;
     std::cout << tx << std::endl;
+
+    //wallet1->get_publicElement();
+
+    bool checking = Node::sign_verifier(wallet1->get_publicElement(),decode(tx.signature), tx.tx_to_json());
+    std::cout << "chenking from node: " << checking << std::endl;
 
     delete wallet1;
 

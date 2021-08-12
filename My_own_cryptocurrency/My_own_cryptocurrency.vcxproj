@@ -185,9 +185,6 @@
     <ProjectReference Include="..\cryptopp850\cryptlib.vcxproj">
       <Project>{c39f4b46-6e89-4074-902e-ca57073044d2}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\sqlite-amalgamation-3360000\windows-build\sqlite3.vcxproj">
-      <Project>{8ae79a36-d2f4-3840-8954-0da81e780a6d}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

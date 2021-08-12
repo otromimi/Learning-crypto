@@ -35,5 +35,8 @@ public:
 	/// <returns>true if verification was okay, false otherwise</returns>
 	bool verify_tx_sig(std::string signature, std::string message);
 
+
+	std::string get_publicElement();
+
 };
 
