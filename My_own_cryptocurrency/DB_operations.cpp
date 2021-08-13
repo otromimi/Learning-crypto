@@ -48,6 +48,7 @@ const char* blocks_table = "CREATE TABLE BLOCKS("  \
 
 
 
+
 int DB_operations::callback(void* NotUsed, int argc, char** argv, char** azColName) {
     int i;
     for (i = 0; i < argc; i++) {
@@ -56,6 +57,7 @@ int DB_operations::callback(void* NotUsed, int argc, char** argv, char** azColNa
     printf("\n");
     return 0;
 }
+
 
 void DB_operations::create_tables() {
 
@@ -98,6 +100,8 @@ void DB_operations::create_tables() {
 
 
 DB_operations::DB_operations() {
+
+
     rc = sqlite3_open("my_blockchain.db", &db);
 
     if (rc) {
