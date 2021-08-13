@@ -72,29 +72,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)Intermediates\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectName)</OutDir>
+    <IntDir>$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
     <CopyLocalProjectReference>false</CopyLocalProjectReference>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)Intermediates\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectName)</OutDir>
+    <IntDir>$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
     <CopyLocalProjectReference>false</CopyLocalProjectReference>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)Intermediates\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectName)</OutDir>
+    <IntDir>$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
     <CopyLocalProjectReference>false</CopyLocalProjectReference>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)Intermediates\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(ProjectName)</OutDir>
+    <IntDir>$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
     <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
     <CopyLocalProjectReference>false</CopyLocalProjectReference>
   </PropertyGroup>

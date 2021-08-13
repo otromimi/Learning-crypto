@@ -5,6 +5,9 @@
 
 // Added by me
 sqlite-amalgamation-3360000/windows-build/*
+cryptopp/
+struct_mapping/
+My_own_cryptocurrency/My_own_cryptocurrency
 
 # User-specific files
 *.rsuser
