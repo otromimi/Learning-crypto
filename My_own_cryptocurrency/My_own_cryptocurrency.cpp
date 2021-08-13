@@ -29,51 +29,42 @@
 
 int main()
 {
-    //if (_DEBUG) { //braaks in linux
-        std::cout << "\n=============Checking for cryptolib=============\n";
-      
-        CryptoPP::SHA256 test_hash;
-        std::cout << "Name: " << test_hash.AlgorithmName() << std::endl;
-        std::cout << "Digest size: " << test_hash.DigestSize() << std::endl;
-        std::cout << "Block size: " << test_hash.BlockSize() << std::endl;
+   
+    std::cout << "\n=============Open block_chain database=============\n";
+    DB_operations blockchain_db;
+    std::cout << "\n=============Creating Wallet=============\n";
+    Wallet* wallet1 = new Wallet;
 
-        std::cout << "\n=============Checking for sqlite3=============\n";
-        DB_operations blockchain_db;
-
-        std::cout << "\n=============Excution starts=============\n";
-    //}
 
  
-    //Node::create_tx(MY_CRYPTO_VERSION);
-
-    Wallet* wallet1 = new Wallet;
+    // creating transaction
     Transaction tx(wallet1->get_publicElement(), 34, 4);
     tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
         
     
-    //tx = Node::create_tx(MY_CRYPTO_VERSION);
+   // signin transaction
     tx.signature = wallet1->sign_tx(tx.tx_to_json());
 
-    std::cout << wallet1->verify_tx_sig(tx.signature, tx.tx_to_json()) << std::endl;
+    //verifiying sign
     std::cout << tx << std::endl;
-
-    //wallet1->get_publicElement();
-
     bool checking = Node::sign_verifier(wallet1->get_publicElement(),tx.signature, tx.tx_to_json());
-    
 
-    delete wallet1;
     
 
     blockchain_db.insert("TRANSACTIONS", tx.to_db_string());
 
 
+    delete wallet1;
+
+
+    //if (_DEBUG) { //braaks in linux
     // Stoping execution in linux
     if (PLATFORM_NAME != "windows") {
         std::cout << "Platform: " << PLATFORM_NAME << std::endl;
         std::cin.get();
     }
+    //}
 
     return 0;
 }
