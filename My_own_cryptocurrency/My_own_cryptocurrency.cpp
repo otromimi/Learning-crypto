@@ -17,16 +17,11 @@
 
 
 // Standard dependencies
-#include <filesystem>
-#include <sstream>
-#include <cstring>
+#include <iostream>
 
 
 // My own dependencies
 #include "Node.h"
-
-// Local dependencies
-
 
 
 #define MY_CRYPTO_VERSION 1 
