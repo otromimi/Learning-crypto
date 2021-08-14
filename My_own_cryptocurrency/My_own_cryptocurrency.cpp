@@ -38,7 +38,7 @@ int main()
 
  
     // creating transaction
-    Transaction tx(wallet1->get_publicElement(), 34, 4);
+    Transaction tx(wallet1->get_compressedPublic(), 34, 4);
     tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
         
@@ -48,7 +48,7 @@ int main()
 
     //verifiying sign
     std::cout << tx << std::endl;
-    bool checking = Node::sign_verifier(wallet1->get_publicElement(),tx.signature, tx.tx_to_json());
+    bool checking = Node::sign_verifier(wallet1->get_compressedPublic(),tx.signature, tx.tx_to_json());
 
     
 

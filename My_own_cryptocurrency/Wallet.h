@@ -36,7 +36,7 @@ public:
 	bool verify_tx_sig(std::string signature, std::string message);
 
 
-	std::string get_publicElement();
+	std::string get_compressedPublic();
 
 };
 

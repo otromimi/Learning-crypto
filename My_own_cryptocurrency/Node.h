@@ -9,6 +9,8 @@
 #include "eccrypto.h"
 #include "sha.h"
 #include "osrng.h"
+#include "oids.h"
+
 
 
 

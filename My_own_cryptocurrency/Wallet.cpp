@@ -27,7 +27,8 @@ AutoSeededRandomPool prng;
 
 Wallet::Wallet() {
 	try {
-		this->load_keys();
+		//this->load_keys();
+		this->new_keys();
 	}
 	catch (Exception e) {
 		this->new_keys();
@@ -142,7 +143,7 @@ bool Wallet::verify_tx_sig(std::string signature, std::string message) {
 	return result;
 }
 
-std::string Wallet::get_publicElement() {
+std::string Wallet::get_compressedPublic() {
 
 	
 	publicKey.AccessGroupParameters().SetPointCompression(true);
@@ -151,13 +152,12 @@ std::string Wallet::get_publicElement() {
 	std::string public_k;
 	publicKey.Save(StringSink(public_k).Ref());
 	
-	//////////////////////////////////////////////////////////////////////
-	// Print some stuff about them
-	std::string encoded_k;
-	StringSource ss3(public_k, true, new HexEncoder(new StringSink(encoded_k)));
+	std::string code = publicKey.GetPublicElement().y % 2 ? "03" : "02";
 
+	std::stringstream x_public;
+	x_public << std::hex << publicKey.GetPublicElement().x;
 	
-	return encoded_k;
+	return code + x_public.str();
 }
 
 

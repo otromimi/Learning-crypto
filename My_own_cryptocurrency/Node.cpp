@@ -71,27 +71,27 @@ const void Node::validate_block(const Block block) {}
 /// <param name="signature">Signature over SHA256 hash.</param>
 /// <param name="message">Data to be verified.</param>
 /// <returns>True if verification went well, false otherwise.</returns>
-bool Node::sign_verifier(std::string public_key, std::string signature, std::string message) {
-
-	std::string decoded_publickey = decode(public_key);
-	std::string decoded_signature = decode(signature);
-
-	CryptoPP::AutoSeededRandomPool prng;
-
+bool Node::sign_verifier(std::string compressed_key, std::string signature, std::string message) {
+	
 
 	CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::PublicKey publicKey;
-	publicKey.AccessGroupParameters().SetPointCompression(true);
-
-	publicKey.Load(CryptoPP::StringSource(decoded_publickey, true).Ref());
+	publicKey.AccessGroupParameters().Initialize(CryptoPP::ASN1::secp256k1());
 
 
+
+	CryptoPP::StringSource ss(compressed_key, true, new CryptoPP::HexDecoder);
+	CryptoPP::ECP::Point point;
+
+	publicKey.GetGroupParameters().GetCurve().DecodePoint(point, ss, ss.MaxRetrievable());
+	publicKey.SetPublicElement(point);
+
+
+	//CryptoPP::AutoSeededRandomPool prng;
 	//bool key_okay = publicKey.Validate(prng, 3);
 
-
+	std::string decoded_signature = decode(signature);
 
 	CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::Verifier verifier(publicKey);
-
-
 	bool result = verifier.VerifyMessage((const CryptoPP::byte*)&message[0], message.size(), (const CryptoPP::byte*)&decoded_signature[0], decoded_signature.size());
 
 	// Verification failure?
@@ -101,8 +101,7 @@ bool Node::sign_verifier(std::string public_key, std::string signature, std::str
 	else {
 		std::cerr << "All good!" << std::endl;
 	}
-
-
+	
 
 	return result;
 }
