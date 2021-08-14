@@ -6,7 +6,7 @@ class Wallet {
 private:
 	
 	/// Generates a new key pair.
-	void new_address();
+	void new_keys();
 
 	/// Save keys to a.ec.der file
 	void save_keys();

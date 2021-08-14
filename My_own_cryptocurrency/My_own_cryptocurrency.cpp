@@ -52,8 +52,9 @@ int main()
 
     
 
-    blockchain_db.insert("TRANSACTIONS", tx.to_db_string());
+    blockchain_db.insert(Element::TRANSACTION, tx.to_db_string());
 
+    
 
     delete wallet1;
 

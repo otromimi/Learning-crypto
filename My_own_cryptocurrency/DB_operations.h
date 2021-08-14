@@ -1,9 +1,18 @@
 #pragma once
+#include "sqlite3.h"
 
+enum Element{
+    BLOCK,
+    TRANSACTION,
+    ENTITY
+};
 
 class DB_operations {
 
-   
+    sqlite3* db;
+    char* zErrMsg = 0;
+    const char* data;
+
     /// <summary>
     /// Fuction called after quering the database.
     /// </summary>
@@ -27,7 +36,14 @@ public:
     /// </summary>
     /// <param name="table">Table where the data is gonna be inserted.</param>
     /// <param name="data">List of parameter to be inserted in each row.</param>
-    void insert(std::string table, std::string data);
+    void insert(Element table, std::string data);
+
+    /// <summary>
+    /// Select values from database
+    /// </summary>
+    std::string select(Element table, std::string data);
+
+    void print_select(Element table, std::string data);
 
     /// <summary>
     /// Destroying instance and closing database.

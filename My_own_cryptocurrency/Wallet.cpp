@@ -26,14 +26,19 @@ ECDSA<ECP, SHA256>::PublicKey publicKey;
 AutoSeededRandomPool prng;
 
 Wallet::Wallet() {
-	this->new_address();
+	try {
+		this->load_keys();
+	}
+	catch (Exception e) {
+		this->new_keys();
+	}
 }
 
 Wallet::~Wallet() {
 	this->save_keys();
 }
 
-void Wallet::new_address(){
+void Wallet::new_keys(){
 
 	// Generating private key and storing it privately
 	// Passing random seed and eliptic curve to be use
@@ -170,6 +175,9 @@ void Wallet::load_keys() {
 
 	
 	if (privateKey.Validate(prng, 3)) {
-		std::cerr << "Keys loaded succesfully." << std::endl;
+		privateKey.MakePublicKey(publicKey);
+	}
+	else {
+		std::cout << "Problem loading keys." << std::endl;
 	}
 }
