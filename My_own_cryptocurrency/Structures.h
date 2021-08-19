@@ -18,19 +18,7 @@
 
 
 
-/// <summary>
-/// Encodes binary strings to hexadecimal.
-/// </summary>
-/// <param name="decoded">Binary string</param>
-/// <returns>Hexadeciaml</returns>
-std::string encode(const std::string decoded);
 
-/// <summary>
-/// Decode from hexadecimal to binary.
-/// </summary>
-/// <param name="encoded">Hexadecimal string</param>
-/// <returns>Binary string</returns>
-std::string decode(const std::string encoded);
 
 
 struct Entity {
@@ -39,11 +27,9 @@ struct Entity {
 
     Entity(std::string account, unsigned int value);
 
-   
+
 };
 
-/// Overloading << operator
-std::ostream& operator << (std::ostream& outstream, Entity& data);
 
 struct Transaction {
 
@@ -63,7 +49,7 @@ struct Transaction {
     Transaction(std::string origin, unsigned int value, unsigned int fee);
 
 
-    std::string tx_to_json();
+    std::string tx_to_json(bool indent);
 
     void json_to_tx(std::string tx_json);
 
@@ -71,8 +57,6 @@ struct Transaction {
 
 };
 
-/// Overloading << operator
-std::ostream& operator << (std::ostream& outstream, Transaction& data);
 
 
 struct Block {
@@ -90,3 +74,11 @@ struct Block {
 
 
 };
+
+
+
+/// Overloading << operator
+std::ostream& operator << (std::ostream& outstream, Entity& data);
+
+/// Overloading << operator
+std::ostream& operator << (std::ostream& outstream, Transaction& data);

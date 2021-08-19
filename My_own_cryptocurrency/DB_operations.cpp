@@ -7,7 +7,7 @@
 #include "DB_operations.h"
 
 
-
+using namespace My_own_crypto;
 
 /// Queries
 
@@ -56,6 +56,7 @@ int DB_operations::callback(void* NotUsed, int argc, char** argv, char** azColNa
 void DB_operations::create_tables() {
 
     /* Execute SQL statement */
+    
 
     int rc;
 
@@ -152,7 +153,7 @@ std::string DB_operations::select(Element table, std::string data) {
         query += "OUTPUTS (TX_ID, ACCOUNT, VALUE) VALUES (" + data + "); ";
     }
     else if (table == Element::TRANSACTION) {
-        query += "TRANSACTIONS (SIGNATURE, BLOCK, TIME, ORIGIN, FEE) VALUES (" + data + "); ";
+        query += "TRANSACTIONS ;";
     }
     else if (table == Element::BLOCK) {
         query += "BLOCKS (BLOCK_ID, VERSION, WORK_HASH, FATHER_HASH, NONCE, TIME, MINER) VALUES (" + data + "); ";
@@ -170,6 +171,7 @@ std::string DB_operations::select(Element table, std::string data) {
         std::cout << "Insertion success" << std::endl;
     }
 
+ 
     return "hola";
 }
 

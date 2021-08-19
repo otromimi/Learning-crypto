@@ -1,34 +1,18 @@
-// Standard dependencies
-#include <iostream>
-#include <iomanip>
-#include <hex.h>
-#include <ostream>
+
 
 // My dependencies
 #include "Wallet.h"
 
 
-// Local dependencies
-#include "cryptlib.h"
-#include "eccrypto.h"
-#include "files.h"
-#include "ecp.h"
-#include "hex.h"
-#include "oids.h"
-#include "osrng.h"
-
-
 using namespace CryptoPP;
+using namespace My_own_crypto;
 
-ECDSA<ECP, SHA256>::PrivateKey privateKey;
-ECDSA<ECP, SHA256>::PublicKey publicKey;
-	
 AutoSeededRandomPool prng;
 
-Wallet::Wallet() {
+Wallet::Wallet(const char* name): name(name) {
 	try {
-		//this->load_keys();
-		this->new_keys();
+		this->load_keys();
+		//this->new_keys();
 	}
 	catch (Exception e) {
 		this->new_keys();
@@ -62,7 +46,7 @@ void Wallet::new_keys(){
 	AutoSeededRandomPool prng;
 	ECDSA<ECP, SHA1>::PrivateKey privateKey;
 	ECDSA<ECP, SHA1>::PublicKey publicKey;
-	privateKey.Initialize(prng, CryptoPP::ASN1::secp256r1());
+	privateKey.Initialize(prng, CryptoPP::ASN1::secp256k1());
 
 	const Integer& x1 = privateKey.GetPrivateExponent();
 	
@@ -103,9 +87,15 @@ std::string Wallet::sign_tx(std::string message) {
 
 	std::string encoded;
 	CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
-	CryptoPP::StringSource(signature, true, new CryptoPP::Redirector(encoder));
+	CryptoPP::StringSource ss(signature, true, new CryptoPP::Redirector(encoder));
 
-	return encoded;
+	//Integer sign_num(encoded.c_str());
+
+	std::ostringstream num_str;
+	//num_str << std::hex << sign_num;
+
+
+	return  encoded;// num_str.str();
 
 	/*
 	std::string encoded;
@@ -123,7 +113,7 @@ bool Wallet::verify_tx_sig(std::string signature, std::string message) {
 
 	std::string decoded_signature;
 	CryptoPP::HexDecoder decoder(new CryptoPP::StringSink(decoded_signature));
-	CryptoPP::StringSource(signature, true, new CryptoPP::Redirector(decoder));
+	CryptoPP::StringSource ss(signature, true, new CryptoPP::Redirector(decoder));
 
 
 	ECDSA<ECP, SHA256>::Verifier verifier(publicKey);
@@ -156,6 +146,10 @@ std::string Wallet::get_compressedPublic() {
 
 	std::stringstream x_public;
 	x_public << std::hex << publicKey.GetPublicElement().x;
+
+	Integer carlos = publicKey.GetPublicElement().x;
+
+	std::cout << carlos.ByteCount() << std::endl;
 	
 	return code + x_public.str();
 }
@@ -163,14 +157,16 @@ std::string Wallet::get_compressedPublic() {
 
 void Wallet::save_keys() {
 	// Save private key in PKCS #8 format
-	FileSink fs("private.ec.der", true /*binary*/);
+	std::string file = this->name + ".ec.der";
+	FileSink fs(file.c_str(), true /*binary*/);
 	privateKey.Save(fs);
 }
 
 void Wallet::load_keys() {
 
 	// Load private key in PKCS #8 format
-	FileSource fs("private.ec.der", true /*pump all*/);
+	std::string file = this->name + ".ec.der";
+	FileSource fs(file.c_str(), true /*pump all*/);
 	privateKey.Load(fs);
 
 	

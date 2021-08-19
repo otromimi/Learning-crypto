@@ -24,6 +24,8 @@
 #include "Node.h"
 
 
+using namespace My_own_crypto;
+
 #define MY_CRYPTO_VERSION 1 
 
 
@@ -33,30 +35,35 @@ int main()
     std::cout << "\n=============Open block_chain database=============\n";
     DB_operations blockchain_db;
     std::cout << "\n=============Creating Wallet=============\n";
-    Wallet* wallet1 = new Wallet;
 
+    
+    Node node1("peter");
+   
 
+    
  
     // creating transaction
-    Transaction tx(wallet1->get_compressedPublic(), 34, 4);
+    Transaction tx(node1.wallet.get_compressedPublic(), 34, 4);
     tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
-        
+    
+    std::cout << tx.tx_to_json(false) << std::endl;
     
    // signin transaction
-    tx.signature = wallet1->sign_tx(tx.tx_to_json());
+    tx.signature = node1.wallet.sign_tx(tx.tx_to_json(false));
 
     //verifiying sign
     std::cout << tx << std::endl;
-    bool checking = Node::sign_verifier(wallet1->get_compressedPublic(),tx.signature, tx.tx_to_json());
+    bool checking = Tools::sign_verifier(node1.wallet.get_compressedPublic(),tx.signature, tx.tx_to_json(false));
 
     
 
     blockchain_db.insert(Element::TRANSACTION, tx.to_db_string());
+    blockchain_db.select(Element::TRANSACTION, tx.to_db_string());
 
     
 
-    delete wallet1;
+    
 
 
     //if (_DEBUG) { //braaks in linux
