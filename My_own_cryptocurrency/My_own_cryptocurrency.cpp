@@ -43,7 +43,7 @@ int main()
     
  
     // creating transaction
-    Transaction tx(node1.wallet.get_compressedPublic(), 34, 4);
+    Transaction tx(node1.wallet.get_compressedPublic(), 34.43f, 4.3f);
     tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
     
@@ -53,13 +53,13 @@ int main()
     tx.signature = node1.wallet.sign_tx(tx.tx_to_json(false));
 
     //verifiying sign
-    std::cout << tx << std::endl;
+    //std::cout << tx << std::endl;
     bool checking = Tools::sign_verifier(node1.wallet.get_compressedPublic(),tx.signature, tx.tx_to_json(false));
 
     
 
-    blockchain_db.insert(Element::TRANSACTION, tx.to_db_string());
-    blockchain_db.select(Element::TRANSACTION, tx.to_db_string());
+    //blockchain_db.insert(Element::TRANSACTION, tx.to_db_string());
+    //blockchain_db.select(Element::TRANSACTION, tx.to_db_string());
 
     
 

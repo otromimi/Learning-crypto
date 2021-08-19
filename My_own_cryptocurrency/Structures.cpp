@@ -3,50 +3,15 @@
 #include "Structures.h"
 
 
-Entity::Entity(std::string account, unsigned int value) :account(account), value(value) {}
+using namespace My_own_crypto;
 
-/// Overloading << operator
-std::ostream& operator << (std::ostream& outstream, Entity& data) {
-    outstream << "\t" << data.account << "\t" << data.value << "\n";
-
-    return outstream;
-}
+Entity::Entity(std::string account, float value) :account(account), value(value) {}
 
 
 
-/// Overloading << operator
-std::ostream& operator << (std::ostream& outstream, Transaction& data) {
-
-    /*
-    // Passing from epoch to UTC
-    std::tm* utc_struct = std::gmtime((const time_t*)data.time);
-    char* time_UTC_string = std::asctime(utc_struct);
-    *(time_UTC_string + 24) = 0x00;
-    */
-    outstream << "-----Transaction: " << "-----\n" <<
-        " UTC " << data.time << "\n" <<
-        "Inputs: { ";
-    for (std::string i : data.inputs) {
-        outstream << i << ", ";
-    }
-    outstream << "\b\b }\n" <<
-        "Outputs: \n";
-    for (Entity i : data.outputs) {
-        outstream << i;
-    }
-    outstream << "\n" <<
-        "Origin: " << data.origin << "\n" <<
-        "Value: " << data.value << "\n" <<
-        "Fee: " << data.fee << "\n" <<
-        "\n --Sign-- \n" << data.signature << "\n" <<
-        "--------------------------------------\n";
-
-    return outstream;
-}
 
 
-
-Transaction::Transaction(std::string origin, unsigned int value, unsigned int fee) :
+Transaction::Transaction(std::string origin, float value, float fee) :
     origin(origin), value(value), fee(fee) {
     /*
     std::time_t now = std::time(0);
@@ -111,3 +76,42 @@ std::string Transaction::to_db_string() {
 
 
 
+
+/// Overloading << operator
+std::ostream& operator << (std::ostream& outstream,Entity& data) {
+    outstream << "\t" << data.account << "\t" << data.value << "\n";
+
+    return outstream;
+}
+
+
+
+/// Overloading << operator
+std::ostream& operator << (std::ostream& outstream, Transaction& data) {
+
+    /*
+    // Passing from epoch to UTC
+    std::tm* utc_struct = std::gmtime((const time_t*)data.time);
+    char* time_UTC_string = std::asctime(utc_struct);
+    *(time_UTC_string + 24) = 0x00;
+    */
+    outstream << "-----Transaction: " << "-----\n" <<
+        " UTC " << data.time << "\n" <<
+        "Inputs: { ";
+    for (std::string i : data.inputs) {
+        outstream << i << ", ";
+    }
+    outstream << "\b\b }\n" <<
+        "Outputs: \n";
+    for (Entity i : data.outputs) {
+        outstream << i;
+    }
+    outstream << "\n" <<
+        "Origin: " << data.origin << "\n" <<
+        "Value: " << data.value << "\n" <<
+        "Fee: " << data.fee << "\n" <<
+        "\n --Sign-- \n" << data.signature << "\n" <<
+        "--------------------------------------\n";
+
+    return outstream;
+}

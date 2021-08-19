@@ -14,9 +14,9 @@ const Transaction Node::create_tx() {
 	//std::cout << version << std::endl;
 
 	std::string destination;
-	unsigned int value;
+	float value;
 	std::string origin("1330662819286567003101256740359821157367793328918");
-	unsigned int fee;
+	float fee;
 
 	std::cout << "Beneficiary: ";
 	getline(std::cin, origin);
@@ -24,12 +24,12 @@ const Transaction Node::create_tx() {
 	std::cout << "Value: ";
 	std::string value_s;
 	getline(std::cin, value_s);
-	value = std::stoi(value_s);
+	value = std::strtof(value_s.c_str(), NULL);
 
 	std::cout << "Fee: ";
 	std::string fee_s;
 	getline(std::cin, fee_s);
-	fee = std::stoi(fee_s);
+	fee = std::strtof(fee_s.c_str(), NULL);
 
 
 	Transaction tx(origin, value, fee);
