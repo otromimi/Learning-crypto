@@ -62,14 +62,15 @@ namespace My_own_crypto {
         /// <param name="origin"></param>
         /// <param name="value"></param>
         /// <param name="fee"></param>
-        Transaction(std::string origin, float value, float fee);
+        Transaction(std::string origin, float value, float fee, std::string = "");
 
         /// <summary>
         /// Return a JSON format string of the transaction.
         /// </summary>
         /// <param name="indent">True if you what it to be nice formated, False if you want it all in one string.</param>
+        /// <param name="full">True if you want to include the signature on the JSON, False otherwise.</param>
         /// <returns>JSON formated transaction</returns>
-        std::string tx_to_json(bool indent);
+        std::string tx_to_json(bool = false, bool = false);
 
         /// <summary>
         /// Populates the transaction object with the passed JSON data.
@@ -101,8 +102,10 @@ namespace My_own_crypto {
         std::vector<Transaction> transaction_list;
         unsigned int ID;
         unsigned int nonce;
+
         // Non hased fields
         std::string work_hash;
+        
 
 
     };

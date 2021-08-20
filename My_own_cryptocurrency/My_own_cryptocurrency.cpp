@@ -47,14 +47,14 @@ int main()
     tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
     
-    std::cout << tx.tx_to_json(false) << std::endl;
+    std::cout << tx.tx_to_json(true, true) << std::endl;
     
    // signin transaction
-    tx.signature = node1.wallet.sign_tx(tx.tx_to_json(false));
+    tx.signature = node1.wallet.sign_tx(tx.tx_to_json(false, false));
 
     //verifiying sign
     //std::cout << tx << std::endl;
-    bool checking = Tools::sign_verifier(node1.wallet.get_compressedPublic(),tx.signature, tx.tx_to_json(false));
+    bool checking = Tools::sign_verifier(node1.wallet.get_compressedPublic(),tx.signature, tx.tx_to_json(false, false));
 
     
 
@@ -62,8 +62,8 @@ int main()
     //blockchain_db.select(Element::TRANSACTION, tx.to_db_string());
 
 
-    std::cout << Tools::time_now() << std::endl;
-    
+    std::cout << Tools::hash_sha256("hola masdfundo") << std::endl;
+    std::cout << tx.tx_to_json(true, true) << std::endl;
 
 
     //if (_DEBUG) { //braaks in linux

@@ -11,8 +11,8 @@ Entity::Entity(std::string account, float value) :account(account), value(value)
 
 
 
-Transaction::Transaction(std::string origin, float value, float fee) :
-    origin(origin), value(value), fee(fee) {
+Transaction::Transaction(std::string origin, float value, float fee, std::string signature) :
+    origin(origin), value(value), fee(fee) , signature(signature){
     /*
     std::time_t now = std::time(0);
     long peter = now;
@@ -27,7 +27,7 @@ Transaction::Transaction(std::string origin, float value, float fee) :
 
 }
 
-std::string Transaction::tx_to_json(bool indent) {
+std::string Transaction::tx_to_json(bool indent, bool full) {
 
     struct_mapping::reg(&Transaction::time, "Time");
     struct_mapping::reg(&Transaction::inputs, "Inputs");
@@ -35,7 +35,8 @@ std::string Transaction::tx_to_json(bool indent) {
     struct_mapping::reg(&Transaction::origin, "Origin");
     struct_mapping::reg(&Transaction::value, "Value");
     struct_mapping::reg(&Transaction::fee, "Fee");
-
+    if(full)
+        struct_mapping::reg(&Transaction::signature, "Signature");
 
     std::ostringstream tx_json;
     if(indent)

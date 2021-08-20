@@ -20,7 +20,7 @@ namespace My_own_crypto {
 		std::string decode(const std::string encoded);
 
 
-		const std::string hash_digest(const std::string message);
+		const std::string hash_sha256(const std::string message);
 
 		/// <summary>
 		/// Elliptic Curve Digital Signature Algorithm verification.

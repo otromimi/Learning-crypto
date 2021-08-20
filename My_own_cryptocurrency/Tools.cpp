@@ -55,7 +55,7 @@ std::string Tools::decode(const std::string encoded) {
 }
 
 
-const std::string Tools::hash_digest(const std::string message) {
+const std::string Tools::hash_sha256(const std::string message) {
 
 	std::string digest;
 	CryptoPP::SHA256 hash;
@@ -64,7 +64,7 @@ const std::string Tools::hash_digest(const std::string message) {
 	digest.resize(hash.DigestSize());
 	hash.Final((CryptoPP::byte*)&digest[0]);
 
-	return digest;
+	return encode(digest);
 }
 
 
