@@ -1,6 +1,10 @@
 
 
 #include "Structures.h"
+#include "struct_mapping.h"
+#include "Tools.h"
+#include "MerkleTree_sha256.h"
+
 
 
 
@@ -22,6 +26,9 @@ std::string Entity::to_json(bool indent, bool full) {
     return tx_json.str();
 }
 
+
+///////////////////////////////////// Block /////////////////////////////////////
+
 Transaction::Transaction(std::string time, std::string origin, float fee, std::string signature) :
     time(time), origin(origin), fee(fee), signature(signature){
     /*
@@ -41,7 +48,6 @@ Transaction::Transaction(std::string time, std::string origin, float fee, std::s
 
 std::string Transaction::tx_to_json(bool indent, bool full) {
 
-    //this->outputs= { Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
 
     struct_mapping::reg(&Entity::account, "Account");
     struct_mapping::reg(&Entity::value, "Value");
@@ -89,31 +95,31 @@ std::string Transaction::to_db_string() {
 }
 
 
-
-std::string tx_to_json(Transaction& tx, bool indent, bool full) {
-
-
-
-    struct_mapping::reg(&My_own_crypto::Entity::account, "Account");
-    struct_mapping::reg(&My_own_crypto::Entity::value, "Value");
-
-    struct_mapping::reg(&Transaction::time, "Time");
-    struct_mapping::reg(&Transaction::inputs, "Inputs");
-    struct_mapping::reg(&Transaction::outputs, "Outputs");
-    struct_mapping::reg(&Transaction::origin, "Origin");
-    struct_mapping::reg(&Transaction::fee, "Fee");
-    if (full)
-        struct_mapping::reg(&Transaction::signature, "Signature");
-
-    std::ostringstream tx_json;
-    if (indent)
-        struct_mapping::map_struct_to_json(tx, tx_json, "  ");
-    else
-        struct_mapping::map_struct_to_json(tx, tx_json);
-
-
-    return tx_json.str();
+void Transaction::compute_hash() {
+    this->hash = Tools::hash_sha256(tx_to_json(false, true));
 }
+
+///////////////////////////////////// Block /////////////////////////////////////
+
+
+Block::Block(){}
+
+
+void Block::find_mt_root() {
+    std::vector<std::string> hash_vector;
+
+    for (Transaction i : this->transaction_list) {
+        i.compute_hash();
+        hash_vector.push_back(i.hash);
+    }
+
+    MerkleTree mt(hash_vector);
+    
+    // mt.printTree(mt.root, 0);
+    this->mt_root = mt.root->hash;
+}
+
+
 
 
 /// Overloading << operator

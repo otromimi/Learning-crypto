@@ -180,6 +180,7 @@
     <ClCompile Include="Wallet.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MerkleTree_sha256.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="DB_operations.h" />
     <ClInclude Include="Node.h" />

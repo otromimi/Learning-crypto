@@ -13,7 +13,7 @@
 
 // Local dependencies
 #include "hex.h"
-#include "struct_mapping.h"
+
 
 
 
@@ -43,15 +43,16 @@ namespace My_own_crypto {
 
         // Fields to be hash
         std::string time; // Time stamp of the transaction
+        std::vector<Entity> outputs;
         std::vector<std::string> inputs;
-        
         std::string origin; // Transation owner PK
         float fee;
+
+        // No sign
         std::string signature;
-        std::string hash;
 
         // No hash
-        std::vector<Entity> outputs;
+        std::string hash;
         float in_comulative_value; 
         float out_cumulative_value;
 
@@ -90,6 +91,8 @@ namespace My_own_crypto {
         /// <returns>""value1", "value2", "value3""</returns>
         std::string to_db_string();
 
+        void compute_hash();
+
 
     };
 
@@ -100,20 +103,20 @@ namespace My_own_crypto {
         std::string time;
         std::string miner;
         float reward;
-        std::vector<Transaction> transaction_list;
+        std::string mt_root; //merkle tree root
         unsigned int ID;
         unsigned int nonce;
 
         // Non hased fields
+        std::vector<Transaction> transaction_list;
         std::string work_hash;
-        
 
+        Block();
+
+        void find_mt_root();
 
     };
 
-
-    
-   
 
 }
 

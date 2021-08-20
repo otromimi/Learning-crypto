@@ -127,12 +127,12 @@ const std::string Tools::time_now() {
 		std::to_string(gmt_time->tm_min) + ":" + \
 		std::to_string(gmt_time->tm_sec);
 		
-	std::cout << utc_time << std::endl;
+	//std::cout << utc_time << std::endl;
 
-	long long back_time = time_to_epoch(utc_time);
+	//long long back_time = time_to_epoch(utc_time);
 
-	std::cout << ttime << std::endl;
-	std::cout << back_time << std::endl;
+	//std::cout << ttime << std::endl;
+	//std::cout << back_time << std::endl;
 	
 	//char* dt = asctime(gmt_time);
 	//std::cout << "The current UTC date and time is:" << dt << std::endl;

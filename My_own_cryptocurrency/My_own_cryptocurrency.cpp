@@ -33,7 +33,7 @@ int main()
 {
    
     std::cout << "\n=============Open block_chain database=============\n";
-    DB_operations blockchain_db;
+    //DB_operations blockchain_db;
     std::cout << "\n=============Creating Wallet=============\n";
 
     
@@ -43,22 +43,50 @@ int main()
     
  
     // creating transaction
-    Transaction tx(Tools::time_now(), node1.wallet.get_compressedPublic(), 4.3f);
-    tx.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
-    tx.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
+    Transaction tx1(Tools::time_now(), node1.wallet.get_compressedPublic(), 42.32f);
+    tx1.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
+    tx1.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
+
+    Transaction tx2(Tools::time_now(), node1.wallet.get_compressedPublic(), 422.f);
+    tx2.inputs = { "225286906970965", "225286906970965" };
+    tx2.outputs = { Entity("225286906970965",1122), Entity("225286906970965",1122) ,Entity("225286906970965",12)};
+
+    Transaction tx3(Tools::time_now(), node1.wallet.get_compressedPublic(), 4.3f);
+    tx3.inputs = { "225286906970965"};
+    tx3.outputs = { Entity("225286906970965",12), Entity("225286906970965",12) };
+
+    Transaction tx4(Tools::time_now(), node1.wallet.get_compressedPublic(), 100.f);
+    tx4.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
+    tx4.outputs = { Entity("225286943970965",142) };
+
+    
 
     
     
-
-    Entity carlos("como estas ", 3333);
-
-    tx.outputs.push_back(Entity("peter", 432));
-    
-    
-    //std::cout << tx.tx_to_json(true, true) << std::endl;
+   
     
    // signin transaction
-    tx.signature = node1.wallet.sign_tx(tx.tx_to_json(false, false));
+    tx1.signature = node1.wallet.sign_tx(tx1.tx_to_json(false, false));
+    tx2.signature = node1.wallet.sign_tx(tx2.tx_to_json(false, false));
+    tx3.signature = node1.wallet.sign_tx(tx3.tx_to_json(false, false));
+    tx4.signature = node1.wallet.sign_tx(tx4.tx_to_json(false, false));
+
+
+    Block b1;
+
+    b1.transaction_list.push_back(tx1);
+    b1.transaction_list.push_back(tx2);
+    b1.transaction_list.push_back(tx3);
+    b1.transaction_list.push_back(tx4);
+
+    b1.find_mt_root();
+
+
+
+
+
+
+
 
     //verifiying sign
     //std::cout << tx << std::endl;
@@ -71,14 +99,9 @@ int main()
 
     //Transaction tx = node1.create_tx();
 
-    std::cout << tx << std::endl;
-    std::cout << tx.tx_to_json(true, true) << std::endl;
+    //std::cout << tx.tx_to_json(true, true) << std::endl;
 
    
-
-
-    std::cout << Tools::hash_sha256("hola masdfundo") << std::endl;
-    //std::cout << tx.tx_to_json(true, true) << std::endl;
 
     
 
