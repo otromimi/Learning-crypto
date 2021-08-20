@@ -27,9 +27,11 @@ namespace My_own_crypto {
         std::string account; // Public key of the receiver
         float value;
 
-       
+        Entity() {};
 
         Entity(std::string account, float value);
+
+        std::string to_json(bool indent, bool full);
 
        
     };
@@ -40,14 +42,18 @@ namespace My_own_crypto {
     struct Transaction {
 
         // Fields to be hash
-        long time; // Time stamp of the transaction
+        std::string time; // Time stamp of the transaction
         std::vector<std::string> inputs;
-        std::vector<Entity> outputs;
+        
         std::string origin; // Transation owner PK
-        float value; // Cumulative value of inputs///  No 100%
         float fee;
         std::string signature;
         std::string hash;
+
+        // No hash
+        std::vector<Entity> outputs;
+        float in_comulative_value; 
+        float out_cumulative_value;
 
 
         /// <summary>
@@ -62,7 +68,7 @@ namespace My_own_crypto {
         /// <param name="origin"></param>
         /// <param name="value"></param>
         /// <param name="fee"></param>
-        Transaction(std::string origin, float value, float fee, std::string = "");
+        Transaction(std::string time, std::string origin, float fee = 0, std::string = "");
 
         /// <summary>
         /// Return a JSON format string of the transaction.
@@ -84,13 +90,8 @@ namespace My_own_crypto {
         /// <returns>""value1", "value2", "value3""</returns>
         std::string to_db_string();
 
-        
-
-        
 
     };
-
-    
 
     struct Block {
 

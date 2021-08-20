@@ -64,6 +64,8 @@ namespace My_own_crypto {
 
 		std::string get_compressedPublic();
 
+		const std::string get_name();
+
 	};
 
 }

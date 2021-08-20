@@ -187,3 +187,17 @@ const long long Tools::time_to_epoch(std::string utc_time) {
 
 	return rawtime;
 }
+
+bool Tools::cont_loop() {
+	std::string answer;
+
+	while (true) {
+		std::cout << "(Y\\N): ";
+		std::cin >> answer;
+		
+		if (answer == "Y" || answer == "y")
+			return true;
+		if (answer == "N" || answer == "n")
+			return false;
+	}
+}

@@ -12,39 +12,32 @@ Node::Node(const char* wallet_name): wallet(Wallet(wallet_name)){}
 const Transaction Node::create_tx() {
 
 	//std::cout << version << std::endl;
-
+	Transaction tx(Tools::time_now(), this->wallet.get_compressedPublic());
 	std::string destination;
 	float value;
-	std::string origin("1330662819286567003101256740359821157367793328918");
-	float fee;
+	
+	std::cout << "Creating transaction with wallet <" << wallet.get_name() << ">.\n\n";
 
-	std::cout << "Beneficiary: ";
-	getline(std::cin, origin);
+	do{
+		std::cout << "\nAdress: ";
+		std::cin >> destination;
+		std::cout << "Quantity: ";
+		std::cin >> value;
+		tx.outputs.push_back(Entity(destination, value));
 
-	std::cout << "Value: ";
-	std::string value_s;
-	getline(std::cin, value_s);
-	value = std::strtof(value_s.c_str(), NULL);
-
-	std::cout << "Fee: ";
-	std::string fee_s;
-	getline(std::cin, fee_s);
-	fee = std::strtof(fee_s.c_str(), NULL);
+		std::cout << "\nAdd another out ";
+	}while (Tools::cont_loop());
 
 
-	Transaction tx(origin, value, fee);
-
-	// Serialization of the transaction structure in a JSON string
-	//const std::string serialize_tx = Transaction::tx_to_json(tx);
-	//std::cout << tx << std::endl;
+	std::cout << "\nFee for the transaction: ";
+	std::cin >> tx.fee;
 
 
-	//tx.tx_id = Node::hash_digest(serialize_tx);
-
-	//std::cout << tx << std::endl;
 	return tx;
 
 }
+
+
 
 const void Node::create_block(Block& block) {}
 

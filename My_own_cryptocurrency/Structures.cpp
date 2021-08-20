@@ -3,16 +3,27 @@
 #include "Structures.h"
 
 
+
 using namespace My_own_crypto;
 
 Entity::Entity(std::string account, float value) :account(account), value(value) {}
 
+std::string Entity::to_json(bool indent, bool full) {
 
+    struct_mapping::reg(&Entity::account, "Account");
+    struct_mapping::reg(&Entity::value, "Value");
 
+    std::ostringstream tx_json;
+    if (indent)
+        struct_mapping::map_struct_to_json(*this, tx_json, "  ");
+    else
+        struct_mapping::map_struct_to_json(*this, tx_json);
 
+    return tx_json.str();
+}
 
-Transaction::Transaction(std::string origin, float value, float fee, std::string signature) :
-    origin(origin), value(value), fee(fee) , signature(signature){
+Transaction::Transaction(std::string time, std::string origin, float fee, std::string signature) :
+    time(time), origin(origin), fee(fee), signature(signature){
     /*
     std::time_t now = std::time(0);
     long peter = now;
@@ -23,24 +34,29 @@ Transaction::Transaction(std::string origin, float value, float fee, std::string
     char* time_UTC_string = std::asctime(utc_struct);
     *(time_UTC_string+24) = 0x00;*/
 
-    this->time = std::time(0);
+    
 
 }
 
+
 std::string Transaction::tx_to_json(bool indent, bool full) {
+
+    //this->outputs= { Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
+
+    struct_mapping::reg(&Entity::account, "Account");
+    struct_mapping::reg(&Entity::value, "Value");
 
     struct_mapping::reg(&Transaction::time, "Time");
     struct_mapping::reg(&Transaction::inputs, "Inputs");
     struct_mapping::reg(&Transaction::outputs, "Outputs");
     struct_mapping::reg(&Transaction::origin, "Origin");
-    struct_mapping::reg(&Transaction::value, "Value");
     struct_mapping::reg(&Transaction::fee, "Fee");
     if(full)
         struct_mapping::reg(&Transaction::signature, "Signature");
 
     std::ostringstream tx_json;
     if(indent)
-        struct_mapping::map_struct_to_json(*this, tx_json, " ");
+        struct_mapping::map_struct_to_json(*this, tx_json, "  ");
     else
         struct_mapping::map_struct_to_json(*this, tx_json);
 
@@ -54,7 +70,6 @@ void Transaction::json_to_tx(std::string tx_json) {
     struct_mapping::reg(&Transaction::inputs, "Inputs");
     struct_mapping::reg(&Transaction::outputs, "Outputs");
     struct_mapping::reg(&Transaction::origin, "Origin");
-    struct_mapping::reg(&Transaction::value, "Value");
     struct_mapping::reg(&Transaction::fee, "Fee");
 
     //  std::ostringstream tx_json;
@@ -75,7 +90,30 @@ std::string Transaction::to_db_string() {
 
 
 
+std::string tx_to_json(Transaction& tx, bool indent, bool full) {
 
+
+
+    struct_mapping::reg(&My_own_crypto::Entity::account, "Account");
+    struct_mapping::reg(&My_own_crypto::Entity::value, "Value");
+
+    struct_mapping::reg(&Transaction::time, "Time");
+    struct_mapping::reg(&Transaction::inputs, "Inputs");
+    struct_mapping::reg(&Transaction::outputs, "Outputs");
+    struct_mapping::reg(&Transaction::origin, "Origin");
+    struct_mapping::reg(&Transaction::fee, "Fee");
+    if (full)
+        struct_mapping::reg(&Transaction::signature, "Signature");
+
+    std::ostringstream tx_json;
+    if (indent)
+        struct_mapping::map_struct_to_json(tx, tx_json, "  ");
+    else
+        struct_mapping::map_struct_to_json(tx, tx_json);
+
+
+    return tx_json.str();
+}
 
 
 /// Overloading << operator
@@ -109,10 +147,11 @@ std::ostream& operator << (std::ostream& outstream, Transaction& data) {
     }
     outstream << "\n" <<
         "Origin: " << data.origin << "\n" <<
-        "Value: " << data.value << "\n" <<
         "Fee: " << data.fee << "\n" <<
         "\n --Sign-- \n" << data.signature << "\n" <<
         "--------------------------------------\n";
 
     return outstream;
 }
+
+

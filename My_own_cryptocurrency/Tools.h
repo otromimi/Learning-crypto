@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 
 namespace My_own_crypto {
@@ -30,6 +32,8 @@ namespace My_own_crypto {
 		/// <param name="message">Data to be verified.</param>
 		/// <returns>True if verification went well, false otherwise.</returns>
 		bool sign_verifier(std::string public_key, std::string signature, std::string message);
+
+		bool cont_loop();
 
 
 		const std::string time_now();

@@ -24,6 +24,7 @@ namespace My_own_crypto {
 
 		const Transaction create_tx();
 
+
 		const void create_block(Block& block);
 
 		const void validate_inputs(std::string input);

@@ -177,3 +177,8 @@ void Wallet::load_keys() {
 		std::cout << "Problem loading keys." << std::endl;
 	}
 }
+
+
+const std::string Wallet::get_name() {
+	return this->name;
+}
