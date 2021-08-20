@@ -31,5 +31,10 @@ namespace My_own_crypto {
 		/// <returns>True if verification went well, false otherwise.</returns>
 		bool sign_verifier(std::string public_key, std::string signature, std::string message);
 
+
+		const std::string time_now();
+
+		const long long time_to_epoch(std::string utc_time);
+
 	}
 }

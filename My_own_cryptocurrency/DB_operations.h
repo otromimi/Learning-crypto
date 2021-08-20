@@ -3,7 +3,7 @@
 
 namespace My_own_crypto {
 
-    enum Element {
+    enum Element{
         BLOCK,
         TRANSACTION,
         ENTITY

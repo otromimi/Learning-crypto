@@ -1,6 +1,17 @@
 
+#define _CRT_SECURE_NO_WARNINGS
+
+// Standard
+#include <iostream>
+#include <iomanip>
+#include <ctime>
+#include <chrono>
+#include <sstream>
+
+// My own
 #include "Tools.h"
 
+// Dependencies
 #include "cryptlib.h"
 #include "eccrypto.h"
 #include "ecp.h"
@@ -9,7 +20,6 @@
 #include "osrng.h"
 
 using namespace My_own_crypto;
-
 
 
 /// <summary>
@@ -102,3 +112,78 @@ bool Tools::sign_verifier(std::string compressed_key, std::string signature, std
 }
 
 
+const std::string Tools::time_now() {
+	std::time_t ttime = std::time(NULL);
+	tm* gmt_time = gmtime(&ttime);
+
+	//char* dt = ctime(&ttime);
+
+	std::string  utc_time;
+
+	utc_time = std::to_string(1900+gmt_time->tm_year) + "/" + \
+		std::to_string(gmt_time->tm_mon) + "/" + \
+		std::to_string(gmt_time->tm_mday) + " " + \
+		std::to_string(gmt_time->tm_hour) + ":" + \
+		std::to_string(gmt_time->tm_min) + ":" + \
+		std::to_string(gmt_time->tm_sec);
+		
+	std::cout << utc_time << std::endl;
+
+	long long back_time = time_to_epoch(utc_time);
+
+	std::cout << ttime << std::endl;
+	std::cout << back_time << std::endl;
+	
+	//char* dt = asctime(gmt_time);
+	//std::cout << "The current UTC date and time is:" << dt << std::endl;
+	//tm* gmt_time = gmtime(dt);
+
+	return utc_time;
+}
+
+const long long Tools::time_to_epoch(std::string utc_time) {
+	
+	long long rawtime;
+	tm* timeinfo;
+	std::string aux;
+	int element = 0;
+
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+
+	for (char i : utc_time) {
+		std::cout << i << std::endl;
+		if (i != '/' && i != ':' && i != ' ')
+			aux += i;
+		else {
+			switch (element) {
+			case 0:
+				timeinfo->tm_year = std::stoi(aux) - 1900;
+				break;
+			case 1:
+				timeinfo->tm_mon = std::stoi(aux);
+				break;
+			case 2:
+				timeinfo->tm_mday = std::stoi(aux);
+				break;
+			case 3:
+				timeinfo->tm_hour = std::stoi(aux);
+				break;
+			case 4:
+				timeinfo->tm_min = std::stoi(aux);
+				break;
+			case 5:
+				timeinfo->tm_sec = std::stoi(aux);
+				break;
+			default:
+				break;
+			}
+			element++;
+			aux = "";
+		}
+	}
+	rawtime = mktime(timeinfo);
+
+
+	return rawtime;
+}

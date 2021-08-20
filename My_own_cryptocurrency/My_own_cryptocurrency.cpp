@@ -2,7 +2,6 @@
 //
 
 
-
 #if defined(_WIN32)
 #define PLATFORM_NAME "windows" // Windows
 #elif defined(_WIN64)
@@ -27,6 +26,7 @@
 using namespace My_own_crypto;
 
 #define MY_CRYPTO_VERSION 1 
+
 
 
 int main()
@@ -61,8 +61,8 @@ int main()
     //blockchain_db.insert(Element::TRANSACTION, tx.to_db_string());
     //blockchain_db.select(Element::TRANSACTION, tx.to_db_string());
 
-    
 
+    std::cout << Tools::time_now() << std::endl;
     
 
 
@@ -87,3 +87,4 @@ int main()
 //   4. Use the Error List window to view errors
 //   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
 //   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+
