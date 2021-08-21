@@ -10,18 +10,22 @@ namespace My_own_crypto {
 		/// <summary>
 		/// Encodes binary strings to hexadecimal.
 		/// </summary>
-		/// <param name="decoded">Binary string</param>
-		/// <returns>Hexadeciaml</returns>
+		/// <param name="decoded">Binary string.</param>
+		/// <returns>Hexadeciaml.</returns>
 		std::string encode(const std::string decoded);
 
 		/// <summary>
 		/// Decode from hexadecimal to binary.
 		/// </summary>
-		/// <param name="encoded">Hexadecimal string</param>
-		/// <returns>Binary string</returns>
+		/// <param name="encoded">Hexadecimal string.</param>
+		/// <returns>Binary string.</returns>
 		std::string decode(const std::string encoded);
 
-
+		/// <summary>
+		/// Computes the hash SHA256.
+		/// </summary>
+		/// <param name="message">String to be hashed.</param>
+		/// <returns>Hash digest.</returns>
 		const std::string hash_sha256(const std::string message);
 
 		/// <summary>
@@ -33,20 +37,31 @@ namespace My_own_crypto {
 		/// <returns>True if verification went well, false otherwise.</returns>
 		bool sign_verifier(std::string public_key, std::string signature, std::string message);
 
+		/// <summary>
+		/// Displays the user with the opstion (Y/N).
+		/// </summary>
+		/// <returns>True if the user inputed (y,Y) or False in case (n,N).</returns>
 		bool cont_loop();
 
 		/// <summary>
 		/// Time from host in UTC, not really precisse but work in windows and linux.
 		/// </summary>
-		/// <returns>String with UTC time in the format: dd/mm/yyyy HH:MM:SS </returns>
+		/// <returns>String with UTC time in the format: dd/mm/yyyy HH:MM:SS .</returns>
 		const std::string time_now();
 
 		/// <summary>
 		/// Parse the string time created in <time_now> into a int struc.
 		/// </summary>
-		/// <param name="utc_time">UTC time in format:  dd/mm/yyyy HH:MM:SS </param>
+		/// <param name="utc_time">UTC time in format:  dd/mm/yyyy HH:MM:SS .</param>
 		/// <returns>Structure <mt> containing numeric field for date values.</returns>
 		const tm get_int_time(std::string utc_time);
 
+
+		/// <summary>
+		/// Outputst the constests to a .txt file.
+		/// </summary>
+		/// <param name="file">name or path to file (the .txt is added at the end).</param>
+		/// <param name="data">string to put on the file.</param>
+		void to_txt(std::string file, std::string data);
 	}
 }

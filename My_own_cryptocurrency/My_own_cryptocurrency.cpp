@@ -76,6 +76,8 @@ int main()
 
     std::cout << block.block_to_json(true, true) << std::endl;
 
+    Tools::to_txt("block_test1", block.block_to_json(true, true));
+
 
     std::cout << Tools::get_int_time(block.time).tm_year << std::endl;
 

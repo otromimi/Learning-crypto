@@ -7,6 +7,7 @@
 #include <ctime>
 #include <chrono>
 #include <sstream>
+#include <fstream>
 
 // My own
 #include "Tools.h"
@@ -162,4 +163,16 @@ bool Tools::cont_loop() {
 		if (answer == "N" || answer == "n")
 			return false;
 	}
+}
+
+
+void Tools::to_txt(std::string file, std::string data) {
+	std::ofstream fw(file+".txt", std::ofstream::out);
+	if (fw.is_open())
+	{
+		fw << data;
+		fw.close();
+	}
+	else 
+		std::cerr << "Problem with opening file" << file << ".txt" << std::endl;
 }
