@@ -3,7 +3,7 @@
 #include "Structures.h"
 #include "struct_mapping.h"
 #include "Tools.h"
-#include "MerkleTree_sha256.h"
+
 
 
 
@@ -70,13 +70,18 @@ std::string Transaction::tx_to_json(bool indent, bool full) {
     return tx_json.str();
 }
 
-void Transaction::json_to_tx(std::string tx_json) {
+void Transaction::json_to_tx(std::string tx_json, bool full) {
+
+    struct_mapping::reg(&Entity::account, "Account");
+    struct_mapping::reg(&Entity::value, "Value");
 
     struct_mapping::reg(&Transaction::time, "Time");
     struct_mapping::reg(&Transaction::inputs, "Inputs");
     struct_mapping::reg(&Transaction::outputs, "Outputs");
     struct_mapping::reg(&Transaction::origin, "Origin");
     struct_mapping::reg(&Transaction::fee, "Fee");
+    if (full)
+        struct_mapping::reg(&Transaction::signature, "Signature");
 
     //  std::ostringstream tx_json;
 
@@ -95,29 +100,66 @@ std::string Transaction::to_db_string() {
 }
 
 
-void Transaction::compute_hash() {
-    this->hash = Tools::hash_sha256(tx_to_json(false, true));
+std::string Transaction::compute_hash() {
+    return Tools::hash_sha256(tx_to_json(false, true));
 }
 
 ///////////////////////////////////// Block /////////////////////////////////////
 
 
-Block::Block(){}
+
+Block::Block(std::string miner) :miner(miner){
+    this->time = Tools::time_now();
+};
 
 
 void Block::find_mt_root() {
     std::vector<std::string> hash_vector;
 
     for (Transaction i : this->transaction_list) {
-        i.compute_hash();
-        hash_vector.push_back(i.hash);
+        hash_vector.push_back(i.compute_hash());
     }
-
-    MerkleTree mt(hash_vector);
-    
-    // mt.printTree(mt.root, 0);
-    this->mt_root = mt.root->hash;
+   
+    this->mt.populateTree(hash_vector);
+    this->mt_root = this->mt.root->hash;
 }
+
+std::string Block::block_to_json(bool indent, bool full) {
+
+    if (full) {
+        struct_mapping::reg(&Entity::account, "Account");
+        struct_mapping::reg(&Entity::value, "Value");
+
+        struct_mapping::reg(&Transaction::time, "Time");
+        struct_mapping::reg(&Transaction::inputs, "Inputs");
+        struct_mapping::reg(&Transaction::outputs, "Outputs");
+        struct_mapping::reg(&Transaction::origin, "Origin");
+        struct_mapping::reg(&Transaction::fee, "Fee");
+        struct_mapping::reg(&Transaction::signature, "Signature");
+    }
+    struct_mapping::reg(&Block::father_hash, "Father_hash");
+    struct_mapping::reg(&Block::time, "Time");
+    struct_mapping::reg(&Block::miner, "Miner");
+    struct_mapping::reg(&Block::reward, "Time");
+    struct_mapping::reg(&Block::mt_root, "MT_root");
+    struct_mapping::reg(&Block::ID, "ID");
+    struct_mapping::reg(&Block::ID, "Nonce");
+    if (full) 
+        struct_mapping::reg(&Block::transaction_list, "Transaction_list");
+       
+    std::ostringstream tx_json;
+    if (indent)
+        struct_mapping::map_struct_to_json(*this, tx_json, "  ");
+    else
+        struct_mapping::map_struct_to_json(*this, tx_json);
+
+
+    return tx_json.str();
+}
+
+
+
+
 
 
 
@@ -128,8 +170,6 @@ std::ostream& operator << (std::ostream& outstream,Entity& data) {
 
     return outstream;
 }
-
-
 
 /// Overloading << operator
 std::ostream& operator << (std::ostream& outstream, Transaction& data) {

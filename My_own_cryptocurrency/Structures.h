@@ -9,13 +9,14 @@
 
 
 // My own dependencies
-
+#include "MerkleTree_sha256.h"
 
 // Local dependencies
 #include "hex.h"
 
 
-
+#define MAX_TX_IN_BLOCK 7
+#define MAX_OUT_TX 12
 
 namespace My_own_crypto {
 
@@ -51,16 +52,12 @@ namespace My_own_crypto {
         // No sign
         std::string signature;
 
-        // No hash
-        std::string hash;
-        float in_comulative_value; 
-        float out_cumulative_value;
 
 
         /// <summary>
         /// Plain constructor
         /// </summary>
-        Transaction();
+        Transaction() {};
 
 
         /// <summary>
@@ -83,7 +80,8 @@ namespace My_own_crypto {
         /// Populates the transaction object with the passed JSON data.
         /// </summary>
         /// <param name="tx_json">JSON data in string format.</param>
-        void json_to_tx(std::string tx_json);
+        /// <param name="full">True the JSON includes the signature, False otherwise.</param>
+        void json_to_tx(std::string tx_json, bool full);
 
         /// <summary>
         /// Returs the string used for DB operations.
@@ -91,7 +89,10 @@ namespace My_own_crypto {
         /// <returns>""value1", "value2", "value3""</returns>
         std::string to_db_string();
 
-        void compute_hash();
+        /// <summary>
+        /// Computes hash of the Tx and returns it.
+        /// </summary>
+        std::string compute_hash();
 
 
     };
@@ -109,11 +110,19 @@ namespace My_own_crypto {
 
         // Non hased fields
         std::vector<Transaction> transaction_list;
-        std::string work_hash;
+        MerkleTree mt; // From here only hash root.
 
-        Block();
+        Block() {};
 
+        Block(std::string miner);
+
+        /// <summary>
+        /// Creates the hash tree with the transactions list.
+        /// </summary>
         void find_mt_root();
+
+
+        std::string block_to_json(bool = false, bool = false);
 
     };
 

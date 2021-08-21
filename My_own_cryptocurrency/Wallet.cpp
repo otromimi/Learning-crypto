@@ -20,6 +20,7 @@ Wallet::Wallet(const char* name): name(name) {
 }
 
 Wallet::~Wallet() {
+	
 	this->save_keys();
 }
 
@@ -156,6 +157,7 @@ std::string Wallet::get_compressedPublic() {
 
 
 void Wallet::save_keys() {
+
 	// Save private key in PKCS #8 format
 	std::string file = this->name + ".ec.der";
 	FileSink fs(file.c_str(), true /*binary*/);

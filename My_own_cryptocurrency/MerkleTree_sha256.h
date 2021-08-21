@@ -7,32 +7,32 @@
 
 namespace My_own_crypto {
 
-    struct Node {
+    struct Node_mt {
 
         std::string hash;
-        Node* left;
-        Node* right;
+        Node_mt* left;
+        Node_mt* right;
 
-        Node(std::string data);
+        Node_mt(std::string data);
     };
   
     struct MerkleTree {
         
 
-        Node* root;
-        std::vector<Node*> leaves;
+        Node_mt* root;
+        std::vector<Node_mt*> leaves;
 
-        MerkleTree(const std::vector <std::string> hash_list);
+        void populateTree(const std::vector <std::string> hash_list);
 
         ~MerkleTree();
 
-        void printTree(Node* n, int indent);
+        void printTree(Node_mt* n, int indent);
 
     private:
         
-        void buildTree(std::vector<Node*> blocks);
+        void buildTree(std::vector<Node_mt*> blocks);
 
-        void deleteTree(Node* n);
+        void deleteTree(Node_mt* n);
 
     };
 

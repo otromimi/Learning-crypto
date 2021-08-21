@@ -22,77 +22,44 @@
 using namespace My_own_crypto;
 
 
-/// <summary>
-/// Encodes binary strings to hexadecimal.
-/// </summary>
-/// <param name="decoded">Binary string</param>
-/// <returns>Hexadeciaml</returns>
+
 std::string Tools::encode(const std::string decoded) {
 	std::string encoded;
 	CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(encoded));
 	CryptoPP::StringSource ss(decoded, true, new CryptoPP::Redirector(encoder));
-
-	//std::cout << "binary: " << decoded.length() << std::endl;
-	//std::cout << "hex: " << encoded.length() << std::endl;
-
 	return encoded;
 }
 
-/// <summary>
-/// Decode from hexadecimal to binary.
-/// </summary>
-/// <param name="encoded">Hexadecimal string</param>
-/// <returns>Binary string</returns>
+
 std::string Tools::decode(const std::string encoded) {
 	std::string decoded;
 	CryptoPP::HexDecoder decoder(new CryptoPP::StringSink(decoded));
 	CryptoPP::StringSource ss(encoded, true, new CryptoPP::Redirector(decoder));
-
-	//std::cout << encoded << std::endl;
-	//std::cout << encoded.length() << std::endl;
-
 	return decoded;
 }
 
 
 const std::string Tools::hash_sha256(const std::string message) {
-
 	std::string digest;
 	CryptoPP::SHA256 hash;
-
 	hash.Update((const CryptoPP::byte*)message.data(), message.size());
 	digest.resize(hash.DigestSize());
 	hash.Final((CryptoPP::byte*)&digest[0]);
-
 	return encode(digest);
 }
 
 
-/// <summary>
-/// Elliptic Curve Digital Signature Algorithm verification.
-/// </summary>
-/// <param name="pt">Public member as a concatenated string of X and Y in hex.</param>
-/// <param name="signature">Signature over SHA256 hash.</param>
-/// <param name="message">Data to be verified.</param>
-/// <returns>True if verification went well, false otherwise.</returns>
+
 bool Tools::sign_verifier(std::string compressed_key, std::string signature, std::string message) {
-
-
 
 	CryptoPP::ECDSA<CryptoPP::ECP, CryptoPP::SHA256>::PublicKey publicKey;
 	publicKey.AccessGroupParameters().Initialize(CryptoPP::ASN1::secp256k1());
-
-
 
 	CryptoPP::StringSource ss(compressed_key, true, new CryptoPP::HexDecoder);
 	CryptoPP::ECP::Point point;
 
 	publicKey.GetGroupParameters().GetCurve().DecodePoint(point, ss, ss.MaxRetrievable());
 	publicKey.SetPublicElement(point);
-
-
-	//CryptoPP::AutoSeededRandomPool prng;
-	//bool key_okay = publicKey.Validate(prng, 3);
 
 	std::string decoded_signature = decode(signature);
 
@@ -104,10 +71,8 @@ bool Tools::sign_verifier(std::string compressed_key, std::string signature, std
 		std::cerr << "Failed to verify signature on message" << std::endl;
 	}
 	else {
-		std::cerr << "All good!" << std::endl;
+		//std::cerr << "All good!" << std::endl;
 	}
-
-
 	return result;
 }
 
@@ -141,39 +106,38 @@ const std::string Tools::time_now() {
 	return utc_time;
 }
 
-const long long Tools::time_to_epoch(std::string utc_time) {
+const tm Tools::get_int_time(std::string utc_time) {
 	
 	long long rawtime;
-	tm* timeinfo;
+	tm timeinfo;
 	std::string aux;
 	int element = 0;
 
 	time(&rawtime);
-	timeinfo = localtime(&rawtime);
+	timeinfo = *localtime(&rawtime);
 
 	for (char i : utc_time) {
-		std::cout << i << std::endl;
 		if (i != '/' && i != ':' && i != ' ')
 			aux += i;
 		else {
 			switch (element) {
 			case 0:
-				timeinfo->tm_year = std::stoi(aux) - 1900;
+				timeinfo.tm_year = std::stoi(aux);
 				break;
 			case 1:
-				timeinfo->tm_mon = std::stoi(aux);
+				timeinfo.tm_mon = std::stoi(aux);
 				break;
 			case 2:
-				timeinfo->tm_mday = std::stoi(aux);
+				timeinfo.tm_mday = std::stoi(aux);
 				break;
 			case 3:
-				timeinfo->tm_hour = std::stoi(aux);
+				timeinfo.tm_hour = std::stoi(aux);
 				break;
 			case 4:
-				timeinfo->tm_min = std::stoi(aux);
+				timeinfo.tm_min = std::stoi(aux);
 				break;
 			case 5:
-				timeinfo->tm_sec = std::stoi(aux);
+				timeinfo.tm_sec = std::stoi(aux);
 				break;
 			default:
 				break;
@@ -182,10 +146,8 @@ const long long Tools::time_to_epoch(std::string utc_time) {
 			aux = "";
 		}
 	}
-	rawtime = mktime(timeinfo);
-
-
-	return rawtime;
+	//rawtime = mktime(timeinfo);
+	return timeinfo;
 }
 
 bool Tools::cont_loop() {

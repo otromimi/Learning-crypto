@@ -37,10 +37,8 @@ int main()
     std::cout << "\n=============Creating Wallet=============\n";
 
     
-    Node node1("peter");
+    Node node1("User2");
    
-
-    
  
     // creating transaction
     Transaction tx1(Tools::time_now(), node1.wallet.get_compressedPublic(), 42.32f);
@@ -59,12 +57,7 @@ int main()
     tx4.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx4.outputs = { Entity("225286943970965",142) };
 
-    
-
-    
-    
    
-    
    // signin transaction
     tx1.signature = node1.wallet.sign_tx(tx1.tx_to_json(false, false));
     tx2.signature = node1.wallet.sign_tx(tx2.tx_to_json(false, false));
@@ -72,18 +65,19 @@ int main()
     tx4.signature = node1.wallet.sign_tx(tx4.tx_to_json(false, false));
 
 
-    Block b1;
+    Block block("225286906970965225286906970965225286906970965");
+    block.ID = 1234234;
+    block.father_hash = "000000000000000000000000000000000000000000000000";
+    block.reward = 12;
+    block.transaction_list = { tx1, tx2, tx3, tx4 };
 
-    b1.transaction_list.push_back(tx1);
-    b1.transaction_list.push_back(tx2);
-    b1.transaction_list.push_back(tx3);
-    b1.transaction_list.push_back(tx4);
-
-    b1.find_mt_root();
-
+    block.find_mt_root();
 
 
+    std::cout << block.block_to_json(true, true) << std::endl;
 
+
+    std::cout << Tools::get_int_time(block.time).tm_year << std::endl;
 
 
 
@@ -95,11 +89,11 @@ int main()
     
 
     //blockchain_db.insert(Element::TRANSACTION, tx.to_db_string());
-    //blockchain_db.select(Element::TRANSACTION, tx.to_db_string());
+    //blockchain_db.select(Element::TRANSACTION, tx1.to_db_string());
 
     //Transaction tx = node1.create_tx();
 
-    //std::cout << tx.tx_to_json(true, true) << std::endl;
+
 
    
 

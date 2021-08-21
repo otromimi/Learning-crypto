@@ -35,10 +35,18 @@ namespace My_own_crypto {
 
 		bool cont_loop();
 
-
+		/// <summary>
+		/// Time from host in UTC, not really precisse but work in windows and linux.
+		/// </summary>
+		/// <returns>String with UTC time in the format: dd/mm/yyyy HH:MM:SS </returns>
 		const std::string time_now();
 
-		const long long time_to_epoch(std::string utc_time);
+		/// <summary>
+		/// Parse the string time created in <time_now> into a int struc.
+		/// </summary>
+		/// <param name="utc_time">UTC time in format:  dd/mm/yyyy HH:MM:SS </param>
+		/// <returns>Structure <mt> containing numeric field for date values.</returns>
+		const tm get_int_time(std::string utc_time);
 
 	}
 }

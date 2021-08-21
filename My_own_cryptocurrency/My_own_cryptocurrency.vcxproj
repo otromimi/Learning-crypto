@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MerkleTree_sha256.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="Tools.cpp" />
     <ClCompile Include="DB_operations.cpp" />
     <ClCompile Include="My_own_cryptocurrency.cpp" />

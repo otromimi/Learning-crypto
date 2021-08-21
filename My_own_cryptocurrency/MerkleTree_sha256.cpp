@@ -8,18 +8,18 @@
 using namespace My_own_crypto;
 
 
-Node::Node(std::string data) {
+Node_mt::Node_mt(std::string data) {
     this->hash = data;
 }
 
 
 
-void MerkleTree::buildTree(std::vector<Node*> blocks) {
-    std::vector<Node*> nodes;
+void MerkleTree::buildTree(std::vector<Node_mt*> blocks) {
+    std::vector<Node_mt*> nodes;
     while (blocks.size() != 1) {
         for (int l = 0, n = 0; l < blocks.size(); l = l + 2, n++) {
             if (l != blocks.size() - 1) { // checks for adjacent block
-                nodes.push_back(new Node(Tools::hash_sha256(blocks[l]->hash + blocks[l + 1]->hash))); // combine and hash adjacent blocks
+                nodes.push_back(new Node_mt(Tools::hash_sha256(blocks[l]->hash + blocks[l + 1]->hash))); // combine and hash adjacent blocks
                 nodes[n]->left = blocks[l]; // assign children
                 nodes[n]->right = blocks[l + 1];
             }
@@ -34,10 +34,10 @@ void MerkleTree::buildTree(std::vector<Node*> blocks) {
     this->root = blocks[0];
 }
 
-MerkleTree::MerkleTree(const std::vector <std::string> hash_list) {
+void MerkleTree::populateTree(const std::vector <std::string> hash_list) {
 
     for (std::string i : hash_list) {
-        leaves.push_back(new Node(i));
+        leaves.push_back(new Node_mt(i));
     }
 
     // initialize leaves
@@ -61,7 +61,7 @@ MerkleTree::~MerkleTree() {
     //std::cout << "Tree deleted" << std::endl;
 }
 
-void MerkleTree::printTree(Node* n, int indent) {
+void MerkleTree::printTree(Node_mt* n, int indent) {
     if (n) {
         if (n->left) {
             printTree(n->left, indent + 4);
@@ -76,7 +76,7 @@ void MerkleTree::printTree(Node* n, int indent) {
     }
 }
 
-void MerkleTree::deleteTree(Node* n) {
+void MerkleTree::deleteTree(Node_mt* n) {
     if (n) {
         deleteTree(n->left);
         deleteTree(n->right);
