@@ -5,7 +5,21 @@ cmake_minimum_required (VERSION 3.8)
 
 project(My_crypto)
 
-set(SOURCE My_own_cryptocurrency.cpp Wallet.h Wallet.cpp DB_operations.h Node.h Structures.h)
+set(SOURCE My_own_cryptocurrency.cpp
+            DB_operations.cpp
+            MerkleTree_sha256.cpp
+            Network.cpp
+            Node.cpp
+            Structures.cpp
+            Tools.cpp
+            Wallet.cpp
+            DB_operations.h
+            MerkleTree_sha256.h
+            Node.h
+            Structures.h
+            Tools.h
+            Wallet.h )
+
 add_executable(${PROJECT_NAME} ${SOURCE})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

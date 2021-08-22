@@ -44,6 +44,7 @@ namespace My_own_crypto {
 
         // Fields to be hash
         std::string time; // Time stamp of the transaction
+        std::string version;
         std::vector<Entity> outputs;
         std::vector<std::string> inputs;
         std::string origin; // Transation owner PK
@@ -101,6 +102,7 @@ namespace My_own_crypto {
 
         // Proof of work fields
         std::string father_hash;
+        std::string version;
         std::string time;
         std::string miner;
         float reward;
@@ -109,6 +111,7 @@ namespace My_own_crypto {
         unsigned int nonce;
 
         // Non hased fields
+        std::string work_hash;
         std::vector<Transaction> transaction_list;
         MerkleTree mt; // From here only hash root.
 

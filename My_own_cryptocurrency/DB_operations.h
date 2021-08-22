@@ -1,5 +1,7 @@
 #pragma once
+
 #include "sqlite3.h"
+#include "Structures.h"
 
 namespace My_own_crypto {
 
@@ -12,7 +14,7 @@ namespace My_own_crypto {
     class DB_operations {
 
         sqlite3* db;
-        char* zErrMsg = 0;
+        mutable char* zErrMsg = 0;
         const char* data;
 
         /// <summary>
@@ -38,7 +40,14 @@ namespace My_own_crypto {
         /// </summary>
         /// <param name="table">Table where the data is gonna be inserted.</param>
         /// <param name="data">List of parameter to be inserted in each row.</param>
-        void insert(Element table, std::string data);
+        int insert(Element table, std::string data) const;
+
+        /// <summary>
+        /// Inserting block into the database.
+        /// </summary>
+        /// <param name="table">Table where the data is gonna be inserted.</param>
+        /// <param name="data">List of parameter to be inserted in each row.</param>
+        void insert_block(Block& block) const;
 
         /// <summary>
         /// Select values from database

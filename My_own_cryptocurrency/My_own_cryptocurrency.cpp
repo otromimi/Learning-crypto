@@ -25,7 +25,7 @@
 
 using namespace My_own_crypto;
 
-#define MY_CRYPTO_VERSION 1 
+#define MY_CRYPTO_VERSION "1.0.0"
 
 
 
@@ -33,7 +33,7 @@ int main()
 {
    
     std::cout << "\n=============Open block_chain database=============\n";
-    //DB_operations blockchain_db;
+    DB_operations blockchain_db;
     std::cout << "\n=============Creating Wallet=============\n";
 
     
@@ -42,18 +42,22 @@ int main()
  
     // creating transaction
     Transaction tx1(Tools::time_now(), node1.wallet.get_compressedPublic(), 42.32f);
+    tx1.version = MY_CRYPTO_VERSION;
     tx1.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx1.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
 
     Transaction tx2(Tools::time_now(), node1.wallet.get_compressedPublic(), 422.f);
+    tx2.version = MY_CRYPTO_VERSION;
     tx2.inputs = { "225286906970965", "225286906970965" };
     tx2.outputs = { Entity("225286906970965",1122), Entity("225286906970965",1122) ,Entity("225286906970965",12)};
 
     Transaction tx3(Tools::time_now(), node1.wallet.get_compressedPublic(), 4.3f);
+    tx3.version = MY_CRYPTO_VERSION;
     tx3.inputs = { "225286906970965"};
     tx3.outputs = { Entity("225286906970965",12), Entity("225286906970965",12) };
 
     Transaction tx4(Tools::time_now(), node1.wallet.get_compressedPublic(), 100.f);
+    tx4.version = MY_CRYPTO_VERSION;
     tx4.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
     tx4.outputs = { Entity("225286943970965",142) };
 
@@ -66,6 +70,7 @@ int main()
 
 
     Block block("225286906970965225286906970965225286906970965");
+    block.version = MY_CRYPTO_VERSION;
     block.ID = 1234234;
     block.father_hash = "000000000000000000000000000000000000000000000000";
     block.reward = 12;
@@ -73,11 +78,13 @@ int main()
 
     block.find_mt_root();
 
+    block.work_hash = Tools::hash_sha256(block.block_to_json());
 
-    std::cout << block.block_to_json(true, true) << std::endl;
+    //std::cout << block.block_to_json(true, true) << std::endl;
 
-    Tools::to_txt("block_test1", block.block_to_json(true, true));
+    //Tools::to_txt("block_test1", block.block_to_json(true, true));
 
+    blockchain_db.insert_block(block);
 
     std::cout << Tools::get_int_time(block.time).tm_year << std::endl;
 
