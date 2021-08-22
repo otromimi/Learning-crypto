@@ -1,12 +1,9 @@
-
+#include <iostream>
+#include <sstream>
 
 #include "Structures.h"
 #include "struct_mapping.h"
 #include "Tools.h"
-
-
-
-
 
 using namespace My_own_crypto;
 

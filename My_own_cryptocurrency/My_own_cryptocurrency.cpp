@@ -80,16 +80,20 @@ int main()
 
     block.work_hash = Tools::hash_sha256(block.block_to_json());
 
-    //std::cout << block.block_to_json(true, true) << std::endl;
+    //  std::cout << block.block_to_json(true, true) << std::endl;
 
     //Tools::to_txt("block_test1", block.block_to_json(true, true));
 
     blockchain_db.insert_block(block);
 
-    std::cout << Tools::get_int_time(block.time).tm_year << std::endl;
+    //std::cout << Tools::get_int_time(block.time).tm_year << std::endl;
 
 
+    Block block_back;
+    
+    blockchain_db.get_block(block_back, 1234234);
 
+    std::cout << block_back.block_to_json(true, true) << std::endl;
 
     //verifiying sign
     //std::cout << tx << std::endl;

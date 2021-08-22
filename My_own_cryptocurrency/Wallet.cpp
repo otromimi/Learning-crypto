@@ -1,4 +1,4 @@
-
+#include <sstream>
 
 // My dependencies
 #include "Wallet.h"

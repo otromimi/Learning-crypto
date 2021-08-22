@@ -28,12 +28,12 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
             )
 
 # target_include_directories must be added AFTER add_executable
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/cryptopp850/)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/cryptopp/)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/struct_mapping/include/struct_mapping/)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/sqlite-amalgamation-3360000/)
 
 # linking against libraries
-target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/cryptopp850/libcryptopp.a)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/cryptopp/libcryptopp.a)
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_BINARY_DIR}/sqlite-amalgamation-3360000/libsqlite3.a)
 

@@ -4,6 +4,7 @@
 // Standard dependencies
 #include <string>
 #include <vector>
+#include <ios>
 
 
 
@@ -12,7 +13,7 @@
 #include "MerkleTree_sha256.h"
 
 // Local dependencies
-#include "hex.h"
+//#include "hex.h"
 
 
 #define MAX_TX_IN_BLOCK 7

@@ -109,7 +109,7 @@ const std::string Tools::time_now() {
 
 const tm Tools::get_int_time(std::string utc_time) {
 	
-	long long rawtime;
+	std::time_t rawtime;
 	tm timeinfo;
 	std::string aux;
 	int element = 0;

@@ -6,9 +6,10 @@
 namespace My_own_crypto {
 
     enum Element{
-        BLOCK,
-        TRANSACTION,
-        ENTITY
+        BLOCKS,
+        TRANSACTIONS,
+        OUTPUTS,
+        INPUTS
     };
 
     class DB_operations {
@@ -21,6 +22,11 @@ namespace My_own_crypto {
         /// Fuction called after quering the database.
         /// </summary>
         static int callback(void* NotUsed, int argc, char** argv, char** azColName);
+
+        static int parse_block(void* blk, int argc, char** argv, char** azColName);
+
+        static int parse_transactions(void* tx_list, int argc, char** argv, char** azColName);
+
 
         /// <summary>
         /// Creating tables for the database
@@ -48,6 +54,9 @@ namespace My_own_crypto {
         /// <param name="table">Table where the data is gonna be inserted.</param>
         /// <param name="data">List of parameter to be inserted in each row.</param>
         void insert_block(Block& block) const;
+
+
+        void get_block(Block& blk, int block_id);
 
         /// <summary>
         /// Select values from database

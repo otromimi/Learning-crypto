@@ -49,15 +49,18 @@ void MerkleTree::populateTree(const std::vector <std::string> hash_list) {
     buildTree(leaves);
 }
 
-    
+MerkleTree::MerkleTree() {
+    this->root = NULL;
+}
    
 MerkleTree::~MerkleTree() {
 
     /*for (unsigned int k = 0; k < leaves.size(); k++) {
         delete leaves[k];
     }*/
-
-    deleteTree(root);
+    if (this->root) {
+        deleteTree(root);
+    }
     //std::cout << "Tree deleted" << std::endl;
 }
 

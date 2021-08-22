@@ -1,5 +1,6 @@
 // Standard dependencies
 #include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,6 +13,13 @@ using namespace My_own_crypto;
 /// Queries
 
 const char* select_tx = "SELECT * FROM TRANSACTIONS;";
+
+const char* inputs_table = "CREATE TABLE INPUTS("  \
+"ID             INTEGER PRIMARY KEY AUTOINCREMENT," \
+"TX_HASH        TEXT                     NOT NULL," \
+"INPUT          TEXT                     NOT NULL," \
+"FOREIGN KEY (TX_HASH) REFERENCES TRANSACTIONS(HASH)" \
+"ON DELETE CASCADE ON UPDATE CASCADE); ";
 
 const char* outputs_table = "CREATE TABLE OUTPUTS("  \
 "ID             INTEGER PRIMARY KEY AUTOINCREMENT," \
@@ -77,6 +85,13 @@ void DB_operations::create_tables() {
         std::cerr << "SQL log: " << zErrMsg << std::endl;
         sqlite3_free(zErrMsg);
     }
+
+    rc = sqlite3_exec(db, (const char*)inputs_table, callback, 0, &zErrMsg);
+
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL log: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
 }
 
 
@@ -96,14 +111,17 @@ DB_operations::DB_operations() {
 int DB_operations::insert(Element table, std::string data) const {
 
     std::string query = "INSERT INTO ";
- 
-    if (table == Element::ENTITY) {
+
+    if (table == Element::INPUTS) {
+        query += "INPUTS (TX_HASH, INPUT) VALUES (" + data + "); ";
+    }
+    if (table == Element::OUTPUTS) {
         query += "OUTPUTS (TX_HASH, ACCOUNT, VALUE) VALUES (" + data + "); ";
     }
-    else if (table == Element::TRANSACTION) {
+    else if (table == Element::TRANSACTIONS) {
         query += "TRANSACTIONS (HASH, VERSION, BLOCK, TIME, OWNER, FEE,  SIGNATURE) VALUES (" + data + "); ";
     }
-    else if (table == Element::BLOCK) {
+    else if (table == Element::BLOCKS) {
         query += "BLOCKS (BLOCK_ID, VERSION, TIME, FATHER_HASH, WORK_HASH, MINER, REWARD, MT_ROOT, NONCE) VALUES (" + data + "); ";
     }
 
@@ -123,13 +141,14 @@ void DB_operations::insert_block(Block& block) const {
     std::ostringstream blk_sink;
     std::ostringstream tx_sink;
     std::ostringstream output_sink;
+    std::ostringstream input_sink;
     int rc;
     std::string tx_hash;
 
     blk_sink << block.ID << ", \"" << block.version << "\", \"" << block.time << "\", \"" << block.father_hash << "\", \"" << block.work_hash << "\", \""
         << block.miner << "\", " << block.reward << ", \"" << block.mt_root << "\", " << block.nonce;
 
-    rc = insert(Element::BLOCK, blk_sink.str());
+    rc = insert(Element::BLOCKS, blk_sink.str());
 
     if (rc)
         return;
@@ -139,13 +158,20 @@ void DB_operations::insert_block(Block& block) const {
         tx_sink << "\"" << tx_hash << "\", \"" << tx.version << "\", " << block.ID << ", \"" << tx.time << "\", \"" << tx.origin << "\", "
             << tx.fee << ", \"" << tx.signature << "\"";
 
-        insert(Element::TRANSACTION, tx_sink.str());
+        insert(Element::TRANSACTIONS, tx_sink.str());
 
         for (Entity out : tx.outputs) {
             output_sink << "\"" << tx_hash << "\", \"" << out.account << "\", " << out.value;
             
-            insert(Element::ENTITY, output_sink.str());
+            insert(Element::OUTPUTS, output_sink.str());
             output_sink.str("");
+        }
+
+        for (std::string input : tx.inputs) {
+            input_sink << "\"" << tx_hash << "\", \"" << input << "\"";
+
+            insert(Element::INPUTS, input_sink.str());
+            input_sink.str("");
         }
         tx_sink.str("");
     }
@@ -154,19 +180,71 @@ void DB_operations::insert_block(Block& block) const {
 
 
 
+void DB_operations::get_block(Block& blk, int block_id) {
+    std::string query = "SELECT * FROM BLOCKS WHERE BLOCK_ID=" + std::to_string(block_id) + ";";
+    //Block blk;
+
+    int rc = sqlite3_exec(db, (const char*)query.c_str(), parse_block, &blk, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+    query = "SELECT (HASH, VERSION, TIME, OWNER, FEE, SIGNATURE) FROM TRANSACTIONS WHERE BLOCK =" + std::to_string(block_id) + ";";
+    //blk.transaction_list.push_back(Transaction());
+    rc = sqlite3_exec(db, (const char*)query.c_str(), parse_transactions, &(blk.transaction_list), &zErrMsg);
+    
+    
+}
+
+int DB_operations::parse_block(void* blk, int argc, char** argv, char** azColName) {
+ 
+    
+    //BLOCK_ID, VERSION, TIME, FATHER_HASH, WORK_HASH, MINER, REWARD, MT_ROOT, NONCE
+    Block* blk_ptr = (Block*)blk;
+    blk_ptr->ID = argv[0] ? (unsigned int)std::stoul(argv[0]) : 0;
+    blk_ptr->version = argv[1] ? argv[1] : "-.-.-.-";
+    blk_ptr->time = argv[2] ? argv[2] : "";
+    blk_ptr->father_hash = argv[3] ? argv[3] : "";
+    blk_ptr->work_hash = argv[4] ? argv[4] : "";
+    blk_ptr->miner = argv[5] ? argv[5] : "";
+    blk_ptr->reward = argv[6] ? std::stof(argv[6]) : 0.f;
+    blk_ptr->mt_root = argv[7] ? argv[7] : "";
+    blk_ptr->nonce = argv[8] ? (unsigned int)std::stoul(argv[8]) : 0;
+    
+    return 0;
+}
+
+int DB_operations::parse_transactions(void* tx_list, int argc, char** argv, char** azColName) {
+
+    //Transaction tx;
+    //Block* blk_ptr = (Block*)blk;
+    std::vector<Transaction>* tx_ptr = (std::vector<Transaction>*)tx_list;
+    tx_ptr->push_back(Transaction());
+    tx_ptr->end()->version = argv[1] ? argv[1] : "NULL";
+    tx_ptr->end()->time = argv[2] ? argv[2] : "NULL";
+    tx_ptr->end()->origin = argv[3] ? argv[3] : "NULL";
+    tx_ptr->end()->fee = argv[4] ? std::stof(argv[4]) : 0.f;
+    tx_ptr->end()->signature = argv[5] ? argv[5] : "NULL";
+
+    //blk_ptr->transaction_list.push_back(Transaction(tx));
+
+    return 0;
+}
+
 
 std::string DB_operations::select(Element table, std::string data) {
 
     std::string query = "SELECT * FROM ";
     int rc;
 
-    if (table == Element::ENTITY) {
+    if (table == Element::OUTPUTS) {
         query += "OUTPUTS (TX_ID, ACCOUNT, VALUE) VALUES (" + data + "); ";
     }
-    else if (table == Element::TRANSACTION) {
+    else if (table == Element::TRANSACTIONS) {
         query += "TRANSACTIONS ;";
     }
-    else if (table == Element::BLOCK) {
+    else if (table == Element::BLOCKS) {
         query += "BLOCKS (BLOCK_ID, VERSION, WORK_HASH, FATHER_HASH, NONCE, TIME, MINER) VALUES (" + data + "); ";
     }
 

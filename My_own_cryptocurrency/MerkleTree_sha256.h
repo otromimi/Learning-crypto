@@ -24,6 +24,8 @@ namespace My_own_crypto {
 
         void populateTree(const std::vector <std::string> hash_list);
 
+        MerkleTree();
+
         ~MerkleTree();
 
         void printTree(Node_mt* n, int indent);
