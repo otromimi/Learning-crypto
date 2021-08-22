@@ -52,6 +52,7 @@ namespace My_own_crypto {
         float fee;
 
         // No sign
+        std::string hash;
         std::string signature;
 
 

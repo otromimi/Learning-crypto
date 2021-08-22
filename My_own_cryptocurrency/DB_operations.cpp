@@ -179,10 +179,10 @@ void DB_operations::insert_block(Block& block) const {
 
 
 
-
 void DB_operations::get_block(Block& blk, int block_id) {
     std::string query = "SELECT * FROM BLOCKS WHERE BLOCK_ID=" + std::to_string(block_id) + ";";
     //Block blk;
+    int num_tx = 0;
 
     int rc = sqlite3_exec(db, (const char*)query.c_str(), parse_block, &blk, &zErrMsg);
     if (rc != SQLITE_OK) {
@@ -190,11 +190,27 @@ void DB_operations::get_block(Block& blk, int block_id) {
         sqlite3_free(zErrMsg);
     }
 
-    query = "SELECT (HASH, VERSION, TIME, OWNER, FEE, SIGNATURE) FROM TRANSACTIONS WHERE BLOCK =" + std::to_string(block_id) + ";";
-    //blk.transaction_list.push_back(Transaction());
-    rc = sqlite3_exec(db, (const char*)query.c_str(), parse_transactions, &(blk.transaction_list), &zErrMsg);
+    query = "SELECT HASH, VERSION, TIME, OWNER, FEE, SIGNATURE FROM TRANSACTIONS WHERE BLOCK =" + std::to_string(block_id) + ";";
+    rc = sqlite3_exec(db, (const char*)query.c_str(), parse_transactions, &(blk), &zErrMsg);
     
-    
+    for (int i = 0; i < blk.transaction_list.size(); i++) {
+
+        query = "SELECT ACCOUNT, VALUE FROM OUTPUTS WHERE TX_HASH='"+ blk.transaction_list[i].hash +"';";
+        rc = sqlite3_exec(db, (const char*)query.c_str(), parse_outputs, &blk.transaction_list[i], &zErrMsg);
+        if (rc != SQLITE_OK) {
+            std::cerr << "SQL error: " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg);
+        }
+
+        query = "SELECT INPUT FROM INPUTS WHERE TX_HASH='" + blk.transaction_list[i].hash + "';";
+        rc = sqlite3_exec(db, (const char*)query.c_str(), parse_inputs, &blk.transaction_list[i], &zErrMsg);
+        if (rc != SQLITE_OK) {
+            std::cerr << "SQL error: " << zErrMsg << std::endl;
+            sqlite3_free(zErrMsg);
+        }
+    }
+
+   
 }
 
 int DB_operations::parse_block(void* blk, int argc, char** argv, char** azColName) {
@@ -218,19 +234,39 @@ int DB_operations::parse_block(void* blk, int argc, char** argv, char** azColNam
 int DB_operations::parse_transactions(void* tx_list, int argc, char** argv, char** azColName) {
 
     //Transaction tx;
-    //Block* blk_ptr = (Block*)blk;
-    std::vector<Transaction>* tx_ptr = (std::vector<Transaction>*)tx_list;
-    tx_ptr->push_back(Transaction());
-    tx_ptr->end()->version = argv[1] ? argv[1] : "NULL";
-    tx_ptr->end()->time = argv[2] ? argv[2] : "NULL";
-    tx_ptr->end()->origin = argv[3] ? argv[3] : "NULL";
-    tx_ptr->end()->fee = argv[4] ? std::stof(argv[4]) : 0.f;
-    tx_ptr->end()->signature = argv[5] ? argv[5] : "NULL";
+    Block* tx_ptr = (Block*)tx_list;
+    //std::vector<Transaction>* tx_ptr = (std::vector<Transaction>*)tx_list;
+    tx_ptr->transaction_list.push_back(Transaction());
+    //Transaction* tx_ptr = (Transaction*)tx_list;
+
+    tx_ptr->transaction_list.back().hash = argv[0] ? argv[0] : "";
+    tx_ptr->transaction_list.back().version = argv[1] ? argv[1] : "";
+    tx_ptr->transaction_list.back().time = argv[2] ? argv[2] : "";
+    tx_ptr->transaction_list.back().origin = argv[3] ? argv[3] : "";
+    tx_ptr->transaction_list.back().fee = argv[4] ? std::stof(argv[4]) : 0.f;
+    tx_ptr->transaction_list.back().signature = argv[5] ? argv[5] : "";
 
     //blk_ptr->transaction_list.push_back(Transaction(tx));
 
     return 0;
 }
+
+int DB_operations::parse_outputs(void* tx, int argc, char** argv, char** azColName) {
+    
+    Transaction* tx_ptr = (Transaction*)tx;
+    tx_ptr->outputs.push_back(Entity(argv[0],std::stof(argv[1])));
+ 
+    return 0;
+}
+
+int DB_operations::parse_inputs(void* tx, int argc, char** argv, char** azColName) {
+
+    Transaction* tx_ptr = (Transaction*)tx;
+    tx_ptr->inputs.push_back(argv[0]);
+
+    return 0;
+}
+
 
 
 std::string DB_operations::select(Element table, std::string data) {

@@ -27,6 +27,10 @@ namespace My_own_crypto {
 
         static int parse_transactions(void* tx_list, int argc, char** argv, char** azColName);
 
+        static int parse_outputs(void* tx, int argc, char** argv, char** azColName);
+
+        static int parse_inputs(void* tx, int argc, char** argv, char** azColName);
+
 
         /// <summary>
         /// Creating tables for the database

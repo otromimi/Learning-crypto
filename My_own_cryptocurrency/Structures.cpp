@@ -7,6 +7,9 @@
 
 using namespace My_own_crypto;
 
+
+///////////////////////////////////// Entity /////////////////////////////////////
+
 Entity::Entity(std::string account, float value) :account(account), value(value) {}
 
 std::string Entity::to_json(bool indent, bool full) {
@@ -24,7 +27,7 @@ std::string Entity::to_json(bool indent, bool full) {
 }
 
 
-///////////////////////////////////// Block /////////////////////////////////////
+///////////////////////////////////// Transaction /////////////////////////////////////
 
 Transaction::Transaction(std::string time, std::string origin, float fee, std::string signature) :
     time(time), origin(origin), fee(fee), signature(signature){
@@ -121,6 +124,7 @@ void Block::find_mt_root() {
    
     this->mt.populateTree(hash_vector);
     this->mt_root = this->mt.root->hash;
+    this->mt.printTree(this->mt.root,0);
 }
 
 std::string Block::block_to_json(bool indent, bool full) {

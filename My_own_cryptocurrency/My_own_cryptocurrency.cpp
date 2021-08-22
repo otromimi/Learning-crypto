@@ -93,7 +93,17 @@ int main()
     
     blockchain_db.get_block(block_back, 1234234);
 
-    std::cout << block_back.block_to_json(true, true) << std::endl;
+    block_back.find_mt_root();
+
+    std::cout << "Printing old mt_root: " << block.mt_root << std::endl;
+    std::cout << "Printing new mt_root: " << block_back.mt_root << std::endl;
+    std::cout << (block.mt_root == block_back.mt_root) << std::endl;
+    
+
+    Tools::to_txt("before", block.block_to_json(true, false));
+    Tools::to_txt("after", block_back.block_to_json(true, false));
+
+    
 
     //verifiying sign
     //std::cout << tx << std::endl;
