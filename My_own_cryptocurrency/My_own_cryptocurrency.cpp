@@ -141,7 +141,7 @@ int main()
 
 
    
-
+    std::cout << "head of chain: " << blockchain_db.get_head() << std::endl;
     
 
     //if (_DEBUG) { //braaks in linux

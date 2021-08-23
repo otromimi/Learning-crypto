@@ -35,6 +35,9 @@ namespace My_own_crypto {
 
         static int parse_transaction(void* tx, int argc, char** argv, char** azColName);
 
+        static int callback_head(void* head, int argc, char** argv, char** azColName);
+
+
 
         /// <summary>
         /// Creating tables for the database
@@ -83,6 +86,9 @@ namespace My_own_crypto {
         /// Select values from database
         /// </summary>
         std::string select(Element table, std::string data);
+
+        unsigned int get_head();
+
 
         void print_select(Element table, std::string data);
 

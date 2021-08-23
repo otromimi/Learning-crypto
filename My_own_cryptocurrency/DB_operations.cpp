@@ -331,6 +331,27 @@ int DB_operations::callback_balance(void* balance, int argc, char** argv, char**
 }
 
 
+unsigned int DB_operations::get_head() {
+    unsigned int head;
+    std::string query = "SELECT MAX(BLOCK_ID) FROM BLOCKS;";
+    int rc;
+
+    rc = sqlite3_exec(db, (const char*)query.c_str(), callback_head, &head, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+    return head;
+}
+
+
+int DB_operations::callback_head(void* head, int argc, char** argv, char** azColName) {
+    *(unsigned int*)head = argv[0] ? (unsigned int)std::stoul(argv[0]) : -1;
+    return 0;
+}
+
+
 std::string DB_operations::select(Element table, std::string data) {
 
     std::string query = "SELECT * FROM ";
