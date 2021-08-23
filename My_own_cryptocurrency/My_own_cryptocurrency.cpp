@@ -37,44 +37,71 @@ int main()
     std::cout << "\n=============Creating Wallet=============\n";
 
     
-    Node node1("User2");
+    Node node1("User3");
    
  
-    // creating transaction
-    Transaction tx1(Tools::time_now(), node1.wallet.get_compressedPublic(), 42.32f);
+    // First transaction (primigine transaciton), the one that puts founds on the different accounts.
+    Transaction tx1("2021/7/23 18:40:25", "02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h", 0.0f);
     tx1.version = MY_CRYPTO_VERSION;
-    tx1.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
-    tx1.outputs = {Entity("225286906970965",12), Entity("225286906970965",12) ,Entity("225286906970965",12) ,Entity("225286906970965",12) };
+    tx1.inputs = { "0000000000000000000000000000000000000000000000000000000000000000" };
+    tx1.outputs = {Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",1000.0f), 
+        Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",1000.0f), 
+        Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",1000.0f), 
+        Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",1000.0f) };
 
-    Transaction tx2(Tools::time_now(), node1.wallet.get_compressedPublic(), 422.f);
+    Transaction tx2("2021/7/23 18:40:30", "0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h", 2.f);
     tx2.version = MY_CRYPTO_VERSION;
-    tx2.inputs = { "225286906970965", "225286906970965" };
-    tx2.outputs = { Entity("225286906970965",1122), Entity("225286906970965",1122) ,Entity("225286906970965",12)};
+    tx2.inputs = { "9AF214EA52CC156C4AFDFF520E0A308462E7139A0FB72FFA9B210FC21FD31ADD" };
+    tx2.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",10.0f),
+         Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",698.0f),
+         Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",10.0f),
+         Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",10.0f) };
 
-    Transaction tx3(Tools::time_now(), node1.wallet.get_compressedPublic(), 4.3f);
+    Transaction tx3("2021/7/23 18:41:30",  "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h", 1.f);
     tx3.version = MY_CRYPTO_VERSION;
-    tx3.inputs = { "225286906970965"};
-    tx3.outputs = { Entity("225286906970965",12), Entity("225286906970965",12) };
+    tx3.inputs = { "E65134724F9B0FE10F4D092470068A5954DC85014E7BF2F556A70C5C7B84C3AD"};
+    tx3.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",2.0f),
+        Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",3.0f),
+        Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",1.0f),
+        Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",3.0f) };
 
-    Transaction tx4(Tools::time_now(), node1.wallet.get_compressedPublic(), 100.f);
+
+    Transaction tx4("2021/7/23 19:41:30", "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h", 1.5f);
     tx4.version = MY_CRYPTO_VERSION;
-    tx4.inputs = { "225286906970965", "225286906970965" ,"225286906970965" ,"225286906970965" ,"225286906970965" };
-    tx4.outputs = { Entity("225286943970965",142) };
+    tx4.inputs = { "9AF214EA52CC156C4AFDFF520E0A308462E7139A0FB72FFA9B210FC21FD31ADD" };
+    tx4.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",298.5f),
+        Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",500.0f),
+        Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",100.0f),
+        Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",100.0f) };
+
 
    
-   // signin transaction
-    tx1.signature = node1.wallet.sign_tx(tx1.tx_to_json(false, false));
-    tx2.signature = node1.wallet.sign_tx(tx2.tx_to_json(false, false));
-    tx3.signature = node1.wallet.sign_tx(tx3.tx_to_json(false, false));
-    tx4.signature = node1.wallet.sign_tx(tx4.tx_to_json(false, false));
 
+    
+   
+   
+    // signin transaction
+    tx1.signature = "0225A040F55FDB0FF88EA7BB7D23226DBE7E077010D859B845C2639A6D22CE2D8E24AF8E2432F55F13FC801BC5626781927BB1CF38DE366E814ACA344F081B86";
+    tx2.signature = "9745CBF55B031DBE80B8603EC6791AEB0ECAC14A31A4271EA7AEB6628051A52D5F7C7B8B2C02A4394AC95B595884D0841D4542987AD50809A968A068E4559106";
+    tx3.signature = "85FF27C931CAE0FFEDA0A423E04984D9364A0CD6C092A0C9D4C8E41DE11364F483BC6661FE121C1BBD87E778D35AD96DDE83BF314D48E084A50F5DE968174056";
+    tx4.signature = "258E41868D3836BD87E34BEFB6EEBB58F53B59529573438EEC250FA8DD17D5A2BC8753FBB5C443EE0AAEA1B57F36F8991595C348C500714DA676A5A030DF8664";
 
-    Block block("225286906970965225286906970965225286906970965");
+    //node1.wallet.sign_tx(tx3.tx_to_json());
+    //tx3.signature = node1.wallet.sign_tx(tx3.tx_to_json());
+    //std::cout << tx3.signature << std::endl;
+    //std::cout << node1.wallet.get_compressedPublic() << std::endl;
+    std::cout << Tools::sign_verifier(tx1.origin, tx1.signature, tx1.tx_to_json()) << std::endl;
+    std::cout << Tools::sign_verifier(tx2.origin, tx2.signature, tx2.tx_to_json()) << std::endl;
+    std::cout << Tools::sign_verifier(tx3.origin, tx3.signature, tx3.tx_to_json()) << std::endl;
+    std::cout << Tools::sign_verifier(tx4.origin, tx4.signature, tx4.tx_to_json()) << std::endl;
+    
+
+    Block block("CEB8B8417BE86B68548638830E7C3DF51A425EE1322D8D719944C09040405FC5");
     block.version = MY_CRYPTO_VERSION;
-    block.ID = 1234234;
+    block.ID = 0;
     block.father_hash = "000000000000000000000000000000000000000000000000";
-    block.reward = 12;
     block.transaction_list = { tx1, tx2, tx3, tx4 };
+    block.reward = block.compute_block_reward();
 
     block.find_mt_root();
 
@@ -89,25 +116,19 @@ int main()
     //std::cout << Tools::get_int_time(block.time).tm_year << std::endl;
 
 
-    Block block_back;
-    
-    blockchain_db.get_block(block_back, 1234234);
 
-    block_back.find_mt_root();
+    std::cout << block.block_to_json(true) << std::endl;
 
-    std::cout << "Printing old mt_root: " << block.mt_root << std::endl;
-    std::cout << "Printing new mt_root: " << block_back.mt_root << std::endl;
-    std::cout << (block.mt_root == block_back.mt_root) << std::endl;
-    
-
-    Tools::to_txt("before", block.block_to_json(true, false));
-    Tools::to_txt("after", block_back.block_to_json(true, false));
-
-    std::cout << node1.wallet.sign_tx(tx1.compute_hash()) << std::endl;
-    std::cout << node1.wallet.sign_tx(tx1.to_db_string()) << std::endl;
+    std::cout << "...ea3h = " << blockchain_db.get_balance("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h") << std::endl;
+    std::cout << "...e67h = " << blockchain_db.get_balance("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h") << std::endl;
+    std::cout << "...033h = " << blockchain_db.get_balance("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h") << std::endl;
+    std::cout << "...193h = " << blockchain_db.get_balance("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h") << std::endl;
+   
 
     
+    
 
+   
     //verifiying sign
     //std::cout << tx << std::endl;
     //bool checking = Tools::sign_verifier(node1.wallet.get_compressedPublic(),tx.signature, tx.tx_to_json(false, false));

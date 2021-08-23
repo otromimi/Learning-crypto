@@ -58,8 +58,8 @@ std::string Transaction::tx_to_json(bool indent, bool full) {
     struct_mapping::reg(&Transaction::outputs, "Outputs");
     struct_mapping::reg(&Transaction::origin, "Origin");
     struct_mapping::reg(&Transaction::fee, "Fee");
-    if(full)
-        struct_mapping::reg(&Transaction::signature, "Signature");
+    /*if (full)
+        struct_mapping::reg(&Transaction::signature, "Signature");*/
 
     std::ostringstream tx_json;
     if(indent)
@@ -72,7 +72,7 @@ std::string Transaction::tx_to_json(bool indent, bool full) {
 }
 
 void Transaction::json_to_tx(std::string tx_json, bool full) {
-
+   
     struct_mapping::reg(&Entity::account, "Account");
     struct_mapping::reg(&Entity::value, "Value");
 
@@ -82,8 +82,10 @@ void Transaction::json_to_tx(std::string tx_json, bool full) {
     struct_mapping::reg(&Transaction::outputs, "Outputs");
     struct_mapping::reg(&Transaction::origin, "Origin");
     struct_mapping::reg(&Transaction::fee, "Fee");
-    if (full)
-        struct_mapping::reg(&Transaction::signature, "Signature");
+    //if (full)
+        //struct_mapping::reg(&Transaction::signature, "Signature");
+
+
 
     //  std::ostringstream tx_json;
 
@@ -125,12 +127,12 @@ void Block::find_mt_root() {
    
     this->mt.populateTree(hash_vector);
     this->mt_root = this->mt.root->hash;
-    this->mt.printTree(this->mt.root,0);
+    //this->mt.printTree(this->mt.root,0);
 }
 
 std::string Block::block_to_json(bool indent, bool full) {
 
-    if (full) {
+    /*if (full) {
         struct_mapping::reg(&Entity::account, "Account");
         struct_mapping::reg(&Entity::value, "Value");
 
@@ -141,7 +143,7 @@ std::string Block::block_to_json(bool indent, bool full) {
         struct_mapping::reg(&Transaction::origin, "Origin");
         struct_mapping::reg(&Transaction::fee, "Fee");
         struct_mapping::reg(&Transaction::signature, "Signature");
-    }
+    }*/
     struct_mapping::reg(&Block::version, "Version");
     struct_mapping::reg(&Block::father_hash, "Father_hash");
     struct_mapping::reg(&Block::time, "Time");
@@ -150,9 +152,9 @@ std::string Block::block_to_json(bool indent, bool full) {
     struct_mapping::reg(&Block::mt_root, "MT_root");
     struct_mapping::reg(&Block::ID, "ID");
     struct_mapping::reg(&Block::ID, "Nonce");
-    if (full) 
+    /*if (full) 
         struct_mapping::reg(&Block::work_hash, "Pow");
-        struct_mapping::reg(&Block::transaction_list, "Transaction_list");
+        struct_mapping::reg(&Block::transaction_list, "Transaction_list");*/
        
     std::ostringstream tx_json;
     if (indent)
@@ -164,7 +166,12 @@ std::string Block::block_to_json(bool indent, bool full) {
     return tx_json.str();
 }
 
-
+float Block::compute_block_reward() {
+    float reward = 0;
+    for (Transaction i : this->transaction_list)
+        reward += i.fee;
+    return reward;
+}
 
 
 

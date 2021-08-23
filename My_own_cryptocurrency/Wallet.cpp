@@ -150,7 +150,7 @@ std::string Wallet::get_compressedPublic() {
 
 	Integer carlos = publicKey.GetPublicElement().x;
 
-	std::cout << carlos.ByteCount() << std::endl;
+	//std::cout << carlos.ByteCount() << std::endl;
 	
 	return code + x_public.str();
 }

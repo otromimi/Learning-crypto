@@ -109,6 +109,7 @@ DB_operations::DB_operations() {
 }
 
 
+
 int DB_operations::insert(Element table, std::string data) const {
 
     std::string query = "INSERT INTO ";
@@ -268,6 +269,29 @@ int DB_operations::parse_inputs(void* tx, int argc, char** argv, char** azColNam
     return 0;
 }
 
+float DB_operations::get_balance(std::string account) {
+    float balance = 0;
+    //std::string query = "SELECT VALUE FROM OUTPUTS WHERE ACCOUNT='" + account +"' AND TX_HASH NOT IN (SELECT INPUT FROM INPUTS WHERE TX_HASH IN (SELECT HASH FROM TRANSACTIONS WHERE OWNER='" + account + "'));";
+    std::string query = "SELECT VALUE FROM OUTPUTS WHERE ACCOUNT='"+account+"' AND TX_HASH NOT IN (SELECT DISTINCT ins.INPUT FROM INPUTS ins, TRANSACTIONS tx WHERE tx.HASH = ins.TX_HASH AND tx.OWNER ='"+account+"'); ";
+    int rc;
+
+    rc = sqlite3_exec(db, (const char*)query.c_str(), callback_balance, &balance, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+    return balance;
+}
+
+
+int DB_operations::callback_balance(void* balance, int argc, char** argv, char** azColName) {
+    for (int i = 0; i < argc; i++) {
+        *(float*)balance += std::stof(argv[i]);
+    }
+    //*(float*)balance = std::stof(argv[0]);
+    return 0;
+}
 
 
 std::string DB_operations::select(Element table, std::string data) {

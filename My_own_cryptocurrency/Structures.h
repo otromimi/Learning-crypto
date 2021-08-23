@@ -129,6 +129,7 @@ namespace My_own_crypto {
 
         std::string block_to_json(bool = false, bool = false);
 
+        float compute_block_reward();
     };
 
 
