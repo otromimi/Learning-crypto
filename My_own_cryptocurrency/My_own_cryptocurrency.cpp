@@ -103,6 +103,9 @@ int main()
     Tools::to_txt("before", block.block_to_json(true, false));
     Tools::to_txt("after", block_back.block_to_json(true, false));
 
+    std::cout << node1.wallet.sign_tx(tx1.compute_hash()) << std::endl;
+    std::cout << node1.wallet.sign_tx(tx1.to_db_string()) << std::endl;
+
     
 
     //verifiying sign

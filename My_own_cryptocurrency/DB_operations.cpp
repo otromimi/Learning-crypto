@@ -30,7 +30,8 @@ const char* outputs_table = "CREATE TABLE OUTPUTS("  \
 "ON DELETE CASCADE ON UPDATE CASCADE); ";
 
 const char* transactions_table = "CREATE TABLE TRANSACTIONS("  \
-"HASH           TEXT PRIMARY KEY         NOT NULL," \
+"ID             INTEGER PRIMARY KEY AUTOINCREMENT," \
+"HASH           TEXT                     NOT NULL," \
 "VERSION        TEXT                     NOT NULL," \
 "BLOCK          INT                      NOT NULL," \
 "TIME           TEXT                     NOT NULL," \
@@ -190,19 +191,19 @@ void DB_operations::get_block(Block& blk, int block_id) {
         sqlite3_free(zErrMsg);
     }
 
-    query = "SELECT HASH, VERSION, TIME, OWNER, FEE, SIGNATURE FROM TRANSACTIONS WHERE BLOCK =" + std::to_string(block_id) + ";";
+    query = "SELECT HASH, VERSION, TIME, OWNER, FEE, SIGNATURE FROM TRANSACTIONS WHERE BLOCK =" + std::to_string(block_id) + " ORDER BY ID ASC;";
     rc = sqlite3_exec(db, (const char*)query.c_str(), parse_transactions, &(blk), &zErrMsg);
     
     for (int i = 0; i < blk.transaction_list.size(); i++) {
 
-        query = "SELECT ACCOUNT, VALUE FROM OUTPUTS WHERE TX_HASH='"+ blk.transaction_list[i].hash +"';";
+        query = "SELECT ACCOUNT, VALUE FROM OUTPUTS WHERE TX_HASH='"+ blk.transaction_list[i].hash +"' ORDER BY ID ASC;";
         rc = sqlite3_exec(db, (const char*)query.c_str(), parse_outputs, &blk.transaction_list[i], &zErrMsg);
         if (rc != SQLITE_OK) {
             std::cerr << "SQL error: " << zErrMsg << std::endl;
             sqlite3_free(zErrMsg);
         }
 
-        query = "SELECT INPUT FROM INPUTS WHERE TX_HASH='" + blk.transaction_list[i].hash + "';";
+        query = "SELECT INPUT FROM INPUTS WHERE TX_HASH='" + blk.transaction_list[i].hash + "' ORDER BY ID ASC;";
         rc = sqlite3_exec(db, (const char*)query.c_str(), parse_inputs, &blk.transaction_list[i], &zErrMsg);
         if (rc != SQLITE_OK) {
             std::cerr << "SQL error: " << zErrMsg << std::endl;

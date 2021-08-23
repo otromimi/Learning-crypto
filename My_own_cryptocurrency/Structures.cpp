@@ -103,7 +103,8 @@ std::string Transaction::to_db_string() {
 
 
 std::string Transaction::compute_hash() {
-    return Tools::hash_sha256(tx_to_json(false, true));
+    this->hash = Tools::hash_sha256(tx_to_json(false, true));
+    return this->hash;
 }
 
 ///////////////////////////////////// Block /////////////////////////////////////
