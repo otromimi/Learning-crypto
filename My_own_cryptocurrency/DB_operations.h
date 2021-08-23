@@ -19,7 +19,7 @@ namespace My_own_crypto {
         const char* data;
 
         /// <summary>
-        /// Fuction called after quering the database.
+        /// Fuctions called after quering the database.
         /// </summary>
         static int callback(void* NotUsed, int argc, char** argv, char** azColName);
 
@@ -32,6 +32,8 @@ namespace My_own_crypto {
         static int parse_inputs(void* tx, int argc, char** argv, char** azColName);
 
         static int callback_balance(void* balance, int argc, char** argv, char** azColName);
+
+        static int parse_transaction(void* tx, int argc, char** argv, char** azColName);
 
 
         /// <summary>
@@ -61,9 +63,20 @@ namespace My_own_crypto {
         /// <param name="data">List of parameter to be inserted in each row.</param>
         void insert_block(Block& block) const;
 
+        void get_tx(Transaction& tx, std::string hash);
 
+        /// <summary>
+        /// Populates the reference block with the data from the DB, with the desire block ID.
+        /// </summary>
+        /// <param name="blk">Block to populate.</param>
+        /// <param name="block_id">ID of block to be retrieve.</param>
         void get_block(Block& blk, int block_id);
 
+        /// <summary>
+        /// Check the balane of an account.
+        /// </summary>
+        /// <param name="account">Account to check the balance.</param>
+        /// <returns>Balance</returns>
         float get_balance(std::string account);
 
         /// <summary>

@@ -125,8 +125,6 @@ int main()
     std::cout << "...193h = " << blockchain_db.get_balance("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h") << std::endl;
    
 
-    
-    
 
    
     //verifiying sign

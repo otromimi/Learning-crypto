@@ -179,6 +179,43 @@ void DB_operations::insert_block(Block& block) const {
     }
 }
 
+void DB_operations::get_tx(Transaction& tx, std::string hash) {
+    std::string query = "SELECT HASH, VERSION, TIME, OWNER, FEE, SIGNATURE FROM TRANSACTIONS WHERE HASH='" + hash + "';";
+
+    int rc = sqlite3_exec(db, (const char*)query.c_str(), parse_transaction, &tx, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+    query = "SELECT ACCOUNT, VALUE FROM OUTPUTS WHERE TX_HASH='" + hash + "' ORDER BY ID ASC;";
+    rc = sqlite3_exec(db, (const char*)query.c_str(), parse_outputs, &tx, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+    query = "SELECT INPUT FROM INPUTS WHERE TX_HASH='" + hash + "' ORDER BY ID ASC;";
+    rc = sqlite3_exec(db, (const char*)query.c_str(), parse_inputs, &tx, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+}
+
+
+
+int DB_operations::parse_transaction(void* tx, int argc, char** argv, char** azColName) {
+
+    Transaction* tx_ptr = (Transaction*)tx;
+    tx_ptr->hash = argv[0] ? argv[0] : "";
+    tx_ptr->version = argv[1] ? argv[1] : "-.-.-.-";
+    tx_ptr->time = argv[2] ? argv[2] : "";
+    tx_ptr->origin = argv[3] ? argv[3] : "";
+    tx_ptr->fee = argv[4] ? std::stof(argv[4]) : 0.f;
+    tx_ptr->signature = argv[5] ? argv[5] : "";
+    return 0;
+}
 
 
 void DB_operations::get_block(Block& blk, int block_id) {
