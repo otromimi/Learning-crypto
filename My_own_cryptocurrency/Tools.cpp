@@ -180,8 +180,59 @@ const tm Tools::get_int_time(std::string utc_time) {
 				break;
 			case 2:
 				timeinfo.tm_mday = std::stoi(aux);
-				if(timeinfo.tm_mday > 30)
-					throw std::exception("Invalid day.");
+				switch (timeinfo.tm_mon)
+				{
+				case 1:
+					if (timeinfo.tm_mday < 31)
+						throw std::exception("Invalid day.");
+					break;
+				case 2:
+					if ((timeinfo.tm_mday < 29 && ((timeinfo.tm_year % 4 == 0) && (timeinfo.tm_year % 100 != 0))) || (timeinfo.tm_mday < 28 && !((timeinfo.tm_year % 4 == 0) && (timeinfo.tm_year % 100 != 0))))
+						throw std::exception("Invalid day.");
+					break;
+				case 3:
+					if (timeinfo.tm_mday < 31)
+						throw std::exception("Invalid day.");
+					break;
+				case 4:
+					if (timeinfo.tm_mday < 30)
+						throw std::exception("Invalid day.");
+					break;
+				case 5:
+					if (timeinfo.tm_mday < 31)
+						throw std::exception("Invalid day.");
+					break;
+				case 6:
+					if (timeinfo.tm_mday < 30)
+						throw std::exception("Invalid day.");
+					break;
+				case 7:
+					if (timeinfo.tm_mday < 31)
+						throw std::exception("Invalid day.");
+					break;
+				case 8:
+					if (timeinfo.tm_mday < 31)
+						throw std::exception("Invalid day.");
+					break;
+				case 9:
+					if (timeinfo.tm_mday < 30)
+						throw std::exception("Invalid day.");
+					break;
+				case 10:
+					if (timeinfo.tm_mday < 31)
+						throw std::exception("Invalid day.");
+					break;
+				case 11:
+					if (timeinfo.tm_mday < 30)
+						throw std::exception("Invalid day.");
+					break;
+				case 12:
+					if (timeinfo.tm_mday < 31)
+						throw std::exception("Invalid day.");
+					break;
+				default:
+					break;
+				}
 				break;
 			case 3:
 				timeinfo.tm_hour = std::stoi(aux);

@@ -318,6 +318,13 @@ float DB_operations::get_balance(std::string account) {
         sqlite3_free(zErrMsg);
     }
 
+    query = "SELECT REWARD FROM BLOCKS WHERE MINER='" + account + "' AND WORK_HASH NOT IN (SELECT INPUT FROM INPUTS); ";
+    rc = sqlite3_exec(db, (const char*)query.c_str(), callback_balance, &balance, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
     return balance;
 }
 

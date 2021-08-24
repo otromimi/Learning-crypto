@@ -96,7 +96,7 @@ int main()
     std::cout << Tools::sign_verifier(tx4.origin, tx4.signature, tx4.tx_to_json()) << std::endl;
     
 
-    Block block("CEB8B8417BE86B68548638830E7C3DF51A425EE1322D8D719944C09040405FC5");
+    Block block("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h");
     block.version = MY_CRYPTO_VERSION;
     block.ID = 1;
     block.father_hash = "000000000000000000000000000000000000000000000000";

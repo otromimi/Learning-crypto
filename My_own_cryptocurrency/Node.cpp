@@ -94,6 +94,7 @@ const bool Node::validate_tx(Transaction tx) {
 		}
 	}
 
+	// Checking time integrity
 	if (!Tools::check_date(tx.time))
 		valid = false;
 
