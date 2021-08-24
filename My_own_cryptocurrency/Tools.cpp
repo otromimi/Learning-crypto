@@ -107,6 +107,54 @@ const std::string Tools::time_now() {
 	return utc_time;
 }
 
+const bool Tools::check_date(std::string date) {
+	try {
+		tm num_date = Tools::get_int_time(date);
+		return true;
+	}
+	catch(std::exception e){
+		//std::cout << e.what() << std::endl;
+		return false;
+	}
+}
+
+const int Tools::is_older(std::string older, std::string newer) {
+	tm old_time = Tools::get_int_time(older);
+	tm new_time = Tools::get_int_time(newer);
+
+	if (old_time.tm_year < new_time.tm_year)
+		return 1;
+	if(old_time.tm_year > new_time.tm_year)
+		return -1;
+
+	if (old_time.tm_mon < new_time.tm_mon)
+		return 1;
+	if (old_time.tm_mon > new_time.tm_mon)
+		return -1;
+
+	if (old_time.tm_mday < new_time.tm_mday)
+		return 1;
+	if (old_time.tm_mday > new_time.tm_mday)
+		return -1;
+
+	if (old_time.tm_hour < new_time.tm_hour)
+		return 1;
+	if (old_time.tm_hour > new_time.tm_hour)
+		return -1;
+
+	if (old_time.tm_min < new_time.tm_min)
+		return 1;
+	if (old_time.tm_min > new_time.tm_min)
+		return -1;
+
+	if (old_time.tm_sec < new_time.tm_sec)
+		return 1;
+	if (old_time.tm_sec > new_time.tm_sec)
+		return -1;
+
+	return 0;
+}
+
 const tm Tools::get_int_time(std::string utc_time) {
 	
 	std::time_t rawtime;
@@ -127,18 +175,28 @@ const tm Tools::get_int_time(std::string utc_time) {
 				break;
 			case 1:
 				timeinfo.tm_mon = std::stoi(aux);
+				if (timeinfo.tm_mon > 12)
+					throw std::exception("Invalid month.");
 				break;
 			case 2:
 				timeinfo.tm_mday = std::stoi(aux);
+				if(timeinfo.tm_mday > 30)
+					throw std::exception("Invalid day.");
 				break;
 			case 3:
 				timeinfo.tm_hour = std::stoi(aux);
+				if(timeinfo.tm_hour > 23)
+					throw std::exception("Invalid hour.");
 				break;
 			case 4:
 				timeinfo.tm_min = std::stoi(aux);
+				if(timeinfo.tm_min > 59)
+					throw std::exception("Invalid minute.");
 				break;
 			case 5:
 				timeinfo.tm_sec = std::stoi(aux);
+				if(timeinfo.tm_sec > 59)
+					throw std::exception("Invalid second.");
 				break;
 			default:
 				break;
@@ -147,6 +205,7 @@ const tm Tools::get_int_time(std::string utc_time) {
 			aux = "";
 		}
 	}
+
 	//rawtime = mktime(timeinfo);
 	return timeinfo;
 }

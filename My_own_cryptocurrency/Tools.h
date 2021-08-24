@@ -49,13 +49,23 @@ namespace My_own_crypto {
 		/// <returns>String with UTC time in the format: dd/mm/yyyy HH:MM:SS .</returns>
 		const std::string time_now();
 
+		const bool check_date(std::string date);
+
+
+		/// <summary>
+		/// Cheack if which of the dates is older.
+		/// </summary>
+		/// <param name="older">String with UTC datetime format: AAAA/MM/DD hh:mm:ss</param>
+		/// <param name="newer">String with UTC datetime format: AAAA/MM/DD hh:mm:ss</param>
+		/// <returns>1 if older is older, -1 if newer is older and 0 if the same.</returns>
+		const int is_older(std::string older, std::string newer);
+
 		/// <summary>
 		/// Parse the string time created in <time_now> into a int struc.
 		/// </summary>
 		/// <param name="utc_time">UTC time in format:  dd/mm/yyyy HH:MM:SS .</param>
 		/// <returns>Structure <mt> containing numeric field for date values.</returns>
 		const tm get_int_time(std::string utc_time);
-
 
 		/// <summary>
 		/// Outputst the constests to a .txt file.

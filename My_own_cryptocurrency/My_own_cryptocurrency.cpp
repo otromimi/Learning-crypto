@@ -33,7 +33,7 @@ int main()
 {
    
     std::cout << "\n=============Open block_chain database=============\n";
-    DB_operations blockchain_db;
+      
     std::cout << "\n=============Creating Wallet=============\n";
 
     
@@ -98,7 +98,7 @@ int main()
 
     Block block("CEB8B8417BE86B68548638830E7C3DF51A425EE1322D8D719944C09040405FC5");
     block.version = MY_CRYPTO_VERSION;
-    block.ID = 0;
+    block.ID = 1;
     block.father_hash = "000000000000000000000000000000000000000000000000";
     block.transaction_list = { tx1, tx2, tx3, tx4 };
     block.reward = block.compute_block_reward();
@@ -111,7 +111,7 @@ int main()
 
     //Tools::to_txt("block_test1", block.block_to_json(true, true));
 
-    blockchain_db.insert_block(block);
+    node1.blockchain.insert_block(block);
 
     //std::cout << Tools::get_int_time(block.time).tm_year << std::endl;
 
@@ -119,13 +119,13 @@ int main()
 
     std::cout << block.block_to_json(true) << std::endl;
 
-    std::cout << "...ea3h = " << blockchain_db.get_balance("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h") << std::endl;
-    std::cout << "...e67h = " << blockchain_db.get_balance("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h") << std::endl;
-    std::cout << "...033h = " << blockchain_db.get_balance("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h") << std::endl;
-    std::cout << "...193h = " << blockchain_db.get_balance("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h") << std::endl;
+    std::cout << "...ea3h = " << node1.blockchain.get_balance("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h") << std::endl;
+    std::cout << "...e67h = " << node1.blockchain.get_balance("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h") << std::endl;
+    std::cout << "...033h = " << node1.blockchain.get_balance("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h") << std::endl;
+    std::cout << "...193h = " << node1.blockchain.get_balance("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h") << std::endl;
    
 
-
+    node1.validate_inputs({ "B5D5A456F11269CD696378E21B2901FE86346CA4FE0EDF22897BFCE86B9AC26E" , "ACB7B78CC31F5E8F78F1C38E2A907A2437D68A759AFC498972AE824FB27C8D7C"}, "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h");
    
     //verifiying sign
     //std::cout << tx << std::endl;
@@ -141,7 +141,7 @@ int main()
 
 
    
-    std::cout << "head of chain: " << blockchain_db.get_head() << std::endl;
+    std::cout << Tools::check_date("2021/7/23 23:6:30") << std::endl;
     
 
     //if (_DEBUG) { //braaks in linux

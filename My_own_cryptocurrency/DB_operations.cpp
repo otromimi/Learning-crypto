@@ -97,9 +97,9 @@ void DB_operations::create_tables() {
 
 
 
-DB_operations::DB_operations() {
+DB_operations::DB_operations(std::string db_name) {
 
-    int rc = sqlite3_open("my_blockchain.db", &db);
+    int rc = sqlite3_open((db_name + ".db").c_str(), &db);
 
     if (rc) {
         std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
@@ -330,6 +330,31 @@ int DB_operations::callback_balance(void* balance, int argc, char** argv, char**
     return 0;
 }
 
+void DB_operations::get_inputs(std::vector<Entity>& inputs_full, std::string address) {
+    std::string query = "SELECT TX_HASH, VALUE FROM OUTPUTS WHERE ACCOUNT='" + address + "' AND TX_HASH NOT IN (SELECT DISTINCT ins.INPUT FROM INPUTS ins, TRANSACTIONS tx WHERE tx.HASH = ins.TX_HASH AND tx.OWNER ='" + address + "'); ";
+    int rc;
+
+    rc = sqlite3_exec(db, (const char*)query.c_str(), callback_inputs, &inputs_full, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+}
+
+int DB_operations::callback_inputs(void* inputs_full, int argc, char** argv, char** azColName) {
+    std::vector<Entity>* inputs_full_ptr = (std::vector<Entity>*)inputs_full;
+    
+    for (int i = 0; i < inputs_full_ptr->size(); i++) {
+
+        if (argv[0] == (*inputs_full_ptr)[i].account) {
+
+            (*inputs_full_ptr)[i].value = std::stof(argv[1]);
+            return 0;
+        }
+    }
+    return 0;
+}
+
 
 unsigned int DB_operations::get_head() {
     unsigned int head;
@@ -347,7 +372,7 @@ unsigned int DB_operations::get_head() {
 
 
 int DB_operations::callback_head(void* head, int argc, char** argv, char** azColName) {
-    *(unsigned int*)head = argv[0] ? (unsigned int)std::stoul(argv[0]) : -1;
+    *(unsigned int*)head = argv[0] ? (unsigned int)std::stoul(argv[0]) : 0;
     return 0;
 }
 

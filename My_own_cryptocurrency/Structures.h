@@ -73,6 +73,7 @@ namespace My_own_crypto {
 
         /// <summary>
         /// Return a JSON format string of the transaction.
+        /// UPDATE Second argument is dummy.
         /// </summary>
         /// <param name="indent">True if you what it to be nice formated, False if you want it all in one string.</param>
         /// <param name="full">True if you want to include the signature on the JSON, False otherwise.</param>
@@ -81,6 +82,7 @@ namespace My_own_crypto {
 
         /// <summary>
         /// Populates the transaction object with the passed JSON data.
+        /// UPDATE Second argument is dummy.
         /// </summary>
         /// <param name="tx_json">JSON data in string format.</param>
         /// <param name="full">True the JSON includes the signature, False otherwise.</param>
@@ -127,8 +129,20 @@ namespace My_own_crypto {
         void find_mt_root();
 
 
+        /// <summary>
+        /// Block structure to JSON string.
+        /// UPDATE Second argument is dummy.
+        /// </summary>
+        /// <param name="indent">Pretty format.</param>
+        /// <param name="full">This parameter is dummy, (doesn't work).</param>
+        /// <returns>String with the block data to be hashed.</returns>
         std::string block_to_json(bool = false, bool = false);
 
+
+        /// <summary>
+        /// Populates the field reward int he block.
+        /// </summary>
+        /// <returns>Sum of transactions fees.</returns>
         float compute_block_reward();
     };
 

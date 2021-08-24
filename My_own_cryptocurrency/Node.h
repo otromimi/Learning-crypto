@@ -19,17 +19,28 @@ namespace My_own_crypto {
 	public:
 
 		Wallet wallet;
+		DB_operations blockchain;
+		unsigned int blockchain_head;
 
 		Node(const char* wallet_name);
 
-		const Transaction create_tx();
 
+		/// <summary>
+		/// Creates transaction in interactive mode.
+		/// </summary>
+		/// <returns>New created transaction.</returns>
+		const Transaction create_tx();
 
 		const void create_block(Block& block);
 
-		const void validate_inputs(std::string input);
+		const float validate_inputs(std::vector<std::string> inputs, std::string address);
 
-		const void validate_tx(const Transaction tx);
+		/// <summary>
+		/// Validates transaction integrity and legitimity.
+		/// </summary>
+		/// <param name="tx">Transaction to be check.</param>
+		/// <returns></returns>
+		const bool validate_tx(Transaction tx);
 
 		const void validate_block(const Block block);
 

@@ -37,6 +37,8 @@ namespace My_own_crypto {
 
         static int callback_head(void* head, int argc, char** argv, char** azColName);
 
+        static int callback_inputs(void* inputs_full, int argc, char** argv, char** azColName);
+
 
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace My_own_crypto {
         /// <summary>
         /// Opening database
         /// </summary>
-        DB_operations();
+        DB_operations(std::string db_name);
 
         /// <summary>
         /// Inserting block into the database.
@@ -82,11 +84,19 @@ namespace My_own_crypto {
         /// <returns>Balance</returns>
         float get_balance(std::string account);
 
+
+        void get_inputs(std::vector<Entity>& inputs_full, std::string address);
+
         /// <summary>
         /// Select values from database
         /// </summary>
         std::string select(Element table, std::string data);
 
+
+        /// <summary>
+        /// Gets the head of the blockchain.
+        /// </summary>
+        /// /// <returns>Last block ID.</returns>
         unsigned int get_head();
 
 
