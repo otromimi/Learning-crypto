@@ -97,12 +97,16 @@ int main()
     std::cout << Tools::sign_verifier(tx4.origin, tx4.signature, tx4.tx_to_json()) << std::endl;
 
 
-    std::cout << true << std::endl;
+    
     std::cout << node1.validate_tx(tx1) << std::endl;
     std::cout << node1.validate_tx(tx2) << std::endl;
     std::cout << node1.validate_tx(tx3) << std::endl;
     std::cout << node1.validate_tx(tx4) << std::endl;
     
+    tx1.compute_hash();
+    tx2.compute_hash();
+    tx3.compute_hash();
+    tx4.compute_hash();
 
     Block block("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h");
     block.version = MY_CRYPTO_VERSION;
@@ -126,6 +130,10 @@ int main()
     //std::cout << blk_back.block_to_json(true) << std::endl;
 
 
+    
+    std::cout << tx3 << std::endl;
+
+    std::cout << block << std::endl;
    
 
     std::cout << "...ea3h = " << node1.blockchain.get_balance("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h") << std::endl;
@@ -148,10 +156,7 @@ int main()
     //Transaction tx = node1.create_tx();
 
 
-    std::cout << Tools::time_now() << std::endl;
-    std::cout << Tools::time_now() << std::endl;
    
-    std::cout << Tools::check_date("2021-07-23 23:06:30") << std::endl;
     
 
     //if (_DEBUG) { //braaks in linux

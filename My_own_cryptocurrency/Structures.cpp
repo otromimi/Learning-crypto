@@ -180,36 +180,58 @@ float Block::compute_block_reward() {
 
 /// Overloading << operator
 std::ostream& operator << (std::ostream& outstream,Entity& data) {
-    outstream << "\t" << data.account << "\t" << data.value << "\n";
+
+    int vpos = 12;
+    outstream << "\t" << "..." << data.account.substr(data.account.size() - vpos, vpos) << "\t" << data.value << "\n";
 
     return outstream;
 }
 
 /// Overloading << operator
 std::ostream& operator << (std::ostream& outstream, Transaction& data) {
+    int vpos = 12;
 
-    /*
-    // Passing from epoch to UTC
-    std::tm* utc_struct = std::gmtime((const time_t*)data.time);
-    char* time_UTC_string = std::asctime(utc_struct);
-    *(time_UTC_string + 24) = 0x00;
-    */
-    outstream << "-----Transaction: " << "-----\n" <<
-        " UTC " << data.time << "\n" <<
-        "Inputs: { ";
+    outstream << " -----------Transaction-----------\n" <<
+        " Version: " << data.version << "\n" <<
+        " Time: " << data.time << "\n" <<
+        " Inputs: { \n";
     for (std::string i : data.inputs) {
-        outstream << i << ", ";
+        outstream << "\t..." << i.substr(i.size() - vpos, vpos) << std::endl;
     }
-    outstream << "\b\b }\n" <<
-        "Outputs: \n";
+    outstream << " }\n" <<
+        " Outputs: { \n";
     for (Entity i : data.outputs) {
-        outstream << i;
+        outstream << "\t..." << i.account.substr(i.account.size() - vpos, vpos) << ", " << i.value << std::endl;;
     }
-    outstream << "\n" <<
-        "Origin: " << data.origin << "\n" <<
-        "Fee: " << data.fee << "\n" <<
-        "\n --Sign-- \n" << data.signature << "\n" <<
-        "--------------------------------------\n";
+    outstream << " }\n" <<
+        " Origin: " << "..." << data.origin.substr(data.origin.size() - vpos, vpos) << "\n" <<
+        " Fee: " << data.fee << "\n" <<
+        " Sign: " << "..." << data.signature.substr(data.signature.size() - vpos, vpos) << "\n" <<
+        " Hash: " << "..." << data.hash.substr(data.hash.size() - vpos, vpos) << "\n" <<
+        " ----------------------------------\n";
+
+    return outstream;
+}
+
+/// Overloading << operator
+std::ostream& operator << (std::ostream& outstream, Block& data) {
+    int vpos = 12;
+
+    outstream << " -------------Block " << data.ID << "------------- \n" <<
+        " Version: " << data.version << "\n" <<
+        " Time: " << data.time << "\n" <<
+        " Tx: { \n";
+    for (Transaction i : data.transaction_list) {
+        outstream << "\t..." << i.hash.substr(i.hash.size() - vpos, vpos) << std::endl;
+    }
+    outstream << " }\n" <<
+        " Mt_root: " << "..." << data.mt_root.substr(data.mt_root.size() - vpos, vpos) << "\n" <<
+        " Father: " << "..." << data.father_hash.substr(data.father_hash.size() - vpos, vpos) << "\n" <<
+        " Reward: " << data.reward << "\n" <<
+        " Miner: " << "..." << data.miner.substr(data.miner.size() - vpos, vpos) << "\n" <<
+        " Nonce: " << data.nonce << "\n" <<
+        " PoW: " << "..." << data.work_hash.substr(data.work_hash.size() - vpos, vpos) << "\n" <<
+        " ----------------------------------\n";
 
     return outstream;
 }

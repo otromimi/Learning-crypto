@@ -155,3 +155,6 @@ std::ostream& operator << (std::ostream& outstream, My_own_crypto::Entity& datas
 
 /// Overloading << operator
 std::ostream& operator << (std::ostream& outstream, My_own_crypto::Transaction& data);
+
+/// Overloading << operator
+std::ostream& operator << (std::ostream& outstream, My_own_crypto::Block& data);
