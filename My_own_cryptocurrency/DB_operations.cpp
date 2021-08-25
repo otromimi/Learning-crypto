@@ -34,7 +34,7 @@ const char* transactions_table = "CREATE TABLE TRANSACTIONS("  \
 "HASH           TEXT                     NOT NULL," \
 "VERSION        TEXT                     NOT NULL," \
 "BLOCK          INT                      NOT NULL," \
-"TIME           TEXT                     NOT NULL," \
+"TIME           DATETIME                 NOT NULL," \
 "OWNER          TEXT                     NOT NULL," \
 "FEE            REAL                     NOT NULL," \
 "SIGNATURE      TEXT                     NOT NULL," \
@@ -44,7 +44,7 @@ const char* transactions_table = "CREATE TABLE TRANSACTIONS("  \
 const char* blocks_table = "CREATE TABLE BLOCKS("  \
 "BLOCK_ID       INT PRIMARY KEY          NOT NULL," \
 "VERSION        TEXT                     NOT NULL," \
-"TIME           TEXT                     NOT NULL," \
+"TIME           DATETIME                 NOT NULL," \
 "FATHER_HASH    TEXT                     NOT NULL," \
 "WORK_HASH      TEXT                     NOT NULL," \
 "MINER          TEXT                     NOT NULL," \
@@ -337,10 +337,17 @@ int DB_operations::callback_balance(void* balance, int argc, char** argv, char**
     return 0;
 }
 
-void DB_operations::get_inputs(std::vector<Entity>& inputs_full, std::string address) {
-    std::string query = "SELECT TX_HASH, VALUE FROM OUTPUTS WHERE ACCOUNT='" + address + "' AND TX_HASH NOT IN (SELECT DISTINCT ins.INPUT FROM INPUTS ins, TRANSACTIONS tx WHERE tx.HASH = ins.TX_HASH AND tx.OWNER ='" + address + "'); ";
+void DB_operations::get_inputs(std::vector<Entity>& inputs_full, std::string address, std::string time) {
+    std::string query = "SELECT TX_HASH, VALUE FROM OUTPUTS WHERE ACCOUNT='" + address + "' AND TX_HASH NOT IN (SELECT DISTINCT ins.INPUT FROM INPUTS ins, TRANSACTIONS tx WHERE tx.HASH = ins.TX_HASH AND tx.OWNER ='" + address + "' AND TIME < '" + time + "'); ";
     int rc;
 
+    rc = sqlite3_exec(db, (const char*)query.c_str(), callback_inputs, &inputs_full, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+    query = "SELECT WORK_HASH, REWARD FROM BLOCKS WHERE MINER='" + address + "' AND WORK_HASH NOT IN (SELECT INPUT FROM INPUTS WHERE TX_HASH IN (SELECT HASH FROM TRANSACTIONS WHERE TIME < '" + time + "')); ";
     rc = sqlite3_exec(db, (const char*)query.c_str(), callback_inputs, &inputs_full, &zErrMsg);
     if (rc != SQLITE_OK) {
         std::cerr << "SQL error: " << zErrMsg << std::endl;
@@ -350,11 +357,11 @@ void DB_operations::get_inputs(std::vector<Entity>& inputs_full, std::string add
 
 int DB_operations::callback_inputs(void* inputs_full, int argc, char** argv, char** azColName) {
     std::vector<Entity>* inputs_full_ptr = (std::vector<Entity>*)inputs_full;
-    
+    std::cout << "input: " << argv[0] << ", " << argv[1] << std::endl;
     for (int i = 0; i < inputs_full_ptr->size(); i++) {
-
+        
         if (argv[0] == (*inputs_full_ptr)[i].account) {
-
+            
             (*inputs_full_ptr)[i].value = std::stof(argv[1]);
             return 0;
         }

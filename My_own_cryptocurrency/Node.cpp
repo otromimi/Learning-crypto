@@ -46,7 +46,7 @@ const Transaction Node::create_tx() {
 
 const void Node::create_block(Block& block) {}
 
-const float Node::validate_inputs(std::vector<std::string> inputs, std::string address) {
+const float Node::validate_inputs(std::vector<std::string> inputs, std::string address, std::string time) {
 	
 	std::vector<Entity> inputs_full;
 	float sum = 0.f;
@@ -54,9 +54,10 @@ const float Node::validate_inputs(std::vector<std::string> inputs, std::string a
 	for (std::string i : inputs)
 		inputs_full.push_back(Entity(i, 0));
 
-	blockchain.get_inputs(inputs_full, address);
+	blockchain.get_inputs(inputs_full, address, time);
 
 	for (Entity i : inputs_full) {
+		std::cout << i.account << std::endl;
 		if (i.value <= 0)
 			return -1.f;
 		sum += i.value;
@@ -73,7 +74,7 @@ const bool Node::validate_tx(Transaction tx) {
 	if (!Tools::sign_verifier(tx.origin, tx.signature, tx.tx_to_json()))
 		valid = false;
 
-	float check_inputs = validate_inputs(tx.inputs, tx.origin);
+	float check_inputs = validate_inputs(tx.inputs, tx.origin, tx.time);
 	float sum_outputs_and_fee = tx.fee;
 	for (Entity i : tx.outputs)
 		sum_outputs_and_fee += i.value;
@@ -89,7 +90,7 @@ const bool Node::validate_tx(Transaction tx) {
 	// Only one output per address.
 	for (int i = 0; i < tx.outputs.size(); i++) {
 		for (int j = i; j < tx.outputs.size(); j++) {
-			if (tx.outputs[i].account == tx.outputs[j].account)
+			if (tx.outputs[i].account == tx.outputs[j].account && i != j)
 				return false;
 		}
 	}

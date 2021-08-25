@@ -37,11 +37,11 @@ int main()
     std::cout << "\n=============Creating Wallet=============\n";
 
     
-    Node node1("User3");
+    Node node1("User1");
    
  
     // First transaction (primigine transaciton), the one that puts founds on the different accounts.
-    Transaction tx1("2021/7/23 18:40:25", "02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h", 0.0f);
+    Transaction tx1("2021-07-23 18:40:25", "02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h", 0.0f);
     tx1.version = MY_CRYPTO_VERSION;
     tx1.inputs = { "0000000000000000000000000000000000000000000000000000000000000000" };
     tx1.outputs = {Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",1000.0f), 
@@ -49,26 +49,26 @@ int main()
         Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",1000.0f), 
         Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",1000.0f) };
 
-    Transaction tx2("2021/7/23 18:40:30", "0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h", 2.f);
+    Transaction tx2("2021-07-23 18:40:30", "0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h", 2.f);
     tx2.version = MY_CRYPTO_VERSION;
-    tx2.inputs = { "9AF214EA52CC156C4AFDFF520E0A308462E7139A0FB72FFA9B210FC21FD31ADD" };
+    tx2.inputs = { "477ED9817BCA3D870CF4FB06BA26951CFC865B6B4641D4C85BD8A30F006BFD6D" };
     tx2.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",10.0f),
          Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",698.0f),
          Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",10.0f),
          Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",10.0f) };
 
-    Transaction tx3("2021/7/23 18:41:30",  "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h", 1.f);
+    Transaction tx3("2021-07-23 18:41:30",  "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h", 1.f);
     tx3.version = MY_CRYPTO_VERSION;
-    tx3.inputs = { "E65134724F9B0FE10F4D092470068A5954DC85014E7BF2F556A70C5C7B84C3AD"};
+    tx3.inputs = { "8CB375B65058192BE8714C660D4AC9810B0AE6EC4C8595F0F6795EA120B333D4"};
     tx3.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",2.0f),
         Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",3.0f),
         Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",1.0f),
         Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",3.0f) };
 
 
-    Transaction tx4("2021/7/23 19:41:30", "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h", 1.5f);
+    Transaction tx4("2021-07-23 19:41:30", "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h", 1.5f);
     tx4.version = MY_CRYPTO_VERSION;
-    tx4.inputs = { "9AF214EA52CC156C4AFDFF520E0A308462E7139A0FB72FFA9B210FC21FD31ADD" };
+    tx4.inputs = { "477ED9817BCA3D870CF4FB06BA26951CFC865B6B4641D4C85BD8A30F006BFD6D" };
     tx4.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",298.5f),
         Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",500.0f),
         Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",100.0f),
@@ -81,19 +81,27 @@ int main()
    
    
     // signin transaction
-    tx1.signature = "0225A040F55FDB0FF88EA7BB7D23226DBE7E077010D859B845C2639A6D22CE2D8E24AF8E2432F55F13FC801BC5626781927BB1CF38DE366E814ACA344F081B86";
-    tx2.signature = "9745CBF55B031DBE80B8603EC6791AEB0ECAC14A31A4271EA7AEB6628051A52D5F7C7B8B2C02A4394AC95B595884D0841D4542987AD50809A968A068E4559106";
-    tx3.signature = "85FF27C931CAE0FFEDA0A423E04984D9364A0CD6C092A0C9D4C8E41DE11364F483BC6661FE121C1BBD87E778D35AD96DDE83BF314D48E084A50F5DE968174056";
-    tx4.signature = "258E41868D3836BD87E34BEFB6EEBB58F53B59529573438EEC250FA8DD17D5A2BC8753FBB5C443EE0AAEA1B57F36F8991595C348C500714DA676A5A030DF8664";
+    tx1.signature = "E5E2B2760517B926F3DC56C836EEF445A9BEAFA4154BF69D26BE7DBD19465116D89A41DB0BECA114CEE616A71A79F17E3EDB72056F39EB3C4E7936D52676881B";
+    tx2.signature = "F1A439B205F50F34F9EFAF118FF259B8A3AD1C052C22006FDEC643E86666A401D4178BCD6E36D3D2A46A06FBB6BD6D914F1C97F0F6021BD55B7CEA72C109CC85";
+    tx3.signature = "742960EA305950A6F8F666F461E3BB3CF00240718AD13A98AFCD048E9BE36495FD4C51E82A83C5DE1BF648925517851E91431DAA66FF6F05C9C504553FA55ABF";
+    tx4.signature = "35A10C5653A8BBB70E7CF496DA88201EBC1E8C20D98754BBD60D69A565025D157916BD7F06BF579B098BC174D9FC5C7494D9781DDB927037F4EEBC439488BFF9";
 
-    //node1.wallet.sign_tx(tx3.tx_to_json());
-    //tx3.signature = node1.wallet.sign_tx(tx3.tx_to_json());
-    //std::cout << tx3.signature << std::endl;
-    //std::cout << node1.wallet.get_compressedPublic() << std::endl;
+    //node1.wallet.sign_tx(tx4.tx_to_json());
+    //tx4.signature = node1.wallet.sign_tx(tx4.tx_to_json());
+    //std::cout << tx4.signature << std::endl;
+    //std::cout << tx4.compute_hash() << std::endl;
+
     std::cout << Tools::sign_verifier(tx1.origin, tx1.signature, tx1.tx_to_json()) << std::endl;
     std::cout << Tools::sign_verifier(tx2.origin, tx2.signature, tx2.tx_to_json()) << std::endl;
     std::cout << Tools::sign_verifier(tx3.origin, tx3.signature, tx3.tx_to_json()) << std::endl;
     std::cout << Tools::sign_verifier(tx4.origin, tx4.signature, tx4.tx_to_json()) << std::endl;
+
+
+    std::cout << true << std::endl;
+    std::cout << node1.validate_tx(tx1) << std::endl;
+    std::cout << node1.validate_tx(tx2) << std::endl;
+    std::cout << node1.validate_tx(tx3) << std::endl;
+    std::cout << node1.validate_tx(tx4) << std::endl;
     
 
     Block block("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h");
@@ -107,17 +115,18 @@ int main()
 
     block.work_hash = Tools::hash_sha256(block.block_to_json());
 
-    //  std::cout << block.block_to_json(true, true) << std::endl;
-
-    //Tools::to_txt("block_test1", block.block_to_json(true, true));
+    
 
     node1.blockchain.insert_block(block);
 
-    //std::cout << Tools::get_int_time(block.time).tm_year << std::endl;
+    Block blk_back;
+
+    node1.blockchain.get_block(blk_back, 1);
+
+    //std::cout << blk_back.block_to_json(true) << std::endl;
 
 
-
-    std::cout << block.block_to_json(true) << std::endl;
+   
 
     std::cout << "...ea3h = " << node1.blockchain.get_balance("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h") << std::endl;
     std::cout << "...e67h = " << node1.blockchain.get_balance("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h") << std::endl;
@@ -125,7 +134,7 @@ int main()
     std::cout << "...193h = " << node1.blockchain.get_balance("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h") << std::endl;
    
 
-    node1.validate_inputs({ "B5D5A456F11269CD696378E21B2901FE86346CA4FE0EDF22897BFCE86B9AC26E" , "ACB7B78CC31F5E8F78F1C38E2A907A2437D68A759AFC498972AE824FB27C8D7C"}, "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h");
+    //node1.validate_inputs({ "B5D5A456F11269CD696378E21B2901FE86346CA4FE0EDF22897BFCE86B9AC26E" , "ACB7B78CC31F5E8F78F1C38E2A907A2437D68A759AFC498972AE824FB27C8D7C"}, "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h");
    
     //verifiying sign
     //std::cout << tx << std::endl;
@@ -139,9 +148,10 @@ int main()
     //Transaction tx = node1.create_tx();
 
 
-
+    std::cout << Tools::time_now() << std::endl;
+    std::cout << Tools::time_now() << std::endl;
    
-    std::cout << Tools::check_date("2021/7/23 23:6:30") << std::endl;
+    std::cout << Tools::check_date("2021-07-23 23:06:30") << std::endl;
     
 
     //if (_DEBUG) { //braaks in linux

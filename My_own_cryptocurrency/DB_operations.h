@@ -85,7 +85,7 @@ namespace My_own_crypto {
         float get_balance(std::string account);
 
 
-        void get_inputs(std::vector<Entity>& inputs_full, std::string address);
+        void get_inputs(std::vector<Entity>& inputs_full, std::string address, std::string time);
 
         /// <summary>
         /// Select values from database

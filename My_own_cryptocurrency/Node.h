@@ -33,7 +33,7 @@ namespace My_own_crypto {
 
 		const void create_block(Block& block);
 
-		const float validate_inputs(std::vector<std::string> inputs, std::string address);
+		const float validate_inputs(std::vector<std::string> inputs, std::string address, std::string time);
 
 		/// <summary>
 		/// Validates transaction integrity and legitimity.

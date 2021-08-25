@@ -86,12 +86,23 @@ const std::string Tools::time_now() {
 
 	std::string  utc_time;
 
-	utc_time = std::to_string(1900+gmt_time->tm_year) + "/" + \
-		std::to_string(gmt_time->tm_mon) + "/" + \
-		std::to_string(gmt_time->tm_mday) + " " + \
-		std::to_string(gmt_time->tm_hour) + ":" + \
-		std::to_string(gmt_time->tm_min) + ":" + \
-		std::to_string(gmt_time->tm_sec);
+	utc_time = std::to_string(1900 + gmt_time->tm_year) + "-";
+
+	if (gmt_time->tm_mon < 10)
+		utc_time += "0";
+	utc_time += std::to_string(gmt_time->tm_mon) + "-";
+	if (gmt_time->tm_mday < 10)
+		utc_time += "0";
+	utc_time += std::to_string(gmt_time->tm_mday) + " ";
+	if (gmt_time->tm_hour < 10)
+		utc_time += "0";
+	utc_time += std::to_string(gmt_time->tm_hour) + ":";
+	if (gmt_time->tm_min < 10)
+		utc_time += "0";
+	utc_time += std::to_string(gmt_time->tm_min) + ":";
+	if (gmt_time->tm_sec < 10)
+		utc_time += "0";
+	utc_time += std::to_string(gmt_time->tm_sec);
 		
 	//std::cout << utc_time << std::endl;
 
@@ -166,7 +177,7 @@ const tm Tools::get_int_time(std::string utc_time) {
 	timeinfo = *localtime(&rawtime);
 
 	for (char i : utc_time) {
-		if (i != '/' && i != ':' && i != ' ')
+		if (i != '-' && i != ':' && i != ' ')
 			aux += i;
 		else {
 			switch (element) {
@@ -183,51 +194,51 @@ const tm Tools::get_int_time(std::string utc_time) {
 				switch (timeinfo.tm_mon)
 				{
 				case 1:
-					if (timeinfo.tm_mday < 31)
+					if (timeinfo.tm_mday > 31)
 						throw std::exception("Invalid day.");
 					break;
 				case 2:
-					if ((timeinfo.tm_mday < 29 && ((timeinfo.tm_year % 4 == 0) && (timeinfo.tm_year % 100 != 0))) || (timeinfo.tm_mday < 28 && !((timeinfo.tm_year % 4 == 0) && (timeinfo.tm_year % 100 != 0))))
+					if ((timeinfo.tm_mday > 29 && !((timeinfo.tm_year % 4 == 0) && (timeinfo.tm_year % 100 != 0))) || (timeinfo.tm_mday > 28 && ((timeinfo.tm_year % 4 == 0) && (timeinfo.tm_year % 100 != 0))))
 						throw std::exception("Invalid day.");
 					break;
 				case 3:
-					if (timeinfo.tm_mday < 31)
+					if (timeinfo.tm_mday > 31)
 						throw std::exception("Invalid day.");
 					break;
 				case 4:
-					if (timeinfo.tm_mday < 30)
+					if (timeinfo.tm_mday > 30)
 						throw std::exception("Invalid day.");
 					break;
 				case 5:
-					if (timeinfo.tm_mday < 31)
+					if (timeinfo.tm_mday > 31)
 						throw std::exception("Invalid day.");
 					break;
 				case 6:
-					if (timeinfo.tm_mday < 30)
+					if (timeinfo.tm_mday > 30)
 						throw std::exception("Invalid day.");
 					break;
 				case 7:
-					if (timeinfo.tm_mday < 31)
+					if (timeinfo.tm_mday > 31)
 						throw std::exception("Invalid day.");
 					break;
 				case 8:
-					if (timeinfo.tm_mday < 31)
+					if (timeinfo.tm_mday > 31)
 						throw std::exception("Invalid day.");
 					break;
 				case 9:
-					if (timeinfo.tm_mday < 30)
+					if (timeinfo.tm_mday > 30)
 						throw std::exception("Invalid day.");
 					break;
 				case 10:
-					if (timeinfo.tm_mday < 31)
+					if (timeinfo.tm_mday > 31)
 						throw std::exception("Invalid day.");
 					break;
 				case 11:
-					if (timeinfo.tm_mday < 30)
+					if (timeinfo.tm_mday > 30)
 						throw std::exception("Invalid day.");
 					break;
 				case 12:
-					if (timeinfo.tm_mday < 31)
+					if (timeinfo.tm_mday > 31)
 						throw std::exception("Invalid day.");
 					break;
 				default:
