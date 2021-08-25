@@ -52,10 +52,10 @@ int main()
     Transaction tx2("2021-07-23 18:40:30", "0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h", 2.f);
     tx2.version = MY_CRYPTO_VERSION;
     tx2.inputs = { "477ED9817BCA3D870CF4FB06BA26951CFC865B6B4641D4C85BD8A30F006BFD6D" };
-    tx2.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",10.0f),
+    tx2.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",100.0f),
          Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",698.0f),
-         Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",10.0f),
-         Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",10.0f) };
+         Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",100.0f),
+         Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",100.0f) };
 
     Transaction tx3("2021-07-23 18:41:30",  "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h", 1.f);
     tx3.version = MY_CRYPTO_VERSION;
@@ -81,15 +81,21 @@ int main()
    
    
     // signin transaction
-    tx1.signature = "E5E2B2760517B926F3DC56C836EEF445A9BEAFA4154BF69D26BE7DBD19465116D89A41DB0BECA114CEE616A71A79F17E3EDB72056F39EB3C4E7936D52676881B";
-    tx2.signature = "F1A439B205F50F34F9EFAF118FF259B8A3AD1C052C22006FDEC643E86666A401D4178BCD6E36D3D2A46A06FBB6BD6D914F1C97F0F6021BD55B7CEA72C109CC85";
-    tx3.signature = "742960EA305950A6F8F666F461E3BB3CF00240718AD13A98AFCD048E9BE36495FD4C51E82A83C5DE1BF648925517851E91431DAA66FF6F05C9C504553FA55ABF";
-    tx4.signature = "35A10C5653A8BBB70E7CF496DA88201EBC1E8C20D98754BBD60D69A565025D157916BD7F06BF579B098BC174D9FC5C7494D9781DDB927037F4EEBC439488BFF9";
+    tx1.signature = "76FA36E6703F547E67E87E1EED082DA0A596418E6727941DC55061B5467143C9E3902DD0D4814829B578C367B8A45C9D65675BB600DAF378EA66E7449422AA7C";
+    tx2.signature = "67D5BCFFD8EC4466521CD158559718EE4A2847F8292A39AB1FF7BF8A4D5E7E147D0BA32EE3C794DDBE0C9AC0483F6DAEBF018115063D940F90378E43B6DD2417";
+    tx3.signature = "D64C04A528A6D52384867BAE240CBFEBB5829BA103E4222B046CC1C9A3E2CD2813FE0321C81A3BF19D7293DCC178F9C4814F0229358E45839896B46ADB1283C7";
+    tx4.signature = "077E906CC9F06BD47B4099AB61C99E2BB256B633792846F63F0EB73391BD1BD7509D9BC94634CE93BDD2150C52B848E02E6527D1B0AD386FACA853EFA545F4F2";
 
-    //node1.wallet.sign_tx(tx4.tx_to_json());
     //tx4.signature = node1.wallet.sign_tx(tx4.tx_to_json());
-    //std::cout << tx4.signature << std::endl;
-    //std::cout << tx4.compute_hash() << std::endl;
+
+    tx1.compute_hash();
+    tx2.compute_hash();
+    tx3.compute_hash();
+    tx4.compute_hash();
+
+    
+    /*std::cout << tx4.signature << std::endl;
+    std::cout << tx4.hash << std::endl;*/
 
     std::cout << Tools::sign_verifier(tx1.origin, tx1.signature, tx1.tx_to_json()) << std::endl;
     std::cout << Tools::sign_verifier(tx2.origin, tx2.signature, tx2.tx_to_json()) << std::endl;
@@ -103,12 +109,11 @@ int main()
     std::cout << node1.validate_tx(tx3) << std::endl;
     std::cout << node1.validate_tx(tx4) << std::endl;
     
-    tx1.compute_hash();
-    tx2.compute_hash();
-    tx3.compute_hash();
-    tx4.compute_hash();
+  
+
 
     Block block("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h");
+    block.time = "2021-07-23 20:41:30";
     block.version = MY_CRYPTO_VERSION;
     block.ID = 1;
     block.father_hash = "000000000000000000000000000000000000000000000000";
@@ -131,9 +136,10 @@ int main()
 
 
     
-    std::cout << tx3 << std::endl;
+    node1.blockchain_head = node1.blockchain.get_head();
+   
 
-    std::cout << block << std::endl;
+    std::cout << node1.validate_block(block) << std::endl;
    
 
     std::cout << "...ea3h = " << node1.blockchain.get_balance("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h") << std::endl;

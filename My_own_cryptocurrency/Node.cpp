@@ -57,7 +57,7 @@ const float Node::validate_inputs(std::vector<std::string> inputs, std::string a
 	blockchain.get_inputs(inputs_full, address, time);
 
 	for (Entity i : inputs_full) {
-		std::cout << i.account << std::endl;
+		
 		if (i.value <= 0)
 			return -1.f;
 		sum += i.value;
@@ -69,6 +69,9 @@ const float Node::validate_inputs(std::vector<std::string> inputs, std::string a
 const bool Node::validate_tx(Transaction tx) {
 
 	bool valid = true;
+
+	if (tx.version != "1.0.0")
+		valid = false;
 
 	// Checking for sign
 	if (!Tools::sign_verifier(tx.origin, tx.signature, tx.tx_to_json()))
@@ -102,7 +105,28 @@ const bool Node::validate_tx(Transaction tx) {
 	return valid;
 }
 
-const void Node::validate_block(const Block block) {}
+const bool Node::validate_block(Block block) {
+	bool valid = true;
+
+	if (block.version != "1.0.0")
+		valid = false;
+
+	//if (block.ID != this->blockchain_head + 1)
+		//valid = false;
+
+	if (Tools::hash_sha256(block.block_to_json()) != block.work_hash)
+		valid = false;
+
+	for (Transaction i : block.transaction_list) {
+		if (!this->validate_tx(i) && i.hash != "477ED9817BCA3D870CF4FB06BA26951CFC865B6B4641D4C85BD8A30F006BFD6D")
+			valid = false;
+		if (1 != Tools::is_older(i.time, block.time))
+			valid = false;
+			
+	}
+
+	return valid;
+}
 
 
 

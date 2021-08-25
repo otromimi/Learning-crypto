@@ -16,6 +16,8 @@ namespace My_own_crypto {
 	class Node {
 	private:
 		
+		int min_per_block;
+
 	public:
 
 		Wallet wallet;
@@ -42,7 +44,7 @@ namespace My_own_crypto {
 		/// <returns></returns>
 		const bool validate_tx(Transaction tx);
 
-		const void validate_block(const Block block);
+		const bool validate_block(Block block);
 
 
 	};

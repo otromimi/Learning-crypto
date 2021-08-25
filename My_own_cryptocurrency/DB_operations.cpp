@@ -357,7 +357,7 @@ void DB_operations::get_inputs(std::vector<Entity>& inputs_full, std::string add
 
 int DB_operations::callback_inputs(void* inputs_full, int argc, char** argv, char** azColName) {
     std::vector<Entity>* inputs_full_ptr = (std::vector<Entity>*)inputs_full;
-    std::cout << "input: " << argv[0] << ", " << argv[1] << std::endl;
+   
     for (int i = 0; i < inputs_full_ptr->size(); i++) {
         
         if (argv[0] == (*inputs_full_ptr)[i].account) {
