@@ -7,3 +7,224 @@ Tx1 hash: F5C7D92D7017BF52DB11302DD2E9CE24DE86D6F475C17F1C7C261D3C6041F04F
 Tx2 hash: 74075039CB00DB764CD2385E8203F2BA09B5934072E526E86C87E8946596AE47
 Tx3 hash: A216B90CC87613177D8DC9D30836A82FAF39228D908434411A2E683AE836C508
 Tx4 hash: 6A7DD7C91573BFFDE7D0AB43F4D2F24504193BF2C9FD6D75830B379AA4DBED5D
+
+
+
+
+
+#include<cstdio>
+#include<cstring>
+#include <iostream>
+#include <sstream>
+
+
+
+#ifdef _WIN32
+#pragma comment(lib, "Ws2_32.lib")
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include<unistd.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<netdb.h>
+#include<arpa/inet.h>
+#endif
+
+void* get_in_addr(struct sockaddr* sa)
+{
+	if (sa->sa_family == AF_INET)
+	{
+		return &(((struct sockaddr_in*)sa)->sin_addr);
+	}
+
+	return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}
+
+#ifdef _WIN32
+
+///=================================================================================================
+/// <summary>	Determines if winsock is initialized. </summary>
+///
+/// <remarks>	mtvee, 2017-03-30. </remarks>
+///
+/// <returns>	True if it is already done. </returns>
+///=================================================================================================
+
+bool WinsockInitialized()
+{
+	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (s == INVALID_SOCKET && WSAGetLastError() == WSANOTINITIALISED) {
+		return false;
+	}
+
+	closesocket(s);
+	return true;
+}
+#endif
+
+int main(int argc, char* argv[])
+{
+	// Variables for writing a server. 
+	/*
+	1. Getting the address data structure.
+	2. Openning a new socket.
+	3. Bind to the socket.
+	4. Listen to the socket.
+	5. Accept Connection.
+	6. Receive Data.
+	7. Close Connection.
+	*/
+	int status;
+	struct addrinfo hints, * res;
+	int listner;
+
+#ifdef _WIN32
+	//----------------------
+	// Initialize Winsock.
+	WSADATA wsaData;
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (iResult != NO_ERROR) {
+		wprintf(L"WSAStartup failed with error: %ld\n", iResult);
+		return 1;
+	}
+#endif
+
+
+	// Before using hint you have to make sure that the data structure is empty 
+	memset(&hints, 0, sizeof hints);
+	// Set the attribute for hint
+	hints.ai_family = AF_INET; // IPV4
+	hints.ai_socktype = SOCK_STREAM; // TCP 
+	hints.ai_flags = AI_PASSIVE;
+
+	sockaddr_in clientService;
+	clientService.sin_family = AF_INET;
+	//clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
+	clientService.sin_port = htons(27015);
+
+	//hints = (addrinfo*)&clientService;
+
+	// Fill the res data structure and make sure that the results make sense. 
+	status = getaddrinfo("127.0.0.1", "5757", &hints, &res);
+	if (status != 0)
+	{
+		fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+	}
+
+	// Create Socket and check if error occured afterwards
+	listner = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	if (listner < 0)
+	{
+		fprintf(stderr, "socket error: %s\n", gai_strerror(status));
+	}
+
+	// Bind the socket to the address of my local machine and port number 
+	status = connect(listner, res->ai_addr, res->ai_addrlen);
+	if (status < 0)
+	{
+		fprintf(stderr, "connect: %s\n", gai_strerror(status));
+	}
+
+	std::cout << res->ai_addr << std::endl;
+
+	char* buffer;
+	char* buffer2;
+	buffer = (char*)malloc(32);
+	std::stringstream readStream;
+	int readData;
+
+	int out = 0;
+	int sendResult;
+
+	
+	// more sperimenting
+	memset(buffer, 0, 32);
+
+	int readResult = recv(listner, buffer, 32, 0);
+	buffer[32-1] = 0;
+	readStream << buffer;
+
+	readData = readStream.str().find("end;") == std::string::npos;
+
+	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+	/// speriment
+	
+
+	unsigned long new_size = std::stoul(readStream.str())+1;
+
+	buffer2 = (char*)malloc(new_size);
+	memset(buffer2, 0, new_size);
+
+	readResult = recv(listner, buffer2, new_size, 0);
+	buffer2[new_size] = 0;
+
+	buffer[new_size-1] = NULL;
+	
+
+	std::cout << readStream.str() << std::endl;
+	readStream.str("");
+
+	readStream << buffer2;
+	
+	
+	readData = readStream.str().find("end;") == std::string::npos;
+	std::cout.flush();
+	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+	sendResult = send(listner, "0", 30, 0);
+
+	readStream.str("");
+	// more sperimenting
+	memset(buffer, 0, 32);
+
+	readResult = recv(listner, buffer, 32, 0);
+	buffer[32 - 1] = 0;
+	readStream << buffer;
+
+	readData = readStream.str().find("end;") == std::string::npos;
+
+	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+	/// speriment
+
+
+	new_size = std::stoul(readStream.str()) + 1;
+
+	buffer2 = (char*)malloc(new_size);
+	memset(buffer2, 0, new_size);
+
+	readResult = recv(listner, buffer2, new_size, 0);
+	buffer2[new_size] = 0;
+
+	buffer[new_size - 1] = NULL;
+
+
+	std::cout << readStream.str() << std::endl;
+	readStream.str("");
+
+	readStream << buffer2;
+
+
+	readData = readStream.str().find("end;") == std::string::npos;
+	std::cout.flush();
+	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+	
+
+	free(buffer);
+	
+	// Close the socket before we finish 
+#ifdef _WIN32
+	//closesocket(listner);
+#else
+	close(new_conn_fd);
+#endif
+
+#ifdef _WIN32
+	WSACleanup();
+#endif
+
+	return 0;
+}
