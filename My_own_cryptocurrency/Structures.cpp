@@ -29,8 +29,10 @@ std::string Entity::to_json(bool indent, bool full) {
 
 ///////////////////////////////////// Transaction /////////////////////////////////////
 
-Transaction::Transaction(std::string time, std::string origin, float fee, std::string signature) :
-    time(time), origin(origin), fee(fee), signature(signature){
+Transaction::Transaction(): time(""), version("-.-.-"), origin(""), fee(0), hash(""), signature("") {}
+
+Transaction::Transaction(std::string time,std::string version, std::string origin, float fee, std::string signature) :
+    time(time), version(version), origin(origin), fee(fee), hash(""), signature(signature){
     /*
     std::time_t now = std::time(0);
     long peter = now;
@@ -46,8 +48,10 @@ Transaction::Transaction(std::string time, std::string origin, float fee, std::s
 }
 
 
-std::string Transaction::tx_to_json(bool indent, bool full) {
+std::string Transaction::tx_to_json(bool indent) {
+    //struct_mapping::detail::Reset::reg(struct_mapping::detail::Functions);
 
+    
 
     struct_mapping::reg(&Entity::account, "Account");
     struct_mapping::reg(&Entity::value, "Value");
@@ -58,8 +62,8 @@ std::string Transaction::tx_to_json(bool indent, bool full) {
     struct_mapping::reg(&Transaction::outputs, "Outputs");
     struct_mapping::reg(&Transaction::origin, "Origin");
     struct_mapping::reg(&Transaction::fee, "Fee");
-    /*if (full)
-        struct_mapping::reg(&Transaction::signature, "Signature");*/
+    struct_mapping::reg(&Transaction::signature, "Signature");
+
 
     std::ostringstream tx_json;
     if(indent)
@@ -71,7 +75,7 @@ std::string Transaction::tx_to_json(bool indent, bool full) {
     return tx_json.str();
 }
 
-void Transaction::json_to_tx(std::string tx_json, bool full) {
+void Transaction::json_to_tx(std::string tx_json) {
    
     struct_mapping::reg(&Entity::account, "Account");
     struct_mapping::reg(&Entity::value, "Value");
@@ -82,8 +86,7 @@ void Transaction::json_to_tx(std::string tx_json, bool full) {
     struct_mapping::reg(&Transaction::outputs, "Outputs");
     struct_mapping::reg(&Transaction::origin, "Origin");
     struct_mapping::reg(&Transaction::fee, "Fee");
-    //if (full)
-        //struct_mapping::reg(&Transaction::signature, "Signature");
+    struct_mapping::reg(&Transaction::signature, "Signature");
 
 
 
@@ -105,7 +108,7 @@ std::string Transaction::to_db_string() {
 
 
 std::string Transaction::compute_hash() {
-    this->hash = Tools::hash_sha256(tx_to_json(false, true));
+    this->hash = Tools::hash_sha256(tx_to_json());
     return this->hash;
 }
 
@@ -152,9 +155,8 @@ std::string Block::block_to_json(bool indent, bool full) {
     struct_mapping::reg(&Block::mt_root, "MT_root");
     struct_mapping::reg(&Block::ID, "ID");
     struct_mapping::reg(&Block::ID, "Nonce");
-    /*if (full) 
-        struct_mapping::reg(&Block::work_hash, "Pow");
-        struct_mapping::reg(&Block::transaction_list, "Transaction_list");*/
+    struct_mapping::reg(&Block::work_hash, "Pow");
+    struct_mapping::reg(&Block::transaction_list, "Transaction_list");
        
     std::ostringstream tx_json;
     if (indent)

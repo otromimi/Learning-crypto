@@ -5,6 +5,7 @@
 #include "DB_operations.h"
 #include "Wallet.h"
 #include "Tools.h"
+#include "Network.h"
 
 // Local dependencies
 
@@ -17,6 +18,7 @@ namespace My_own_crypto {
 	private:
 		
 		int min_per_block;
+		//std::vector<Transaction> confirmed_tx_pool;
 
 	public:
 
@@ -37,6 +39,9 @@ namespace My_own_crypto {
 
 		const float validate_inputs(std::vector<std::string> inputs, std::string address, std::string time);
 
+
+		const bool validate_sign(Transaction tx);
+
 		/// <summary>
 		/// Validates transaction integrity and legitimity.
 		/// </summary>
@@ -45,6 +50,7 @@ namespace My_own_crypto {
 		const bool validate_tx(Transaction tx);
 
 		const bool validate_block(Block block);
+
 
 
 	};

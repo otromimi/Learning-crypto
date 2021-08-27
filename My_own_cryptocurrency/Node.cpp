@@ -66,6 +66,14 @@ const float Node::validate_inputs(std::vector<std::string> inputs, std::string a
 	return sum;
 }
 
+const bool Node::validate_sign(Transaction tx) {
+	std::string signature = tx.signature;
+	tx.signature = "";
+	if (!Tools::sign_verifier(tx.origin, signature, tx.tx_to_json()))
+		return false;
+	return true;
+}
+
 const bool Node::validate_tx(Transaction tx) {
 
 	bool valid = true;
@@ -74,7 +82,7 @@ const bool Node::validate_tx(Transaction tx) {
 		valid = false;
 
 	// Checking for sign
-	if (!Tools::sign_verifier(tx.origin, tx.signature, tx.tx_to_json()))
+	if (!validate_sign(tx))
 		valid = false;
 
 	float check_inputs = validate_inputs(tx.inputs, tx.origin, tx.time);

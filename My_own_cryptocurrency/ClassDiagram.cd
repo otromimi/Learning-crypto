@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="My_own_crypto::Wallet">
+    <Position X="11.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AwABCAAAAAAAAAAABAAAEAAAACCEAAAAIAAAQIAAAAA=</HashCode>
+      <FileName>Wallet.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="My_own_crypto::Entity" Collapsed="true">
+    <Position X="5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAABAAAQAAAAAAAAAAAAAACAAAAAAQAAAAAA=</HashCode>
+      <FileName>Structures.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="My_own_crypto::Transaction" Collapsed="true">
+    <Position X="3.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>GACBASAAAABAgAACAAAAIAAAAAAAABAAAAAAAAQAAAA=</HashCode>
+      <FileName>Structures.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="My_own_crypto::Block" Collapsed="true">
+    <Position X="3.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAANECgEIAAAgABAAAAAAABAAAAAAAAACAAAAAAAEAA=</HashCode>
+      <FileName>Structures.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

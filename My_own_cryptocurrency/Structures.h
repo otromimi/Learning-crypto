@@ -42,6 +42,7 @@ namespace My_own_crypto {
     /// Transaction.
     /// </summary>
     struct Transaction {
+    public:
 
         // Fields to be hash
         std::string time; // Time stamp of the transaction
@@ -60,7 +61,7 @@ namespace My_own_crypto {
         /// <summary>
         /// Plain constructor
         /// </summary>
-        Transaction() {};
+        Transaction();
 
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace My_own_crypto {
         /// <param name="origin"></param>
         /// <param name="value"></param>
         /// <param name="fee"></param>
-        Transaction(std::string time, std::string origin, float fee = 0, std::string = "");
+        Transaction(std::string time, std::string = "-.-.-", std::string origin = "", float fee = 0, std::string = "");
 
         /// <summary>
         /// Return a JSON format string of the transaction.
@@ -78,7 +79,7 @@ namespace My_own_crypto {
         /// <param name="indent">True if you what it to be nice formated, False if you want it all in one string.</param>
         /// <param name="full">True if you want to include the signature on the JSON, False otherwise.</param>
         /// <returns>JSON formated transaction</returns>
-        std::string tx_to_json(bool = false, bool = false);
+        std::string tx_to_json(bool = false);
 
         /// <summary>
         /// Populates the transaction object with the passed JSON data.
@@ -86,7 +87,7 @@ namespace My_own_crypto {
         /// </summary>
         /// <param name="tx_json">JSON data in string format.</param>
         /// <param name="full">True the JSON includes the signature, False otherwise.</param>
-        void json_to_tx(std::string tx_json, bool full);
+        void json_to_tx(std::string tx_json);
 
         /// <summary>
         /// Returs the string used for DB operations.
