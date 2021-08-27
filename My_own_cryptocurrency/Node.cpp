@@ -6,7 +6,7 @@
 // My own dependencies
 #include "Node.h"
 
-constexpr auto DB_NAME = "my_blockchain";
+constexpr auto DB_NAME = "blockchain0";
 
 using namespace My_own_crypto;
 

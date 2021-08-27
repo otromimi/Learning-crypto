@@ -181,11 +181,11 @@ int main()
 
     
 
-    runServer(node1.blockchain, node1.blockchain_head, block.transaction_list, "carlos");
+    //runServer(node1.blockchain, node1.blockchain_head, block.transaction_list, "carlos");
     
     //runServer("hola");
 
-    //std::thread test(Network::runServer, std::string("peter"));
+    std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5757");
     //Server::mutex.lock();
     //for (int i = 0; i < 102; i++)
     //    std::cout << "&";
@@ -194,7 +194,7 @@ int main()
 
     
 
-    //test.join();
+    test.join();
 
     //if (_DEBUG) { //braaks in linux
     // Stoping execution in linux

@@ -25,7 +25,7 @@ namespace My_own_crypto {
 
 		void runServer(DB_operations& blockchain, unsigned int& my_head, std::vector<Transaction>& confirmed_tx_pool, std::string port);
 
-		int runClient(std::string address, std::string port);
+		void runClient(std::string address, std::string port, int head);
 
 
 }

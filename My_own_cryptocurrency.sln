@@ -8,11 +8,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "My_own_cryptocurrency", "My
 		{C39F4B46-6E89-4074-902E-CA57073044D2} = {C39F4B46-6E89-4074-902E-CA57073044D2}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3", "sqlite-amalgamation-3360000\windows-build\sqlite3.vcxproj", "{C6EE836C-DCD1-34AE-B666-8D2D901B963F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3-shell", "sqlite-amalgamation-3360000\windows-build\sqlite3-shell.vcxproj", "{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cryptlib", "cryptopp\cryptlib.vcxproj", "{C39F4B46-6E89-4074-902E-CA57073044D2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3", "sqlite-amalgamation-3360000\win-build\sqlite3.vcxproj", "{FC2B766E-3620-3C8C-9756-96B220DC7205}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlite3-shell", "sqlite-amalgamation-3360000\win-build\sqlite3-shell.vcxproj", "{9D35E433-FE6D-31C4-A86D-F97857D29FA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,46 +54,6 @@ Global
 		{6F191754-8510-455B-A3BF-16D861E840A4}.RelWithDebInfo|x64.Build.0 = Release|x64
 		{6F191754-8510-455B-A3BF-16D861E840A4}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
 		{6F191754-8510-455B-A3BF-16D861E840A4}.RelWithDebInfo|x86.Build.0 = Release|Win32
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.Debug|x64.ActiveCfg = Debug|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.Debug|x64.Build.0 = Debug|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.Debug|x86.ActiveCfg = Debug|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.DLL-Import Debug|x64.ActiveCfg = Debug|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.DLL-Import Debug|x64.Build.0 = Debug|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.DLL-Import Debug|x86.ActiveCfg = RelWithDebInfo|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.DLL-Import Debug|x86.Build.0 = RelWithDebInfo|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.DLL-Import Release|x64.ActiveCfg = Release|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.DLL-Import Release|x64.Build.0 = Release|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.DLL-Import Release|x86.ActiveCfg = RelWithDebInfo|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.DLL-Import Release|x86.Build.0 = RelWithDebInfo|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.MinSizeRel|x64.ActiveCfg = MinSizeRel|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.MinSizeRel|x64.Build.0 = MinSizeRel|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.MinSizeRel|x86.ActiveCfg = MinSizeRel|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.Release|x64.ActiveCfg = Release|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.Release|x64.Build.0 = Release|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.Release|x86.ActiveCfg = Release|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.RelWithDebInfo|x64.Build.0 = RelWithDebInfo|x64
-		{C6EE836C-DCD1-34AE-B666-8D2D901B963F}.RelWithDebInfo|x86.ActiveCfg = RelWithDebInfo|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.Debug|x64.ActiveCfg = Debug|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.Debug|x64.Build.0 = Debug|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.Debug|x86.ActiveCfg = Debug|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.DLL-Import Debug|x64.ActiveCfg = Debug|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.DLL-Import Debug|x64.Build.0 = Debug|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.DLL-Import Debug|x86.ActiveCfg = RelWithDebInfo|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.DLL-Import Debug|x86.Build.0 = RelWithDebInfo|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.DLL-Import Release|x64.ActiveCfg = Release|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.DLL-Import Release|x64.Build.0 = Release|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.DLL-Import Release|x86.ActiveCfg = RelWithDebInfo|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.DLL-Import Release|x86.Build.0 = RelWithDebInfo|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.MinSizeRel|x64.ActiveCfg = MinSizeRel|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.MinSizeRel|x64.Build.0 = MinSizeRel|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.MinSizeRel|x86.ActiveCfg = MinSizeRel|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.Release|x64.ActiveCfg = Release|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.Release|x64.Build.0 = Release|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.Release|x86.ActiveCfg = Release|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.RelWithDebInfo|x64.Build.0 = RelWithDebInfo|x64
-		{A0FABB2B-0856-37E4-BA9F-7820A1733E8C}.RelWithDebInfo|x86.ActiveCfg = RelWithDebInfo|x64
 		{C39F4B46-6E89-4074-902E-CA57073044D2}.Debug|x64.ActiveCfg = Debug|x64
 		{C39F4B46-6E89-4074-902E-CA57073044D2}.Debug|x64.Build.0 = Debug|x64
 		{C39F4B46-6E89-4074-902E-CA57073044D2}.Debug|x86.ActiveCfg = Debug|Win32
@@ -118,6 +78,46 @@ Global
 		{C39F4B46-6E89-4074-902E-CA57073044D2}.RelWithDebInfo|x64.Build.0 = Release|x64
 		{C39F4B46-6E89-4074-902E-CA57073044D2}.RelWithDebInfo|x86.ActiveCfg = Release|Win32
 		{C39F4B46-6E89-4074-902E-CA57073044D2}.RelWithDebInfo|x86.Build.0 = Release|Win32
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.Debug|x64.ActiveCfg = Debug|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.Debug|x64.Build.0 = Debug|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.Debug|x86.ActiveCfg = Debug|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.DLL-Import Debug|x64.ActiveCfg = Debug|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.DLL-Import Debug|x64.Build.0 = Debug|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.DLL-Import Debug|x86.ActiveCfg = RelWithDebInfo|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.DLL-Import Debug|x86.Build.0 = RelWithDebInfo|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.DLL-Import Release|x64.ActiveCfg = Release|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.DLL-Import Release|x64.Build.0 = Release|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.DLL-Import Release|x86.ActiveCfg = RelWithDebInfo|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.DLL-Import Release|x86.Build.0 = RelWithDebInfo|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.MinSizeRel|x64.ActiveCfg = MinSizeRel|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.MinSizeRel|x64.Build.0 = MinSizeRel|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.MinSizeRel|x86.ActiveCfg = MinSizeRel|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.Release|x64.ActiveCfg = Release|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.Release|x64.Build.0 = Release|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.Release|x86.ActiveCfg = Release|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.RelWithDebInfo|x64.Build.0 = RelWithDebInfo|x64
+		{FC2B766E-3620-3C8C-9756-96B220DC7205}.RelWithDebInfo|x86.ActiveCfg = RelWithDebInfo|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.Debug|x64.ActiveCfg = Debug|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.Debug|x64.Build.0 = Debug|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.Debug|x86.ActiveCfg = Debug|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.DLL-Import Debug|x64.ActiveCfg = Debug|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.DLL-Import Debug|x64.Build.0 = Debug|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.DLL-Import Debug|x86.ActiveCfg = RelWithDebInfo|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.DLL-Import Debug|x86.Build.0 = RelWithDebInfo|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.DLL-Import Release|x64.ActiveCfg = Release|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.DLL-Import Release|x64.Build.0 = Release|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.DLL-Import Release|x86.ActiveCfg = RelWithDebInfo|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.DLL-Import Release|x86.Build.0 = RelWithDebInfo|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.MinSizeRel|x64.ActiveCfg = MinSizeRel|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.MinSizeRel|x64.Build.0 = MinSizeRel|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.MinSizeRel|x86.ActiveCfg = MinSizeRel|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.Release|x64.ActiveCfg = Release|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.Release|x64.Build.0 = Release|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.Release|x86.ActiveCfg = Release|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.RelWithDebInfo|x64.ActiveCfg = RelWithDebInfo|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.RelWithDebInfo|x64.Build.0 = RelWithDebInfo|x64
+		{9D35E433-FE6D-31C4-A86D-F97857D29FA9}.RelWithDebInfo|x86.ActiveCfg = RelWithDebInfo|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

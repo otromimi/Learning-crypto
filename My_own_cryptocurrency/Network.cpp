@@ -82,8 +82,7 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 	WSADATA wsaData;
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != NO_ERROR) {
-		wprintf(L"WSAStartup failed with error: %ld\n", iResult);
-		
+		std::cerr << "WSAStartup failed with error: " << iResult << std::endl;
 	}
 #endif
 
@@ -96,138 +95,124 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 	hints.ai_flags = AI_PASSIVE;
 
 	// Fill the res data structure and make sure that the results make sense. 
-	status = getaddrinfo("127.0.0.1", "5757", &hints, &res);
+	status = getaddrinfo("127.0.0.1", port.c_str(), &hints, &res);
 	if (status != 0)
 	{
-		fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+		std::cerr << "getaddrinfo error: " << gai_strerror(status) << std::endl;
 	}
 
 	// Create Socket and check if error occured afterwards
 	listner = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (listner < 0)
 	{
-		fprintf(stderr, "socket error: %s\n", gai_strerror(status));
+		std::cerr << "socket error: " << gai_strerror(status) << std::endl;
 	}
 
 	// Bind the socket to the address of my local machine and port number 
 	status = bind(listner, res->ai_addr, res->ai_addrlen);
 	if (status < 0)
 	{
-		fprintf(stderr, "bind: %s\n", gai_strerror(status));
+		std::cerr << "bind: " << gai_strerror(status) << std::endl;
 	}
 
 	status = listen(listner, 10);
 	if (status < 0)
 	{
-		fprintf(stderr, "listen: %s\n", gai_strerror(status));
+		std::cerr << "listen: " << gai_strerror(status) << std::endl;
 	}
 
 	// Free the res linked list after we are done with it	
 	freeaddrinfo(res);
 
 
-	// We should wait now for a connection to accept
+	
 	int new_conn_fd;
 	struct sockaddr_storage client_addr;
 	socklen_t addr_size;
 	char s[INET6_ADDRSTRLEN]; // an empty string 
 
-							  // Calculate the size of the data structure	
+	// Calculate the size of the data structure	
 	addr_size = sizeof client_addr;
 
-	printf("I am now accepting connections ...\n");
+	std::cout << "I am now accepting connections ...\n";
 
 
-	char* buffer;
-	buffer = (char*)malloc(32);
+	char* buffer = (char*)malloc(32);
 	std::stringstream readStream;
 	bool readData = true;
 	int readResult;
 	Block blk;
+	Pool tx_pool;
 	
-	memset(buffer, 0, 32);
+	memset(buffer, 0, 32); // buffer to ceros.
 
-	//while (1) {
-		// Accept a new connection and return back the socket desciptor 
-		new_conn_fd = accept(listner, (struct sockaddr*)&client_addr, &addr_size);
-		if (new_conn_fd < 0)
-		{
-			fprintf(stderr, "accept: %s\n", gai_strerror(new_conn_fd));
-			//continue;
-		}
+	
+	// Accept a new connection and retrieve file descriptor for it.
+	new_conn_fd = accept(listner, (struct sockaddr*)&client_addr, &addr_size);
+	if (new_conn_fd < 0)
+	{
+		std::cerr << "accept: " << gai_strerror(new_conn_fd) << std::endl;
+		//continue;
+	}
 
-
-		inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), s, sizeof s);
-		printf("I am now connected to %s \n", s);
+	// Get connections info
+	inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), s, sizeof s);
+	std::cout << "I am now connected to " << s << std::endl;
 
 		
+	//Get updated pool
+	mutex.lock();
+	tx_pool.valid_tx = confirmed_tx_pool;
+	mutex.unlock();
 
-		Pool tx_pool;
+	std::string str_pool = tx_pool.pool_to_json(false);
+	std::string size_str_pool = std::to_string(str_pool.size());
+
+	// Send poll size and then pool
+	status = send(new_conn_fd, size_str_pool.c_str(), size_str_pool.size(), 0);
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	status = send(new_conn_fd, str_pool.c_str(), str_pool.size(), 0);
+
+	//std::cout << str_pool.size() << std::endl;
+
+	// Getting his head possitoin on the blockchain
+	readResult = recv(new_conn_fd, buffer, 32, 0);
+	buffer[32 - 1] = 0;
+	readStream << buffer;
+	unsigned long his_head = std::stoul(readStream.str());
+	std::cout << his_head << std::endl;
+
+	free(buffer);// Controling memory leaks
+
+	his_head++;
+	while (his_head < my_head+1) {
+
+		// Get block
 		mutex.lock();
-		tx_pool.valid_tx = confirmed_tx_pool;
+		blockchain.get_block(blk, his_head);
 		mutex.unlock();
+		std::cout << blk << std::endl;
+		
+		// Prepare block data for sending
+		std::string his_h_str = blk.block_to_json(false);
+		std::string size_blk = std::to_string(his_h_str.size());
+		//std::cout << his_h_str << std::endl;
 
-		std::string str_pool = tx_pool.pool_to_json(false);
-		std::string size_str_pool = std::to_string(str_pool.size());
-
-		status = send(new_conn_fd, size_str_pool.c_str(), size_str_pool.size(), 0);
+		// Send block
+		status = send(new_conn_fd, size_blk.c_str(), size_blk.size(), 0);
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		status = send(new_conn_fd, str_pool.c_str(), str_pool.size(), 0);
-
-		std::cout << str_pool.size() << std::endl;
-
-		readResult = recv(new_conn_fd, buffer, 32, 0);
-		buffer[32 - 1] = 0;
-		readStream << buffer;
-		unsigned long his_head = std::stoul(readStream.str());
-		std::cout << his_head << std::endl;
-
+		status = send(new_conn_fd, his_h_str.c_str(), his_h_str.size(), 0);
 		his_head++;
-		while (his_head < my_head+1) {
-			mutex.lock();
-			blockchain.get_block(blk, his_head);
-			mutex.unlock();
-			std::cout << blk << std::endl;
-			
-			std::string his_h_str = blk.block_to_json(false);
-			std::string size_blk = std::to_string(his_h_str.size());
-			std::cout << his_h_str << std::endl;
-
-			status = send(new_conn_fd, size_blk.c_str(), size_blk.size(), 0);
-			std::this_thread::sleep_for(std::chrono::milliseconds(500));
-			status = send(new_conn_fd, his_h_str.c_str(), his_h_str.size(), 0);
-			his_head++;
-		}
-
-		/*do {
-			readResult = recv(new_conn_fd, buffer, 30, 0);
-			readStream << buffer;
+	}
 
 
-			readData = readStream.str().find("end;") == std::string::npos;
-
-			std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
-		} while (readResult);*/
-
-
-
-		if (status == -1)
-		{
-#ifdef _WIN32
-			closesocket(new_conn_fd);
-			WSACleanup();
-#else
-			close(new_conn_fd);
-#endif
-			_exit(4);
-		}
-
-	//}
 	// Close the socket before we finish 
 #ifdef _WIN32
 	closesocket(new_conn_fd);
+	closesocket(listner);
 #else
 	close(new_conn_fd);
+	close(listner);
 #endif
 
 #ifdef _WIN32
@@ -265,7 +250,7 @@ void Pool::json_to_pool(std::string data) {
 }
 
 
-void runClient(std::string address, std::string port)
+void My_own_crypto::runClient(std::string address, std::string port, int head)
 {
 	// Variables for writing a client. 
 	/*
@@ -277,7 +262,7 @@ void runClient(std::string address, std::string port)
 	*/
 	int status;
 	struct addrinfo hints, * res;
-	int listner;
+	int client_request;
 
 #ifdef _WIN32
 	//----------------------
@@ -286,7 +271,7 @@ void runClient(std::string address, std::string port)
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != NO_ERROR) {
 		wprintf(L"WSAStartup failed with error: %ld\n", iResult);
-		
+
 	}
 #endif
 
@@ -298,29 +283,29 @@ void runClient(std::string address, std::string port)
 	hints.ai_socktype = SOCK_STREAM; // TCP 
 	hints.ai_flags = AI_PASSIVE;
 
-	sockaddr_in clientService;
-	clientService.sin_family = AF_INET;
+	//sockaddr_in clientService;
+	//clientService.sin_family = AF_INET;
 	//clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
-	clientService.sin_port = htons(27015);
+	//clientService.sin_port = htons(27015);
 
 	//hints = (addrinfo*)&clientService;
 
 	// Fill the res data structure and make sure that the results make sense. 
-	status = getaddrinfo("127.0.0.1", "5757", &hints, &res);
+	status = getaddrinfo(address.c_str(), port.c_str(), &hints, &res);
 	if (status != 0)
 	{
 		fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
 	}
 
 	// Create Socket and check if error occured afterwards
-	listner = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-	if (listner < 0)
+	client_request = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	if (client_request < 0)
 	{
 		fprintf(stderr, "socket error: %s\n", gai_strerror(status));
 	}
 
 	// Bind the socket to the address of my local machine and port number 
-	status = connect(listner, res->ai_addr, res->ai_addrlen);
+	status = connect(client_request, res->ai_addr, res->ai_addrlen);
 	if (status < 0)
 	{
 		fprintf(stderr, "connect: %s\n", gai_strerror(status));
@@ -328,39 +313,101 @@ void runClient(std::string address, std::string port)
 
 	std::cout << res->ai_addr << std::endl;
 
-	char* buffer;
-	buffer = (char*)malloc(8);
+	char* buffer = (char*)malloc(32 + 1);
 	std::stringstream readStream;
 	int readData;
 
-	memset(buffer, 0, 8);
+	int out = 0;
+	int sendResult;
 
-	int readResult = recv(listner, buffer, 8, 0);
-	buffer[8] = NULL;
+
+	// more sperimenting
+	memset(buffer, 0, 32);
+
+	int readResult = recv(client_request, buffer, 32, 0);
+	buffer[32] = NULL;
 	readStream << buffer;
-
 
 	readData = readStream.str().find("end;") == std::string::npos;
 
 	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
+	/// speriment
+
+	unsigned long new_size = 30;
+	try {
+		new_size = std::stoul(readStream.str());
+	}
+	catch (std::exception e) {
+
+	}
+
+	free(buffer);
+	buffer = (char*)malloc(new_size + 1);
+	memset(buffer, 0, new_size);
+
+	readResult = recv(client_request, buffer, new_size, 0);
+	buffer[new_size] = NULL;
 
 
-	readResult = recv(listner, buffer, 8, 0);
-
-	//buffer = (char*)peter;
-
-	int sendResult = send(listner, "caracolitas de colores", 30, 0);
 
 
+	std::cout << readStream.str() << std::endl;
+	readStream.str("");
 
-	delete buffer;
+	readStream << buffer;
+
+
+	readData = readStream.str().find("end;") == std::string::npos;
+	std::cout.flush();
+	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+	sendResult = send(client_request, std::to_string(head).c_str(), 30, 0);
+
+	readStream.str("");
+	// more sperimenting
+	memset(buffer, 0, 32);
+
+	readResult = recv(client_request, buffer, 32, 0);
+	buffer[32] = 0;
+	readStream << buffer;
+
+	readData = readStream.str().find("end;") == std::string::npos;
+
+	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+	/// speriment
+
+
+	new_size = std::stoul(readStream.str());
+
+	free(buffer);
+	buffer = (char*)malloc(new_size + 1);
+	memset(buffer, 0, new_size);
+
+	readResult = recv(client_request, buffer, new_size, 0);
+	buffer[new_size] = NULL;
+
+
+
+
+	std::cout << readStream.str() << std::endl;
+	readStream.str("");
+
+	readStream << buffer;
+
+
+	readData = readStream.str().find("end;") == std::string::npos;
+	std::cout.flush();
+	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+	free(buffer);
 
 	// Close the socket before we finish 
 #ifdef _WIN32
-	closesocket(listner);
+	closesocket(client_request);
 #else
-	close(new_conn_fd);
+	close(client_request);
 #endif
 
 #ifdef _WIN32

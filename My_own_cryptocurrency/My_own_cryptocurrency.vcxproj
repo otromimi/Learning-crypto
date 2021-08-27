@@ -193,8 +193,8 @@
     <ProjectReference Include="..\cryptopp\cryptlib.vcxproj">
       <Project>{c39f4b46-6e89-4074-902e-ca57073044d2}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\sqlite-amalgamation-3360000\windows-build\sqlite3.vcxproj">
-      <Project>{8ae79a36-d2f4-3840-8954-0da81e780a6d}</Project>
+    <ProjectReference Include="..\sqlite-amalgamation-3360000\win-build\sqlite3.vcxproj">
+      <Project>{fc2b766e-3620-3c8c-9756-96b220dc7205}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
