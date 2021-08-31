@@ -177,7 +177,8 @@ int main()
     /*std::vector<std::string> names;
     Transaction jj = tx1;*/
 
-    extern std::mutex mutex;
+    extern std::mutex server_mutex;
+    extern std::mutex client_mutex;
 
     
 
@@ -191,7 +192,8 @@ int main()
     //    std::cout << "&";
     //Server::mutex.unlock();
 
-
+    std::cin.get();
+    node1.~Node();
     
 
     test.join();

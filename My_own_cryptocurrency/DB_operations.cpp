@@ -223,6 +223,8 @@ void DB_operations::get_block(Block& blk, int block_id) {
     //Block blk;
     int num_tx = 0;
 
+    blk.transaction_list.clear();
+
     int rc = sqlite3_exec(db, (const char*)query.c_str(), parse_block, &blk, &zErrMsg);
     if (rc != SQLITE_OK) {
         std::cerr << "SQL error: " << zErrMsg << std::endl;

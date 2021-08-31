@@ -27,7 +27,8 @@
 
 using namespace My_own_crypto;
 
-std::mutex mutex;
+std::mutex server_mutex;
+std::mutex client_mutex;
 
 
 void* get_in_addr(struct sockaddr* sa)
@@ -137,81 +138,93 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 	std::cout << "I am now accepting connections ...\n";
 
 
-	char* buffer = (char*)malloc(32);
+	char* buffer; 
 	std::stringstream readStream;
 	bool readData = true;
 	int readResult;
 	Block blk;
 	Pool tx_pool;
+
+
+	std::string his_h_str;
+	std::string size_blk;
+
+	std::string str_pool;
+	std::string size_str_pool;
 	
-	memset(buffer, 0, 32); // buffer to ceros.
+	while (true) {
 
-	
-	// Accept a new connection and retrieve file descriptor for it.
-	new_conn_fd = accept(listner, (struct sockaddr*)&client_addr, &addr_size);
-	if (new_conn_fd < 0)
-	{
-		std::cerr << "accept: " << gai_strerror(new_conn_fd) << std::endl;
-		//continue;
-	}
+		buffer = (char*)malloc(32);
+		memset(buffer, 0, 32); // buffer to ceros.
 
-	// Get connections info
-	inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), s, sizeof s);
-	std::cout << "I am now connected to " << s << std::endl;
 
-		
-	//Get updated pool
-	mutex.lock();
-	tx_pool.valid_tx = confirmed_tx_pool;
-	mutex.unlock();
+		// Accept a new connection and retrieve file descriptor for it.
+		new_conn_fd = accept(listner, (struct sockaddr*)&client_addr, &addr_size);
+		if (new_conn_fd < 0)
+		{
+			std::cerr << "accept: " << gai_strerror(new_conn_fd) << std::endl;
+			//continue;
+		}
 
-	std::string str_pool = tx_pool.pool_to_json(false);
-	std::string size_str_pool = std::to_string(str_pool.size());
+		// Get connections info
+		inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), s, sizeof s);
+		std::cout << "I am now connected to " << s << std::endl;
 
-	// Send poll size and then pool
-	status = send(new_conn_fd, size_str_pool.c_str(), size_str_pool.size(), 0);
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	status = send(new_conn_fd, str_pool.c_str(), str_pool.size(), 0);
 
-	//std::cout << str_pool.size() << std::endl;
+		//Get updated pool
+		server_mutex.lock();
+		tx_pool.valid_tx = confirmed_tx_pool;
+		server_mutex.unlock();
 
-	// Getting his head possitoin on the blockchain
-	readResult = recv(new_conn_fd, buffer, 32, 0);
-	buffer[32 - 1] = 0;
-	readStream << buffer;
-	unsigned long his_head = std::stoul(readStream.str());
-	std::cout << his_head << std::endl;
+		str_pool = tx_pool.pool_to_json(false);
+		size_str_pool = std::to_string(str_pool.size());
 
-	free(buffer);// Controling memory leaks
-
-	his_head++;
-	while (his_head < my_head+1) {
-
-		// Get block
-		mutex.lock();
-		blockchain.get_block(blk, his_head);
-		mutex.unlock();
-		std::cout << blk << std::endl;
-		
-		// Prepare block data for sending
-		std::string his_h_str = blk.block_to_json(false);
-		std::string size_blk = std::to_string(his_h_str.size());
-		//std::cout << his_h_str << std::endl;
-
-		// Send block
-		status = send(new_conn_fd, size_blk.c_str(), size_blk.size(), 0);
+		// Send poll size and then pool
+		status = send(new_conn_fd, size_str_pool.c_str(), size_str_pool.size(), 0);
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		status = send(new_conn_fd, his_h_str.c_str(), his_h_str.size(), 0);
+		status = send(new_conn_fd, str_pool.c_str(), str_pool.size(), 0);
+
+
+		// Getting his head possitoin on the blockchain
+		readResult = recv(new_conn_fd, buffer, 32, 0);
+		buffer[32 - 1] = 0;
+		readStream << buffer;
+		unsigned long his_head = std::stoul(readStream.str());
+
+		free(buffer);// Controling memory leaks
+
 		his_head++;
+		while (his_head < my_head + 1) {
+
+
+			// Get block
+			server_mutex.lock();
+			blockchain.get_block(blk, his_head);
+			server_mutex.unlock();
+			std::cout << blk << std::endl;
+
+			// Prepare block data for sending
+			his_h_str = blk.block_to_json(false);
+			size_blk = std::to_string(his_h_str.size());
+			
+
+			// Send block
+			status = send(new_conn_fd, size_blk.c_str(), size_blk.size(), 0);
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+			status = send(new_conn_fd, his_h_str.c_str(), his_h_str.size(), 0);
+			his_head++;
+		}
+		closesocket(new_conn_fd);
+
 	}
 
 
 	// Close the socket before we finish 
 #ifdef _WIN32
-	closesocket(new_conn_fd);
+	
 	closesocket(listner);
 #else
-	close(new_conn_fd);
+	
 	close(listner);
 #endif
 

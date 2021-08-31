@@ -14,6 +14,10 @@ Node::Node(const char* wallet_name): wallet(Wallet(wallet_name)), blockchain(DB_
 	this->blockchain_head = blockchain.get_head();
 }
 
+Node::~Node() {
+	this->blockchain_head = -5;
+}
+
 const Transaction Node::create_tx() {
 
 	//std::cout << version << std::endl;

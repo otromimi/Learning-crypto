@@ -27,7 +27,7 @@ namespace My_own_crypto {
 		unsigned int blockchain_head;
 
 		Node(const char* wallet_name);
-
+		~Node();
 
 		/// <summary>
 		/// Creates transaction in interactive mode.

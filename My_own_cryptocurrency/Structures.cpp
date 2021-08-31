@@ -158,14 +158,14 @@ std::string Block::block_to_json(bool indent, bool full) {
     struct_mapping::reg(&Block::work_hash, "Pow");
     struct_mapping::reg(&Block::transaction_list, "Transaction_list");
        
-    std::ostringstream tx_json;
+    std::ostringstream block_json;
     if (indent)
-        struct_mapping::map_struct_to_json(*this, tx_json, "  ");
+        struct_mapping::map_struct_to_json(*this, block_json, "  ");
     else
-        struct_mapping::map_struct_to_json(*this, tx_json);
+        struct_mapping::map_struct_to_json(*this, block_json);
 
 
-    return tx_json.str();
+    return block_json.str();
 }
 
 float Block::compute_block_reward() {
