@@ -31,6 +31,8 @@ using namespace My_own_crypto;
 
 #define MY_CRYPTO_VERSION "1.0.0"
 
+// Below fuctions declarations
+int menu();
 
 /// first argument: server port
 /// second argument: client connection port
@@ -176,6 +178,8 @@ int main(int argc, char* argv[])
     extern std::mutex client_mutex;
     extern std::atomic<bool> server_running;
 
+    menu();
+
     
 
     //runServer(node1.blockchain, node1.blockchain_head, block.transaction_list, "carlos");
@@ -218,6 +222,44 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+
+int menu() {
+    std::string str_selection;
+    int selection = 0;
+
+    do {
+
+        std::cout << "\x1B[2J\x1B[H";// clear screen
+
+        std::cout << "\n=============My_own_cryptocurrency=============\n" <<
+            "\n\tSelect one of the options: \n" <<
+            "\t 1.- Create transaction\n" <<
+            "\t 2.- Mine block\n" <<
+            "\t 3.- Sync node\n" <<
+            "\t 4.- Print block\n" <<
+            "\t 5.- Print transaction\n" <<
+            "\t 6.- Wallet info\n" <<
+            "\t 7.- Write and save\n" <<
+            "\n\t >>> ";
+
+        std::cin >> str_selection;
+        try {
+            selection = std::stoi(str_selection);
+        }
+        catch (std::exception e) {
+            selection = 0;
+            std::cin.clear();
+        }
+    } while (selection == 0);
+
+    //std::cout << str_selection << std::endl;
+
+    std::cout << "\x1B[2J\x1B[H";// clear screen
+
+    return selection;
+}
+
+
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
