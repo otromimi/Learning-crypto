@@ -77,12 +77,6 @@ int main()
         Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",500.0f),
         Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",100.0f),
         Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",100.0f) };
-
-
-   
-
-    
-   
    
     // signin transaction
     tx1.signature = "37EFD26CA810CB33412DC04EDE9A2DE58EA8D1768371982018806C2DC4B406B3CF32D2610C791C084464F415B378F8DE9AF12C14915B7C5E6CA1C08284BD6414";
@@ -179,6 +173,7 @@ int main()
 
     extern std::mutex server_mutex;
     extern std::mutex client_mutex;
+    extern std::atomic<bool> server_running;
 
     
 
@@ -193,7 +188,9 @@ int main()
     //Server::mutex.unlock();
 
     std::cin.get();
-    node1.~Node();
+
+    server_running = false;
+    //node1.~Node();
     
 
     test.join();

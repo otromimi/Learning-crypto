@@ -30,6 +30,9 @@ using namespace My_own_crypto;
 std::mutex server_mutex;
 std::mutex client_mutex;
 
+//bool server_running = true;
+std::atomic<bool> server_running = true;
+
 
 void* get_in_addr(struct sockaddr* sa)
 {
@@ -152,7 +155,7 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 	std::string str_pool;
 	std::string size_str_pool;
 	
-	while (true) {
+	while (server_running) {
 
 		buffer = (char*)malloc(32);
 		memset(buffer, 0, 32); // buffer to ceros.
@@ -283,8 +286,7 @@ void My_own_crypto::runClient(std::string address, std::string port, int head)
 	WSADATA wsaData;
 	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (iResult != NO_ERROR) {
-		wprintf(L"WSAStartup failed with error: %ld\n", iResult);
-
+		std::cerr << "WSAStartup failed with error: " << iResult << std::endl;
 	}
 #endif
 
@@ -307,21 +309,21 @@ void My_own_crypto::runClient(std::string address, std::string port, int head)
 	status = getaddrinfo(address.c_str(), port.c_str(), &hints, &res);
 	if (status != 0)
 	{
-		fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+		std::cerr << "getaddrinfo error : " << gai_strerror(status) << std::endl;
 	}
 
 	// Create Socket and check if error occured afterwards
 	client_request = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (client_request < 0)
 	{
-		fprintf(stderr, "socket error: %s\n", gai_strerror(status));
+		std::cerr << "socket error: " << gai_strerror(status) << std::endl;
 	}
 
 	// Bind the socket to the address of my local machine and port number 
 	status = connect(client_request, res->ai_addr, res->ai_addrlen);
 	if (status < 0)
 	{
-		fprintf(stderr, "connect: %s\n", gai_strerror(status));
+		std::cerr << "connect: " << gai_strerror(status) << std::endl;
 	}
 
 	std::cout << res->ai_addr << std::endl;

@@ -10,6 +10,8 @@
 
 namespace My_own_crypto {
 
+	
+
 	struct Pool {
 		std::vector<Transaction> valid_tx;
 		unsigned int my_head;
