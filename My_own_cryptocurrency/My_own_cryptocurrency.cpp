@@ -192,7 +192,10 @@ int main(int argc, char* argv[])
         std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5758");
     }*/
 
-    std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5758");
+    //std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5758");
+    //test.detach();
+    node1.run_server("5758");
+
 
     node1.check_node("5757");
 
@@ -204,13 +207,14 @@ int main(int argc, char* argv[])
     //    std::cout << "&";
     //Server::mutex.unlock();
 
-    std::cin.get();
+    
 
-    server_running = false;
+    //server_running = false;
     //node1.~Node();
     
 
-    test.join();
+    //test.join();
+  
 
     //if (_DEBUG) { //braaks in linux
     // Stoping execution in linux

@@ -26,13 +26,25 @@ namespace My_own_crypto {
 		DB_operations blockchain;
 		unsigned int blockchain_head;
 
+		std::vector<Transaction> confirmed_tansactions;
+
 		std::vector<Transaction> received_transactions;
 		std::vector<Block> received_blocks;
 
 		Node(const char* wallet_name);
 		~Node();
 
-		//runClient(std::string address, std::string port, int head);
+		/// <summary>
+		/// Runs the server in a detached thread.
+		/// </summary>
+		/// <param name="port">Port were the server is gonna be run.</param>
+		void run_server(std::string port);
+
+		
+		/// <summary>
+		/// Retrieves updated informaiton from its pear.
+		/// </summary>
+		/// /// <param name="port">Port were the pear server is running.</param>
 		void check_node(std::string port);
 
 		/// <summary>

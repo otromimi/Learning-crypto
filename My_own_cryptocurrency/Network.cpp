@@ -196,9 +196,9 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 
 		free(buffer);// Controling memory leaks
 
-		his_head++;
-		while (his_head < my_head + 1) {
-
+		
+		while (his_head < my_head) {
+			his_head++;
 
 			// Get block
 			server_mutex.lock();
@@ -215,7 +215,7 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 			status = send(new_conn_fd, size_blk.c_str(), size_blk.size(), 0);
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 			status = send(new_conn_fd, his_h_str.c_str(), his_h_str.size(), 0);
-			his_head++;
+			
 		}
 		closesocket(new_conn_fd);
 

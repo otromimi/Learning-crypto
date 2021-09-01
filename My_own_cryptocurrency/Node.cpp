@@ -18,6 +18,10 @@ Node::~Node() {
 	this->blockchain_head = -5;
 }
 
+void Node::run_server(std::string port) {
+	std::thread test(&runServer, std::ref(this->blockchain), std::ref(this->blockchain_head), std::ref(this->confirmed_tansactions), port.c_str());
+	test.detach();
+}
 
 void Node::check_node(std::string port) {
 	runClient("127.0.0.1", port, 0, this->received_transactions, this->received_blocks);
