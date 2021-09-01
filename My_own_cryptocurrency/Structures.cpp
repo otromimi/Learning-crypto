@@ -151,10 +151,10 @@ std::string Block::block_to_json(bool indent, bool full) {
     struct_mapping::reg(&Block::father_hash, "Father_hash");
     struct_mapping::reg(&Block::time, "Time");
     struct_mapping::reg(&Block::miner, "Miner");
-    struct_mapping::reg(&Block::reward, "Time");
+    struct_mapping::reg(&Block::reward, "Reward");
     struct_mapping::reg(&Block::mt_root, "MT_root");
     struct_mapping::reg(&Block::ID, "ID");
-    struct_mapping::reg(&Block::ID, "Nonce");
+    struct_mapping::reg(&Block::nonce, "Nonce");
     struct_mapping::reg(&Block::work_hash, "Pow");
     struct_mapping::reg(&Block::transaction_list, "Transaction_list");
        
@@ -186,10 +186,10 @@ void Block::json_to_block(std::string blk_json) {
     struct_mapping::reg(&Block::father_hash, "Father_hash");
     struct_mapping::reg(&Block::time, "Time");
     struct_mapping::reg(&Block::miner, "Miner");
-    struct_mapping::reg(&Block::reward, "Time");
+    struct_mapping::reg(&Block::reward, "Reward");
     struct_mapping::reg(&Block::mt_root, "MT_root");
     struct_mapping::reg(&Block::ID, "ID");
-    struct_mapping::reg(&Block::ID, "Nonce");
+    struct_mapping::reg(&Block::nonce, "Nonce");
     struct_mapping::reg(&Block::work_hash, "Pow");
     struct_mapping::reg(&Block::transaction_list, "Transaction_list");
 
@@ -223,6 +223,9 @@ std::ostream& operator << (std::ostream& outstream,Entity& data) {
 /// Overloading << operator
 std::ostream& operator << (std::ostream& outstream, Transaction& data) {
     int vpos = 12;
+    if (data.hash == "") {
+        data.compute_hash();
+    }
 
     outstream << " -----------Transaction-----------\n" <<
         " Version: " << data.version << "\n" <<
