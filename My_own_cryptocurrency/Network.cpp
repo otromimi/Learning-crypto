@@ -138,7 +138,7 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 	// Calculate the size of the data structure	
 	addr_size = sizeof client_addr;
 
-	std::cout << "I am now accepting connections ...\n";
+	//std::cout << "I am now accepting connections ...\n";
 
 
 	char* buffer; 
@@ -166,12 +166,12 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 		if (new_conn_fd < 0)
 		{
 			std::cerr << "accept: " << gai_strerror(new_conn_fd) << std::endl;
-			//continue;
+			continue;
 		}
 
 		// Get connections info
 		inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr*)&client_addr), s, sizeof s);
-		std::cout << "I am now connected to " << s << std::endl;
+		//std::cout << "I am now connected to " << s << std::endl;
 
 
 		//Get updated pool
@@ -204,7 +204,7 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 			server_mutex.lock();
 			blockchain.get_block(blk, his_head);
 			server_mutex.unlock();
-			std::cout << blk << std::endl;
+			//std::cout << blk << std::endl;
 
 			// Prepare block data for sending
 			his_h_str = blk.block_to_json(false);
@@ -266,7 +266,7 @@ void Pool::json_to_pool(std::string data) {
 }
 
 
-void My_own_crypto::runClient(std::string address, std::string port, int head)
+void My_own_crypto::runClient(std::string address, std::string port, unsigned int head)
 {
 	// Variables for writing a client. 
 	/*
@@ -393,8 +393,10 @@ void My_own_crypto::runClient(std::string address, std::string port, int head)
 
 	/// speriment
 
-
-	new_size = std::stoul(readStream.str());
+	try {
+		new_size = std::stoul(readStream.str());
+	}
+	catch (std::exception e) {}
 
 	free(buffer);
 	buffer = (char*)malloc(new_size + 1);
@@ -410,6 +412,7 @@ void My_own_crypto::runClient(std::string address, std::string port, int head)
 	readStream.str("");
 
 	readStream << buffer;
+	readStream << std::endl;
 
 
 	readData = readStream.str().find("end;") == std::string::npos;

@@ -26,8 +26,14 @@ namespace My_own_crypto {
 		DB_operations blockchain;
 		unsigned int blockchain_head;
 
+		std::vector<Transaction> received_transactions;
+		std::vector<Block> received_blocks;
+
 		Node(const char* wallet_name);
 		~Node();
+
+		//runClient(std::string address, std::string port, int head);
+		void check_node(std::string port);
 
 		/// <summary>
 		/// Creates transaction in interactive mode.

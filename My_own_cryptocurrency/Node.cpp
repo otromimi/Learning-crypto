@@ -18,6 +18,12 @@ Node::~Node() {
 	this->blockchain_head = -5;
 }
 
+
+void Node::check_node(std::string port) {
+	runClient("127.0.0.1", port, this->blockchain_head);
+
+}
+
 const Transaction Node::create_tx() {
 
 	//std::cout << version << std::endl;

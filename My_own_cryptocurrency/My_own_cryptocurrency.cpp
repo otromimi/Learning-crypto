@@ -32,8 +32,9 @@ using namespace My_own_crypto;
 #define MY_CRYPTO_VERSION "1.0.0"
 
 
-
-int main()
+/// first argument: server port
+/// second argument: client connection port
+int main(int argc, char* argv[])
 {
    
     std::cout << "\n=============Open block_chain database=============\n";
@@ -180,8 +181,21 @@ int main()
     //runServer(node1.blockchain, node1.blockchain_head, block.transaction_list, "carlos");
     
     //runServer("hola");
+    /*if (argc > 0) {
+        std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), argv[0]);
+    }
+    else {
+        std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5758");
+    }*/
 
-    std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5757");
+    std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5758");
+
+    node1.check_node("5757");
+
+    node1.check_node("5757");
+
+    std::cout << "printing some more " << std::endl;
+
     //Server::mutex.lock();
     //for (int i = 0; i < 102; i++)
     //    std::cout << "&";
