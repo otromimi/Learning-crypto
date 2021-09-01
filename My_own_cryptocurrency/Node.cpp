@@ -24,7 +24,7 @@ void Node::run_server(std::string port) {
 }
 
 void Node::check_node(std::string port) {
-	runClient("127.0.0.1", port, 0, this->received_transactions, this->received_blocks);
+	runClient("127.0.0.1", port, this->blockchain_head, this->received_transactions, this->received_blocks);
 	for (Transaction i : this->received_transactions) {
 		std::cout << i << std::endl;
 	}

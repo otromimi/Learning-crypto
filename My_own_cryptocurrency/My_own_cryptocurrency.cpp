@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
     extern std::mutex client_mutex;
     extern std::atomic<bool> server_running;
 
-    menu();
+    
 
     
 
@@ -192,12 +192,19 @@ int main(int argc, char* argv[])
         std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5758");
     }*/
 
-    //std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5758");
-    //test.detach();
-    node1.run_server("5758");
+    //node1.blockchain_head = 0;
 
+    std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(node1.confirmed_tansactions), "5762");
+    test.detach();
 
-    node1.check_node("5757");
+    //server_running = true;
+    //node1.run_server("5762");
+    node1.confirmed_tansactions.push_back(tx1);
+    node1.confirmed_tansactions.push_back(tx2);
+
+    menu();
+    
+    node1.check_node("5773");
 
 
     std::cout << "printing some more " << std::endl;

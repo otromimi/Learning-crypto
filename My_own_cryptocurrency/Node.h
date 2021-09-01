@@ -44,7 +44,7 @@ namespace My_own_crypto {
 		/// <summary>
 		/// Retrieves updated informaiton from its pear.
 		/// </summary>
-		/// /// <param name="port">Port were the pear server is running.</param>
+		/// <param name="port">Port were the pear server is running.</param>
 		void check_node(std::string port);
 
 		/// <summary>

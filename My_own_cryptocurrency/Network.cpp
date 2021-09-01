@@ -337,7 +337,7 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 		std::cerr << "socket error: " << gai_strerror(status) << std::endl;
 	}
 
-	// Bind the socket to the address of my local machine and port number 
+	// Connect the socket to the address of my local machine and port number 
 	status = connect(client_request, res->ai_addr, res->ai_addrlen);
 	if (status < 0)
 	{
@@ -363,7 +363,7 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 
 	readData = readStream.str().find("end;") == std::string::npos;
 
-	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+	std::cout << "Done tx_valids size (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
 	/// speriment
 
@@ -372,38 +372,42 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 		new_size = std::stoul(readStream.str());
 	}
 	catch (std::exception e) {
-
+		new_size = 0;
 	}
 
-	free(buffer);
+
+	free(buffer);		
 	buffer = (char*)malloc(new_size + 1);
 	memset(buffer, 0, new_size);
 
 	readResult = recv(client_request, buffer, new_size, 0);
 	buffer[new_size] = NULL;
 
+	if (new_size > 2) {
 
 
+		std::cout << readStream.str() << std::endl;
+		readStream.str("");
 
-	std::cout << readStream.str() << std::endl;
-	readStream.str("");
-
-	readStream << buffer;
+		readStream << buffer;
 
 
-	readData = readStream.str().find("end;") == std::string::npos;
-	std::cout.flush();
-	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+		readData = readStream.str().find("end;") == std::string::npos;
+		std::cout.flush();
+		std::cout << "Done tx_valids (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
-	Pool recieved_pool;
-	recieved_pool.json_to_pool("{\"tx_pool\":"+readStream.str()+"}");
-	client_mutex.lock();
-	recieved_transacitons = recieved_pool.valid_tx;
-	client_mutex.unlock();
+	
+		Pool recieved_pool;
+		recieved_pool.json_to_pool("{\"tx_pool\":" + readStream.str() + "}");
+		client_mutex.lock();
+		recieved_transacitons = recieved_pool.valid_tx;
+		client_mutex.unlock();
+	}
 	
 	sendResult = send(client_request, std::to_string(head).c_str(), 30, 0);
 
 	do{
+		buffer = (char*)malloc(32 + 1);
 		readStream.str("");
 		memset(buffer, 0, 32);
 
@@ -415,7 +419,7 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 
 			readData = readStream.str().find("end;") == std::string::npos;
 
-			std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+			std::cout << "Done block size(length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
 			// Setting recieving structures for block
 			try {
@@ -425,38 +429,42 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 				new_size = 0;
 			}
 
-			free(buffer);
-			buffer = (char*)malloc(new_size + 1);
-			memset(buffer, 0, new_size);
+			if (new_size > 2) {
 
-			readResult = recv(client_request, buffer, new_size, 0);
-			buffer[new_size] = NULL;
+				free(buffer);
+				buffer = (char*)malloc(new_size + 1);
+				memset(buffer, 0, new_size);
 
-
-
-
-			std::cout << readStream.str() << std::endl;
-			readStream.str("");
-
-			readStream << buffer;
-			readStream << std::endl;
+				readResult = recv(client_request, buffer, new_size, 0);
+				buffer[new_size] = NULL;
 
 
-			readData = readStream.str().find("end;") == std::string::npos;
-			std::cout.flush();
-			std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
-			if (readStream.str().length() > 1) {
+
+				std::cout << readStream.str() << std::endl;
+				readStream.str("");
+
+				readStream << buffer;
+				readStream << std::endl;
+
+
+				readData = readStream.str().find("end;") == std::string::npos;
+				std::cout.flush();
+				std::cout << "Done block (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+				
 				client_mutex.lock();
 				Block new_blk;
 				new_blk.json_to_block(readStream.str());
 				recieved_blocks.push_back(new_blk);
 				client_mutex.unlock();
+				
 			}
+			free(buffer);
 		}
 
-		free(buffer);
-	} while (status);
+		
+	} while (readResult > 0);
 
 	// Close the socket before we finish 
 #ifdef _WIN32
