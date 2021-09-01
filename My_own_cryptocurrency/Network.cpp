@@ -240,7 +240,16 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 
 std::string Pool::pool_to_json(bool indent) {
 
-	
+	struct_mapping::reg(&Entity::account, "Account");
+	struct_mapping::reg(&Entity::value, "Value");
+
+	struct_mapping::reg(&Transaction::version, "Version");
+	struct_mapping::reg(&Transaction::time, "Time");
+	struct_mapping::reg(&Transaction::inputs, "Inputs");
+	struct_mapping::reg(&Transaction::outputs, "Outputs");
+	struct_mapping::reg(&Transaction::origin, "Origin");
+	struct_mapping::reg(&Transaction::fee, "Fee");
+	struct_mapping::reg(&Transaction::signature, "Signature");
 
 	struct_mapping::reg(&Pool::valid_tx, "tx_pool");
 
@@ -256,7 +265,16 @@ std::string Pool::pool_to_json(bool indent) {
 
 void Pool::json_to_pool(std::string data) {
 
+	struct_mapping::reg(&Entity::account, "Account");
+	struct_mapping::reg(&Entity::value, "Value");
 
+	struct_mapping::reg(&Transaction::version, "Version");
+	struct_mapping::reg(&Transaction::time, "Time");
+	struct_mapping::reg(&Transaction::inputs, "Inputs");
+	struct_mapping::reg(&Transaction::outputs, "Outputs");
+	struct_mapping::reg(&Transaction::origin, "Origin");
+	struct_mapping::reg(&Transaction::fee, "Fee");
+	struct_mapping::reg(&Transaction::signature, "Signature");
 
 	struct_mapping::reg(&Pool::valid_tx, "tx_pool");
 
@@ -266,7 +284,7 @@ void Pool::json_to_pool(std::string data) {
 }
 
 
-void My_own_crypto::runClient(std::string address, std::string port, unsigned int head)
+void My_own_crypto::runClient(std::string address, std::string port, unsigned int head, std::vector<Transaction>& recieved_transacitons, std::vector<Block>& recieved_blocks)
 {
 	// Variables for writing a client. 
 	/*
@@ -377,49 +395,68 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 	std::cout.flush();
 	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
+	Pool recieved_pool;
+	recieved_pool.json_to_pool("{\"tx_pool\":"+readStream.str()+"}");
+	client_mutex.lock();
+	recieved_transacitons = recieved_pool.valid_tx;
+	client_mutex.unlock();
+	
 	sendResult = send(client_request, std::to_string(head).c_str(), 30, 0);
 
-	readStream.str("");
-	// more sperimenting
-	memset(buffer, 0, 32);
+	do{
+		readStream.str("");
+		memset(buffer, 0, 32);
 
-	readResult = recv(client_request, buffer, 32, 0);
-	buffer[32] = 0;
-	readStream << buffer;
+		readResult = recv(client_request, buffer, 32, 0);
 
-	readData = readStream.str().find("end;") == std::string::npos;
+		if (readResult > 0) {
+			buffer[32] = 0;
+			readStream << buffer;
 
-	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+			readData = readStream.str().find("end;") == std::string::npos;
 
-	/// speriment
+			std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
-	try {
-		new_size = std::stoul(readStream.str());
-	}
-	catch (std::exception e) {}
+			// Setting recieving structures for block
+			try {
+				new_size = std::stoul(readStream.str());
+			}
+			catch (std::exception e) {
+				new_size = 0;
+			}
 
-	free(buffer);
-	buffer = (char*)malloc(new_size + 1);
-	memset(buffer, 0, new_size);
+			free(buffer);
+			buffer = (char*)malloc(new_size + 1);
+			memset(buffer, 0, new_size);
 
-	readResult = recv(client_request, buffer, new_size, 0);
-	buffer[new_size] = NULL;
-
-
-
-
-	std::cout << readStream.str() << std::endl;
-	readStream.str("");
-
-	readStream << buffer;
-	readStream << std::endl;
+			readResult = recv(client_request, buffer, new_size, 0);
+			buffer[new_size] = NULL;
 
 
-	readData = readStream.str().find("end;") == std::string::npos;
-	std::cout.flush();
-	std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
-	free(buffer);
+
+			std::cout << readStream.str() << std::endl;
+			readStream.str("");
+
+			readStream << buffer;
+			readStream << std::endl;
+
+
+			readData = readStream.str().find("end;") == std::string::npos;
+			std::cout.flush();
+			std::cout << "Done (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+
+			if (readStream.str().length() > 1) {
+				client_mutex.lock();
+				Block new_blk;
+				new_blk.json_to_block(readStream.str());
+				recieved_blocks.push_back(new_blk);
+				client_mutex.unlock();
+			}
+		}
+
+		free(buffer);
+	} while (status);
 
 	// Close the socket before we finish 
 #ifdef _WIN32

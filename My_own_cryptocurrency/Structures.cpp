@@ -168,6 +168,37 @@ std::string Block::block_to_json(bool indent, bool full) {
     return block_json.str();
 }
 
+void Block::json_to_block(std::string blk_json) {
+
+    /*if (full) {
+        struct_mapping::reg(&Entity::account, "Account");
+        struct_mapping::reg(&Entity::value, "Value");
+
+        struct_mapping::reg(&Transaction::version, "Version");
+        struct_mapping::reg(&Transaction::time, "Time");
+        struct_mapping::reg(&Transaction::inputs, "Inputs");
+        struct_mapping::reg(&Transaction::outputs, "Outputs");
+        struct_mapping::reg(&Transaction::origin, "Origin");
+        struct_mapping::reg(&Transaction::fee, "Fee");
+        struct_mapping::reg(&Transaction::signature, "Signature");
+    }*/
+    struct_mapping::reg(&Block::version, "Version");
+    struct_mapping::reg(&Block::father_hash, "Father_hash");
+    struct_mapping::reg(&Block::time, "Time");
+    struct_mapping::reg(&Block::miner, "Miner");
+    struct_mapping::reg(&Block::reward, "Time");
+    struct_mapping::reg(&Block::mt_root, "MT_root");
+    struct_mapping::reg(&Block::ID, "ID");
+    struct_mapping::reg(&Block::ID, "Nonce");
+    struct_mapping::reg(&Block::work_hash, "Pow");
+    struct_mapping::reg(&Block::transaction_list, "Transaction_list");
+
+    std::istringstream jason_data(blk_json);
+
+    struct_mapping::map_json_to_struct(*this, jason_data);
+
+}
+
 float Block::compute_block_reward() {
     float reward = 0;
     for (Transaction i : this->transaction_list)
@@ -218,6 +249,12 @@ std::ostream& operator << (std::ostream& outstream, Transaction& data) {
 /// Overloading << operator
 std::ostream& operator << (std::ostream& outstream, Block& data) {
     int vpos = 12;
+    if (data.transaction_list.size() != 0) {
+        for (int i = 0; i < data.transaction_list.size(); i++) {
+            if (data.transaction_list[i].hash == "")
+                data.transaction_list[i].compute_hash();
+        }
+    }
 
     outstream << " -------------Block " << data.ID << "------------- \n" <<
         " Version: " << data.version << "\n" <<

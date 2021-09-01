@@ -20,7 +20,16 @@ Node::~Node() {
 
 
 void Node::check_node(std::string port) {
-	runClient("127.0.0.1", port, this->blockchain_head);
+	runClient("127.0.0.1", port, 0, this->received_transactions, this->received_blocks);
+	for (Transaction i : this->received_transactions) {
+		i.compute_hash();
+		std::cout << i << std::endl;
+	}
+	for (Block i : received_blocks) {
+		for (Transaction j : i.transaction_list)
+			j.compute_hash();
+		std::cout << i << std::endl;
+	}
 
 }
 

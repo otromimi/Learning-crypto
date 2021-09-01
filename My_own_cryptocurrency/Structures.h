@@ -139,6 +139,7 @@ namespace My_own_crypto {
         /// <returns>String with the block data to be hashed.</returns>
         std::string block_to_json(bool = false, bool = false);
 
+        void json_to_block(std::string blk_json);
 
         /// <summary>
         /// Populates the field reward int he block.

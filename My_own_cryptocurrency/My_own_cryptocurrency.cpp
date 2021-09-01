@@ -192,7 +192,6 @@ int main(int argc, char* argv[])
 
     node1.check_node("5757");
 
-    node1.check_node("5757");
 
     std::cout << "printing some more " << std::endl;
 
