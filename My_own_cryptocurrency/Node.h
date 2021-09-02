@@ -71,7 +71,11 @@ namespace My_own_crypto {
 
 		const bool validate_block(Block block);
 
+		const void print_block();
 
+		const void print_transaction();
+
+		const void print_wallet_info();
 
 	};
 

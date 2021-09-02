@@ -211,5 +211,96 @@ const bool Node::validate_block(Block block) {
 	return valid;
 }
 
+const void Node::print_block() {
+
+	this->blockchain_head = this->blockchain.get_head();
+
+	std::cout << "\x1B[2J\x1B[H\n";
+
+	unsigned int blk_id;
+	Block blk;
+
+	std::cout << "Block id: ";
+	std::cin >> blk_id;
+
+	if (blk_id <= this->blockchain_head && blk_id > 0) {
+		this->blockchain.get_block(blk, blk_id);
+		std::cout <<  "\x1B[2J\x1B[H\n" << blk << std::endl;
+	}
+	else {
+		std::cout <<  "\x1B[2J\x1B[H\n" << " The block with ID " << blk_id << " wasn't found\n\n  Max blockchain depth: " << this->blockchain_head << "\n" << std::endl;
+	}
+
+}
 
 
+const void Node::print_transaction() {
+
+	std::string tx_hash;
+	std::vector<std::string> tx_list;
+	Transaction tx;
+
+	do {
+
+		std::cout << "\x1B[2J\x1B[H\n" << "Transaction hash: ";
+		std::cin >> tx_hash;
+		tx_list.clear();
+		std::cout << "\x1B[2J\x1B[H\n";
+
+		this->blockchain.get_tx_count(tx_list, tx_hash);
+		if (tx_list.size() > 1) {
+			std::cout << "The following transactions were found: \n";
+			for (std::string i : tx_list)
+				std::cout << "\t" << i << "\n";
+			std::cout << std::endl;
+		}
+		else if (tx_list.size() == 1) {
+			this->blockchain.get_tx(tx, tx_hash);
+			std::cout << tx << std::endl;
+		}
+		else {
+			std::cout << "No transactions were found with hash: " << (tx_hash.size() < 64 ? "..." + tx_hash : tx_hash) << "\n" << std::endl;
+		}
+		std::cout << "Search for another transaction";
+	} while (Tools::cont_loop());
+}
+
+
+
+const void Node::print_wallet_info() {
+
+	std::string pk = this->wallet.get_compressedPublic();
+	float balance = this->blockchain.get_balance(pk);
+	std::vector<Entity> unspent_outs;
+	int under1 = 0, under10 = 0, under100 = 0, under1000 = 0, over1000 = 0;
+
+	this->blockchain.get_unespent_tx(unspent_outs, pk, Tools::time_now());
+
+	for (Entity i : unspent_outs) {
+		if (i.value < 1.f)
+			under1++;
+		else if (i.value < 10.f)
+			under10++;
+		else if (i.value < 100.f)
+			under100++;
+		else if (i.value < 1000.f)
+			under1000++;
+		else if (i.value > 1000.f)
+			over1000++;
+	}
+
+	std::cout << "\x1B[2J\x1B[H" << 
+		"\n User: " << this->wallet.get_name() <<
+		"\n Blockchain: " << DB_NAME <<
+		"\n Account address: " << pk <<
+		"\n Balance: " << balance <<
+		"\n Wallet fragmentation{ " << 
+		"\n\t" << under1 <<" utx under 1" <<
+		"\n\t" << under10 << " utx under 10" <<
+		"\n\t" << under100 << " utx under 100" <<
+		"\n\t" << under1000 << " utx under 1000" <<
+		"\n\t" << over1000 << " utx over 1000" <<
+		"\n }" <<
+		"\n" << std::endl;
+
+}

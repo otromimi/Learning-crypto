@@ -25,6 +25,8 @@ namespace My_own_crypto {
 
         static int parse_block(void* blk, int argc, char** argv, char** azColName);
 
+        static int callback_tx_count(void* tx_list, int argc, char** argv, char** azColName);
+
         static int parse_transactions(void* tx_list, int argc, char** argv, char** azColName);
 
         static int parse_outputs(void* tx, int argc, char** argv, char** azColName);
@@ -69,6 +71,9 @@ namespace My_own_crypto {
         /// <param name="table">Table where the data is gonna be inserted.</param>
         /// <param name="data">List of parameter to be inserted in each row.</param>
         void insert_block(Block& block) const;
+
+
+        void get_tx_count(std::vector<std::string>& tx_list, std::string hash);
 
         void get_tx(Transaction& tx, std::string hash);
 

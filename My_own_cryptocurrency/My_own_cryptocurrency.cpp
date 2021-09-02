@@ -207,12 +207,17 @@ int main(int argc, char* argv[])
             break;
         case 4:
             //print block
+            node1.print_block();
+            press2cont();
             break;
         case 5:
             //print transaction
+            node1.print_transaction();
             break;
         case 6:
             //wallet info
+            node1.print_wallet_info();
+            press2cont();
             break;
         case 0:
             //write and save

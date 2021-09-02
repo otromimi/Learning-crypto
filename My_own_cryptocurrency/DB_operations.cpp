@@ -179,8 +179,26 @@ void DB_operations::insert_block(Block& block) const {
     }
 }
 
+void DB_operations::get_tx_count(std::vector<std::string>& tx_list, std::string hash) {
+    std::string query = "SELECT HASH, VERSION, TIME, OWNER, FEE, SIGNATURE FROM TRANSACTIONS WHERE HASH LIKE '%" + hash + "%';";
+
+    int rc = sqlite3_exec(db, (const char*)query.c_str(), callback_tx_count, &tx_list, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+}
+
+int DB_operations::callback_tx_count(void* tx_list, int argc, char** argv, char** azColName) {
+
+    std::vector<std::string>* tx_list_ptr = (std::vector<std::string>*)tx_list;
+    tx_list_ptr->push_back(argv[0]);
+    return 0;
+}
+
 void DB_operations::get_tx(Transaction& tx, std::string hash) {
-    std::string query = "SELECT HASH, VERSION, TIME, OWNER, FEE, SIGNATURE FROM TRANSACTIONS WHERE HASH='" + hash + "';";
+    std::string query = "SELECT HASH, VERSION, TIME, OWNER, FEE, SIGNATURE FROM TRANSACTIONS WHERE HASH LIKE '%" + hash + "';";
 
     int rc = sqlite3_exec(db, (const char*)query.c_str(), parse_transaction, &tx, &zErrMsg);
     if (rc != SQLITE_OK) {
