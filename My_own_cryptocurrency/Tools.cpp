@@ -274,12 +274,16 @@ const tm Tools::get_int_time(std::string utc_time) {
 
 bool Tools::cont_loop() {
 	std::string answer;
-
+	std::string aux;
+	
 	while (true) {
-		std::cout << "(Y\\N): ";
-		std::cin >> answer;
+		std::cin.clear();
+		std::getline(std::cin, aux);
+
+		std::cout << "(Y\\n): ";
+		answer = std::cin.get(); //>> answer;
 		
-		if (answer == "Y" || answer == "y")
+		if (answer == "Y" || answer == "y" || answer == "\n")
 			return true;
 		if (answer == "N" || answer == "n")
 			return false;

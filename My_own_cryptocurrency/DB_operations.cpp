@@ -355,6 +355,8 @@ void DB_operations::get_inputs(std::vector<Entity>& inputs_full, std::string add
         std::cerr << "SQL error: " << zErrMsg << std::endl;
         sqlite3_free(zErrMsg);
     }
+
+    std::cout << "unspent: " << inputs_full.size() << std::endl;
 }
 
 int DB_operations::callback_inputs(void* inputs_full, int argc, char** argv, char** azColName) {

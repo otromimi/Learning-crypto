@@ -22,6 +22,8 @@ namespace My_own_crypto {
 
 	public:
 
+		std::string version;
+
 		Wallet wallet;
 		DB_operations blockchain;
 		unsigned int blockchain_head;
@@ -31,7 +33,7 @@ namespace My_own_crypto {
 		std::vector<Transaction> received_transactions;
 		std::vector<Block> received_blocks;
 
-		Node(const char* wallet_name);
+		Node(const char* wallet_name, const char* version);
 		~Node();
 
 		/// <summary>
@@ -51,7 +53,7 @@ namespace My_own_crypto {
 		/// Creates transaction in interactive mode.
 		/// </summary>
 		/// <returns>New created transaction.</returns>
-		const Transaction create_tx();
+		Transaction create_tx();
 
 		const void create_block(Block& block);
 

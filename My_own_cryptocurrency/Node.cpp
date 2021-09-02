@@ -10,7 +10,7 @@ constexpr auto DB_NAME = "blockchain0";
 
 using namespace My_own_crypto;
 
-Node::Node(const char* wallet_name): wallet(Wallet(wallet_name)), blockchain(DB_operations(DB_NAME)), blockchain_head(0){
+Node::Node(const char* wallet_name, const char* version): wallet(Wallet(wallet_name)),version(version), blockchain(DB_operations(DB_NAME)), blockchain_head(0){
 	this->blockchain_head = blockchain.get_head();
 }
 
@@ -25,37 +25,73 @@ void Node::run_server(std::string port) {
 
 void Node::check_node(std::string port) {
 	runClient("127.0.0.1", port, this->blockchain_head, this->received_transactions, this->received_blocks);
+	std::cout << "Retrieved transactions: " << this->received_transactions.size() << std::endl;
+	std::cout << "Retrieved blocks: " << this->received_blocks.size() << std::endl;
+	/*
 	for (Transaction i : this->received_transactions) {
 		std::cout << i << std::endl;
 	}
 	for (Block i : received_blocks) {
 		std::cout << i << std::endl;
-	}
+	}*/
 
 }
 
-const Transaction Node::create_tx() {
+Transaction Node::create_tx() {
 
 	//std::cout << version << std::endl;
-	Transaction tx(Tools::time_now(), this->wallet.get_compressedPublic());
+	Transaction tx(Tools::time_now(),this->version, this->wallet.get_compressedPublic());
+	std::vector<Entity> unspent_outs;
 	std::string destination;
-	float value;
+	float balance, total, value;
+
+	blockchain.get_inputs(unspent_outs, tx.origin, "2021-07-23 19:45:30");
+	balance = this->blockchain.get_balance(wallet.get_compressedPublic());
+
+	std::cout << "UTX: " << unspent_outs.size() << std::endl;
 	
-	std::cout << "Creating transaction with wallet <" << wallet.get_name() << ">.\n\n";
+	std::cout << "Creating transaction with wallet <" << wallet.get_name() << "> on blockchain <" << DB_NAME << ">.\n\n";
+	std::cout << "Balance: " << balance << std::endl;
+	total = 0.f;
 
 	do{
 		std::cout << "\nAdress: ";
 		std::cin >> destination;
+
 		std::cout << "Quantity: ";
 		std::cin >> value;
+		total += value;
+
 		tx.outputs.push_back(Entity(destination, value));
 
-		std::cout << "\nAdd another out ";
+		std::cout << "\nOne more outputs ";
+		std::cin.clear();
 	}while (Tools::cont_loop());
 
 
-	std::cout << "\nFee for the transaction: ";
+	std::cout << "\nTransaction fee: ";
 	std::cin >> tx.fee;
+	total += tx.fee;
+
+	//std::reverse(unspent_outs.begin(), unspent_outs.end());
+
+	std::cout << "balance: "<< balance << std::endl;
+	std::cout << "total: "<< total << std::endl;
+
+	if (total <= balance) {
+		std::cout << "in " << std::endl;
+		for (Entity i : unspent_outs) {
+			if (total > 0) {
+				total -= i.value;
+				tx.inputs.push_back(i.account.c_str());
+				std::cout << "adding " << std::endl;
+			}
+		}
+	}
+
+
+	tx.compute_hash();
+	tx.signature = this->wallet.sign_tx(tx.tx_to_json(false));
 
 
 	return tx;

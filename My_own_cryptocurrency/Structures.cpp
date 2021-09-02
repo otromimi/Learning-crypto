@@ -222,6 +222,7 @@ std::ostream& operator << (std::ostream& outstream,Entity& data) {
 
 /// Overloading << operator
 std::ostream& operator << (std::ostream& outstream, Transaction& data) {
+   
     int vpos = 12;
     if (data.hash == "") {
         data.compute_hash();
@@ -229,7 +230,7 @@ std::ostream& operator << (std::ostream& outstream, Transaction& data) {
 
     outstream << " -----------Transaction-----------\n" <<
         " Version: " << data.version << "\n" <<
-        " Time: " << data.time << "\n" <<
+        " Time: " << data.time << "  UTC" << "\n" <<
         " Inputs: { \n";
     for (std::string i : data.inputs) {
         outstream << "\t..." << i.substr(i.size() - vpos, vpos) << std::endl;
@@ -261,7 +262,7 @@ std::ostream& operator << (std::ostream& outstream, Block& data) {
 
     outstream << " -------------Block " << data.ID << "------------- \n" <<
         " Version: " << data.version << "\n" <<
-        " Time: " << data.time << "\n" <<
+        " Time: " << data.time << "  UTC" << "\n" <<
         " Tx: { \n";
     for (Transaction i : data.transaction_list) {
         outstream << "\t..." << i.hash.substr(i.hash.size() - vpos, vpos) << std::endl;

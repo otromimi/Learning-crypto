@@ -33,18 +33,15 @@ using namespace My_own_crypto;
 
 // Below fuctions declarations
 int menu();
+void press2cont();
 
 /// first argument: server port
 /// second argument: client connection port
 int main(int argc, char* argv[])
 {
-   
-    std::cout << "\n=============Open block_chain database=============\n";
-      
-    std::cout << "\n=============Creating Wallet=============\n";
 
     
-    Node node1("User3");
+    Node node1("User3", MY_CRYPTO_VERSION);
    
  
     // First transaction (primigine transaciton), the one that puts founds on the different accounts.
@@ -179,21 +176,9 @@ int main(int argc, char* argv[])
     extern std::atomic<bool> server_running;
 
     
-
     
-
-    //runServer(node1.blockchain, node1.blockchain_head, block.transaction_list, "carlos");
     
-    //runServer("hola");
-    /*if (argc > 0) {
-        std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), argv[0]);
-    }
-    else {
-        std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(block.transaction_list), "5758");
-    }*/
-
-    //node1.blockchain_head = 0;
-
+    // Running server in a separate thread
     std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(node1.confirmed_tansactions), "5762");
     test.detach();
 
@@ -202,12 +187,45 @@ int main(int argc, char* argv[])
     node1.confirmed_tansactions.push_back(tx1);
     node1.confirmed_tansactions.push_back(tx2);
 
-    menu();
+    Transaction tx;
+
+    int selected_option = 0;
+    do {
+        selected_option = menu();
+        switch (selected_option)
+        {
+        case 1:
+            //create transaction
+            tx = node1.create_tx();
+            std::cout << tx << std::endl;
+            press2cont();
+            break;
+        case 2:
+            //mine block
+            break;
+        case 3:
+            //sync node
+            break;
+        case 4:
+            //print block
+            break;
+        case 5:
+            //print transaction
+            break;
+        case 6:
+            //wallet info
+            break;
+        case 0:
+            //write and save
+            node1.check_node("5773");
+            break;
+        default:
+            break;
+        }
+    } while (selected_option != 0);
     
-    node1.check_node("5773");
+   
 
-
-    std::cout << "printing some more " << std::endl;
 
     //Server::mutex.lock();
     //for (int i = 0; i < 102; i++)
@@ -236,7 +254,7 @@ int main(int argc, char* argv[])
 
 int menu() {
     std::string str_selection;
-    int selection = 0;
+    int selection = -1;
 
     do {
 
@@ -250,7 +268,7 @@ int menu() {
             "\t 4.- Print block\n" <<
             "\t 5.- Print transaction\n" <<
             "\t 6.- Wallet info\n" <<
-            "\t 7.- Write and save\n" <<
+            "\t 0.- Write and save\n" <<
             "\n\t >>> ";
 
         std::cin >> str_selection;
@@ -258,10 +276,10 @@ int menu() {
             selection = std::stoi(str_selection);
         }
         catch (std::exception e) {
-            selection = 0;
+            selection = -1;
             std::cin.clear();
         }
-    } while (selection == 0);
+    } while (selection == -1);
 
     //std::cout << str_selection << std::endl;
 
@@ -270,16 +288,11 @@ int menu() {
     return selection;
 }
 
-
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
-
+void press2cont() {
+    std::cout << "Press enter to continue...";
+    std::cin.clear();
+    std::string aux;
+    std::getline(std::cin, aux);
+    std::cin.get();
+    std::cin.clear();
+}
