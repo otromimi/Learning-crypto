@@ -37,7 +37,7 @@ void Node::check_node(std::string port) {
 
 }
 
-Transaction Node::create_tx() {
+void Node::create_tx() {
 
 	//std::cout << version << std::endl;
 	Transaction tx(Tools::time_now(),this->version, this->wallet.get_compressedPublic());
@@ -45,56 +45,75 @@ Transaction Node::create_tx() {
 	std::string destination;
 	float balance, total, value;
 
-	blockchain.get_inputs(unspent_outs, tx.origin, "2021-07-23 19:45:30");
+	balance = 0.f;
+	this->blockchain.get_unespent_tx(unspent_outs, tx.origin, Tools::time_now());
 	balance = this->blockchain.get_balance(wallet.get_compressedPublic());
 
-	std::cout << "UTX: " << unspent_outs.size() << std::endl;
 	
 	std::cout << "Creating transaction with wallet <" << wallet.get_name() << "> on blockchain <" << DB_NAME << ">.\n\n";
 	std::cout << "Balance: " << balance << std::endl;
 	total = 0.f;
 
-	do{
-		std::cout << "\nAdress: ";
-		std::cin >> destination;
+	try {
 
-		std::cout << "Quantity: ";
-		std::cin >> value;
-		total += value;
+		do {
+			std::cout << "\nAdress: ";
+			std::cin >> destination;
 
-		tx.outputs.push_back(Entity(destination, value));
-
-		std::cout << "\nOne more outputs ";
-		std::cin.clear();
-	}while (Tools::cont_loop());
-
-
-	std::cout << "\nTransaction fee: ";
-	std::cin >> tx.fee;
-	total += tx.fee;
-
-	//std::reverse(unspent_outs.begin(), unspent_outs.end());
-
-	std::cout << "balance: "<< balance << std::endl;
-	std::cout << "total: "<< total << std::endl;
-
-	if (total <= balance) {
-		std::cout << "in " << std::endl;
-		for (Entity i : unspent_outs) {
-			if (total > 0) {
-				total -= i.value;
-				tx.inputs.push_back(i.account.c_str());
-				std::cout << "adding " << std::endl;
+			if (destination.size() < 12) {
+				throw std::exception("This string will break some fuctions.");
 			}
+
+			std::cout << "Quantity: ";
+			std::cin >> value;
+			value = floor(value * 100) / 100;
+			total += value;
+
+			tx.outputs.push_back(Entity(destination, value));
+
+			std::cout << "\nOne more outputs ";
+			std::cin.clear();
+		} while (Tools::cont_loop());
+
+
+		std::cout << "\nTransaction fee: ";
+		std::cin >> tx.fee;
+		total += tx.fee;
+
+		std::cout << "\x1B[2J\x1B[H";
+		std::reverse(unspent_outs.begin(), unspent_outs.end());
+
+		if (total <= balance) {
+			for (Entity i : unspent_outs) {
+				if (total > 0) {
+					total -= i.value;
+					tx.inputs.push_back(i.account.c_str());
+				}
+				else {
+					break;
+				}
+			}
+			if (total < 0) {
+				tx.outputs.push_back(Entity(tx.origin, (total * -1)));
+			}
+			tx.compute_hash();
+			tx.signature = this->wallet.sign_tx(tx.tx_to_json(false));
+
+			std::cout << tx << std::endl;
+			if (this->validate_tx(tx))
+				this->confirmed_tansactions.push_back(tx);
+			else
+				std::cout << "There is some wrong information on your transaction, it will not get propagated." << std::endl;
 		}
+		else {
+			std::cout << "Insuficient balance for this transaction.\n\n Operation canceled." << std::endl;
+		}
+
+	}catch(std::exception e){
+
+		std::cout << "\x1B[2J\x1B[H\n";
+		std::cout << "Transaction creation failed, try again later." << std::endl;
 	}
-
-
-	tx.compute_hash();
-	tx.signature = this->wallet.sign_tx(tx.tx_to_json(false));
-
-
-	return tx;
 
 }
 

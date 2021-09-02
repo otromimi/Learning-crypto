@@ -53,7 +53,7 @@ namespace My_own_crypto {
 		/// Creates transaction in interactive mode.
 		/// </summary>
 		/// <returns>New created transaction.</returns>
-		Transaction create_tx();
+		void create_tx();
 
 		const void create_block(Block& block);
 

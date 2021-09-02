@@ -356,11 +356,11 @@ void DB_operations::get_inputs(std::vector<Entity>& inputs_full, std::string add
         sqlite3_free(zErrMsg);
     }
 
-    std::cout << "unspent: " << inputs_full.size() << std::endl;
 }
 
 int DB_operations::callback_inputs(void* inputs_full, int argc, char** argv, char** azColName) {
     std::vector<Entity>* inputs_full_ptr = (std::vector<Entity>*)inputs_full;
+
    
     for (int i = 0; i < inputs_full_ptr->size(); i++) {
         
@@ -373,6 +373,32 @@ int DB_operations::callback_inputs(void* inputs_full, int argc, char** argv, cha
     return 0;
 }
 
+void DB_operations::get_unespent_tx(std::vector<Entity>& utx_v, std::string address, std::string time) {
+    std::string query = "SELECT TX_HASH, VALUE FROM OUTPUTS WHERE ACCOUNT='" + address + "' AND TX_HASH NOT IN (SELECT DISTINCT ins.INPUT FROM INPUTS ins, TRANSACTIONS tx WHERE tx.HASH = ins.TX_HASH AND tx.OWNER ='" + address + "' AND TIME < '" + time + "'); ";
+    int rc;
+
+    rc = sqlite3_exec(db, (const char*)query.c_str(), callback_unespent_tx, &utx_v, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+    query = "SELECT WORK_HASH, REWARD FROM BLOCKS WHERE MINER='" + address + "' AND WORK_HASH NOT IN (SELECT INPUT FROM INPUTS WHERE TX_HASH IN (SELECT HASH FROM TRANSACTIONS WHERE TIME < '" + time + "')); ";
+    rc = sqlite3_exec(db, (const char*)query.c_str(), callback_unespent_tx, &utx_v, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        std::cerr << "SQL error: " << zErrMsg << std::endl;
+        sqlite3_free(zErrMsg);
+    }
+
+}
+
+
+int DB_operations::callback_unespent_tx(void* utx_v, int argc, char** argv, char** azColName) {
+    std::vector<Entity>* utx_v_ptr = (std::vector<Entity>*)utx_v;    
+    utx_v_ptr->push_back(Entity(argv[0], std::stof(argv[1])));
+
+    return 0;
+}
 
 unsigned int DB_operations::get_head() {
     unsigned int head;

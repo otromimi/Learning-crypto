@@ -39,6 +39,8 @@ namespace My_own_crypto {
 
         static int callback_inputs(void* inputs_full, int argc, char** argv, char** azColName);
 
+        static int callback_unespent_tx(void* utx_v, int argc, char** argv, char** azColName);
+
 
 
         /// <summary>
@@ -86,6 +88,14 @@ namespace My_own_crypto {
 
 
         void get_inputs(std::vector<Entity>& inputs_full, std::string address, std::string time);
+
+        /// <summary>
+        /// Populates the vector<Entity> with the unespent outputs.
+        /// </summary>
+        /// <param name="utx_v">Vector to populate with utx.</param>
+        /// <param name="address">Retrieve utx from this address.</param>
+        /// <param name="time">Retrieve only utx older than this time.</param>
+        void get_unespent_tx(std::vector<Entity>& utx_v, std::string address, std::string time);
 
         /// <summary>
         /// Select values from database

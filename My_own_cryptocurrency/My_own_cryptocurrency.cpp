@@ -196,8 +196,7 @@ int main(int argc, char* argv[])
         {
         case 1:
             //create transaction
-            tx = node1.create_tx();
-            std::cout << tx << std::endl;
+            node1.create_tx();
             press2cont();
             break;
         case 2:
