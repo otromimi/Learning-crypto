@@ -35,10 +35,26 @@ using namespace My_own_crypto;
 int menu();
 void press2cont();
 
-/// first argument: server port
-/// second argument: client connection port
-int main(int argc, char* argv[])
-{
+/// <summary>
+/// 
+/// </summary>
+/// <param name="argc"></param>
+/// <param name="argv[0]">Port where to connect to another node in localhost.</param>
+/// <param name="argv[1]">Port where the server will run in localhost.</param>
+/// <param name="argv[2]">Wallet user name.</param>
+/// <returns></returns>
+int main(int argc, char* argv[]){
+
+
+    std::string client_port = argc > 1 ? argv[1] : "5050";
+    std::string server_port = argc > 2 ? argv[2] : "5051";
+    std::string user = argc > 3 ? argv[3] : "User1";
+
+
+    std::cout << "Client port: " << client_port << std::endl;
+    std::cout << "Server port: " << server_port << std::endl;
+    std::cout << "User: " << user << std::endl;
+
 
     
     Node node1("User3", MY_CRYPTO_VERSION);
@@ -186,6 +202,10 @@ int main(int argc, char* argv[])
     //node1.run_server("5762");
     node1.confirmed_tansactions.push_back(tx1);
     node1.confirmed_tansactions.push_back(tx2);
+
+
+    press2cont();
+
 
     Transaction tx;
 
