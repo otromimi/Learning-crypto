@@ -219,9 +219,17 @@ int main(int argc, char* argv[]){
 
     //server_running = true;
     //node1.run_server("5762");
-    node1.confirmed_tansactions.push_back(tx1);
+    node1.confirmed_tansactions.push_back(tx3);
     node1.confirmed_tansactions.push_back(tx2);
+    node1.confirmed_tansactions.push_back(tx1);
+    node1.confirmed_tansactions.push_back(tx4);
+    node1.confirmed_tansactions.push_back(tx0);
 
+    Block blk1;
+   
+    node1.create_block(blk1);
+
+    std::cout << blk1 << std::endl;
    
 
     press2cont();

@@ -16,7 +16,7 @@
 //#include "hex.h"
 
 
-#define MAX_TX_IN_BLOCK 7
+#define MAX_TX_IN_BLOCK 4
 #define MAX_OUT_TX 12
 
 namespace My_own_crypto {

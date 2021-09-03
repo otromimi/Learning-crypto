@@ -124,7 +124,46 @@ void Node::create_tx() {
 
 
 
-const void Node::create_block(Block& block) {}
+const void Node::create_block(Block& block) {
+
+	Block father_blk;
+	Transaction aux;
+
+	// Getting more profitable transactions
+	for (int i = 0; i < this->confirmed_tansactions.size(); i++) {
+		for (int j = i; j < this->confirmed_tansactions.size(); j++) {
+			if (this->confirmed_tansactions[i].fee > this->confirmed_tansactions[j].fee) {
+				aux = this->confirmed_tansactions[i];
+				this->confirmed_tansactions[i] = this->confirmed_tansactions[j];
+				this->confirmed_tansactions[j] = aux;
+			}
+		}
+	}
+	for (Transaction i : this->confirmed_tansactions)
+		std::cout << i.fee << std::endl;
+	this->blockchain.get_block(father_blk, this->blockchain_head);
+
+	block.miner = this->wallet.get_compressedPublic();
+	block.version = this->version;
+	block.time = Tools::time_now();
+	block.ID = this->blockchain_head + 1;
+	block.father_hash = father_blk.work_hash;
+	for (int i = 0; i < MAX_TX_IN_BLOCK; i++) {
+		if (this->confirmed_tansactions.size()) {
+			block.transaction_list.push_back(this->confirmed_tansactions.back());
+			this->confirmed_tansactions.pop_back();
+		}
+	}
+	
+	block.reward = block.compute_block_reward();
+	block.work_hash = "000062F515148AE88CC1112FBF7D6B41DCCC2135C9690CBD215CED9E6E98D599";
+
+	block.find_mt_root();
+
+
+	for (Transaction i : this->confirmed_tansactions)
+		std::cout << i.fee << std::endl;
+}
 
 
 
