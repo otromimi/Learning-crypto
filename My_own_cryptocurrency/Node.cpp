@@ -126,6 +126,39 @@ void Node::create_tx() {
 
 const void Node::create_block(Block& block) {}
 
+
+
+const void Node::proof_of_work(Block& blk, int leading_ceros) {
+	
+	std::string goal(leading_ceros, '0');
+	std::string pow;
+	bool mining = true;
+	Block blk_cp = blk;
+	blk_cp.work_hash = "";
+	blk_cp.nonce = 0;
+	blk_cp.transaction_list.clear();
+
+	do {
+		pow = Tools::hash_sha256(blk_cp.block_to_json(false));
+		if (pow.substr(0, leading_ceros) == goal)
+			mining = false;
+		else
+			blk_cp.nonce++;
+	} while (mining);
+
+	blk.work_hash = pow;
+	blk.nonce = blk_cp.nonce;
+}
+
+const bool Node::validate_pow(Block blk) {
+	std::string pow = blk.work_hash;
+	blk.work_hash = "";
+	blk.transaction_list.clear();
+	blk.work_hash = Tools::hash_sha256(blk.block_to_json(false));
+
+	return pow == blk.work_hash;
+}
+
 const float Node::validate_inputs(std::vector<std::string> inputs, std::string address, std::string time) {
 	
 	std::vector<Entity> inputs_full;
@@ -158,6 +191,9 @@ const bool Node::validate_tx(Transaction tx) {
 
 	bool valid = true;
 
+	if (tx.compute_hash() == this->origin_tx)
+		return true;
+
 	if (tx.version != "1.0.0")
 		valid = false;
 
@@ -175,7 +211,7 @@ const bool Node::validate_tx(Transaction tx) {
 		valid = false;
 
 	// Outputs under threshold.
-	if (tx.outputs.size() >= MAX_OUT_TX)
+	if (tx.outputs.size() > MAX_OUT_TX)
 		valid = false;
 	
 	// Only one output per address.
@@ -199,18 +235,31 @@ const bool Node::validate_block(Block block) {
 	if (block.version != "1.0.0")
 		valid = false;
 
+	// validating PoW
+	if (!this->validate_pow(block))
+		valid = false;
+
 	//if (block.ID != this->blockchain_head + 1)
 		//valid = false;
 
-	if (Tools::hash_sha256(block.block_to_json()) != block.work_hash)
+	// validating chain continuity
+	if (block.ID != 1) {
+		Block father_block;
+		this->blockchain.get_block(father_block, block.ID - 1);
+		if (father_block.work_hash != block.father_hash)
+			valid = false;
+	}
+
+	// validating max tx per block
+	if (block.transaction_list.size() > MAX_TX_IN_BLOCK)
 		valid = false;
 
+	// validating each of the tx
 	for (Transaction i : block.transaction_list) {
-		if (!this->validate_tx(i) && i.hash != "477ED9817BCA3D870CF4FB06BA26951CFC865B6B4641D4C85BD8A30F006BFD6D")
+		if (!this->validate_tx(i))
 			valid = false;
 		if (1 != Tools::is_older(i.time, block.time))
-			valid = false;
-			
+			valid = false;		
 	}
 
 	return valid;

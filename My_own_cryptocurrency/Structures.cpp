@@ -116,7 +116,9 @@ std::string Transaction::compute_hash() {
 
 
 
-Block::Block(std::string miner) :miner(miner){
+Block::Block() : nonce(0) {};
+
+Block::Block(std::string miner) :miner(miner), nonce(0){
     this->time = Tools::time_now();
 };
 

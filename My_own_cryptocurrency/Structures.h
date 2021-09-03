@@ -70,6 +70,7 @@ namespace My_own_crypto {
         /// <param name="origin"></param>
         /// <param name="value"></param>
         /// <param name="fee"></param>
+        /// <param name="signature"></param>
         Transaction(std::string time, std::string = "-.-.-", std::string origin = "", float fee = 0, std::string = "");
 
         /// <summary>
@@ -120,7 +121,7 @@ namespace My_own_crypto {
         std::vector<Transaction> transaction_list;
         MerkleTree mt; // From here only hash root.
 
-        Block() {};
+        Block();
 
         Block(std::string miner);
 

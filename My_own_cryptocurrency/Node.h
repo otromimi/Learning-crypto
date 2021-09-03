@@ -17,6 +17,8 @@ namespace My_own_crypto {
 	class Node {
 	private:
 		
+		std::string origin_tx = "88A7A5CC39A111E1BB0931DD79D083611C03180258F06AEFE7CE1421B20DAE0E";
+
 		int min_per_block;
 		//std::vector<Transaction> confirmed_tx_pool;
 
@@ -56,6 +58,10 @@ namespace My_own_crypto {
 		void create_tx();
 
 		const void create_block(Block& block);
+
+		const void proof_of_work(Block& blk, int leading_ceros);
+
+		const bool validate_pow(Block blk);
 
 		const float validate_inputs(std::vector<std::string> inputs, std::string address, std::string time);
 

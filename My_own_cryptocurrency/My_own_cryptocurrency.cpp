@@ -59,6 +59,23 @@ int main(int argc, char* argv[]){
    
  
     // First transaction (primigine transaciton), the one that puts founds on the different accounts.
+    Transaction tx0("2021-07-23 00:00:00", MY_CRYPTO_VERSION, "000000000000000000000000000000000000000000000000000000000000000000h", 0.0f, 
+        "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+
+    tx0.inputs = { "0000000000000000000000000000000000000000000000000000000000000000" };
+    tx0.outputs = { Entity("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h",250000.0f),
+        Entity("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h",250000.0f),
+        Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",250000.0f),
+        Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",250000.0f) };
+   
+    std::cout << tx0 << std::endl;
+
+    std::cout << tx0.hash << std::endl;
+
+
+    std::cout << "Validating primigen tx: " << node1.validate_tx(tx0) << std::endl;
+
+    
     Transaction tx1("2021-07-23 18:40:25", MY_CRYPTO_VERSION, "02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h", 0.0f);
   
     tx1.inputs = { "0000000000000000000000000000000000000000000000000000000000000000" };
@@ -132,20 +149,24 @@ int main(int argc, char* argv[]){
   
 
 
-    Block block("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h");
-    block.time = "2021-07-23 20:41:30";
+    Block block("000000000000000000000000000000000000000000000000000000000000000000h");
+    block.time = "2021-07-23 21:07:23";
     block.version = MY_CRYPTO_VERSION;
     block.ID = 1;
+    block.nonce = 61337;
     block.father_hash = "000000000000000000000000000000000000000000000000";
-    block.transaction_list = { tx1, tx2, tx3, tx4 };
+    block.transaction_list = {tx0};
     block.reward = block.compute_block_reward();
+    block.work_hash = "000062F515148AE88CC1112FBF7D6B41DCCC2135C9690CBD215CED9E6E98D599";
 
     block.find_mt_root();
 
-    block.work_hash = Tools::hash_sha256(block.block_to_json());
+    //block.work_hash = Tools::hash_sha256(block.block_to_json());
+    //node1.proof_of_work(block, 4);
+
+    std::cout << "block validaiton: " << node1.validate_block(block) << std::endl;
 
     
-
     node1.blockchain.insert_block(block);
 
     Block blk_back;
