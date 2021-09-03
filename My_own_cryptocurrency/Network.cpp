@@ -1,10 +1,9 @@
 
-#include<cstdio>
-#include<cstring>
+#include <cstdio>
+#include <cstring>
 #include <sstream>
 #include <iostream>
-#include <thread>
-#include<chrono>
+#include <chrono>
 
 #include "Network.h"
 #include "struct_mapping.h"
@@ -217,7 +216,14 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 			status = send(new_conn_fd, his_h_str.c_str(), his_h_str.size(), 0);
 			
 		}
+		
+#ifdef _WIN32
+
 		closesocket(new_conn_fd);
+#else
+
+		close(new_conn_fd);
+#endif
 
 	}
 
@@ -344,7 +350,6 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 		std::cerr << "connect: " << gai_strerror(status) << std::endl;
 	}
 
-	std::cout << res->ai_addr << std::endl;
 
 	char* buffer = (char*)malloc(32 + 1);
 	std::stringstream readStream;
@@ -363,7 +368,7 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 
 	readData = readStream.str().find("end;") == std::string::npos;
 
-	std::cout << "Done tx_valids size (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+	std::cout << "Done tx_valids_size (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
 	/// speriment
 
@@ -419,7 +424,7 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 
 			readData = readStream.str().find("end;") == std::string::npos;
 
-			std::cout << "Done block size(length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
+			std::cout << "Done block_size(length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
 			// Setting recieving structures for block
 			try {

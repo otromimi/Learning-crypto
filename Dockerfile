@@ -13,7 +13,7 @@ WORKDIR ${PROJECT_DIR}
 # Creatting library static library libcryptopp.a
 RUN make -C cryptopp/ libcryptopp.a
 # Generating makefiles for sqlite and project + building
-#RUN cmake . -B ./linux-build/
+RUN cmake . -B ./linux-build/
 #RUN cmake --build ./linux-build/
-EXPOSE 5757/tcp
+#EXPOSE 5757/tcp
 

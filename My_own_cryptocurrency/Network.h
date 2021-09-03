@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <future>
+#include <thread>
 #include <mutex>
-#include <vector>
+#include <atomic>
 
 #include "Structures.h"
 #include"DB_operations.h"
@@ -21,13 +23,12 @@ namespace My_own_crypto {
 		void json_to_pool(std::string data);
 	};
 
-	
 
-		void runTest();
+	void runTest();
 
-		void runServer(DB_operations& blockchain, unsigned int& my_head, std::vector<Transaction>& confirmed_tx_pool, std::string port);
+	void runServer(DB_operations& blockchain, unsigned int& my_head, std::vector<Transaction>& confirmed_tx_pool, std::string port);
 
-		void runClient(std::string address, std::string port, unsigned int head, std::vector<Transaction>& recieved_transacitons, std::vector<Block>& recieved_blocks);
+	void runClient(std::string address, std::string port, unsigned int head, std::vector<Transaction>& recieved_transacitons, std::vector<Block>& recieved_blocks);
 
 
 }

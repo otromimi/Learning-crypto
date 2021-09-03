@@ -24,7 +24,12 @@ void Node::run_server(std::string port) {
 }
 
 void Node::check_node(std::string port) {
+
+
 	runClient("127.0.0.1", port, this->blockchain_head, this->received_transactions, this->received_blocks);
+	
+
+	std::cout << "\x1B[2J\x1B[H\n\n";
 	std::cout << "Retrieved transactions: " << this->received_transactions.size() << std::endl;
 	std::cout << "Retrieved blocks: " << this->received_blocks.size() << std::endl;
 	/*
@@ -61,7 +66,7 @@ void Node::create_tx() {
 			std::cin >> destination;
 
 			if (destination.size() < 12) {
-				throw std::exception("This string will break some fuctions.");
+				throw std::exception();
 			}
 
 			std::cout << "Quantity: ";

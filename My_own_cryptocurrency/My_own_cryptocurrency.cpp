@@ -17,9 +17,7 @@
 
 // Standard dependencies
 #include <iostream>
-#include <future>
-#include <thread>
-#include <mutex>
+
 
 // My own dependencies
 
@@ -57,7 +55,7 @@ int main(int argc, char* argv[]){
 
 
     
-    Node node1("User3", MY_CRYPTO_VERSION);
+    Node node1(user.c_str(), MY_CRYPTO_VERSION);
    
  
     // First transaction (primigine transaciton), the one that puts founds on the different accounts.
@@ -195,7 +193,7 @@ int main(int argc, char* argv[]){
     
     
     // Running server in a separate thread
-    std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(node1.confirmed_tansactions), "5762");
+    std::thread test(&runServer, std::ref(node1.blockchain), std::ref(node1.blockchain_head), std::ref(node1.confirmed_tansactions), server_port);
     test.detach();
 
     //server_running = true;
@@ -203,6 +201,7 @@ int main(int argc, char* argv[]){
     node1.confirmed_tansactions.push_back(tx1);
     node1.confirmed_tansactions.push_back(tx2);
 
+   
 
     press2cont();
 
@@ -224,6 +223,8 @@ int main(int argc, char* argv[]){
             break;
         case 3:
             //sync node
+            node1.check_node(client_port);
+            press2cont();
             break;
         case 4:
             //print block
@@ -241,7 +242,6 @@ int main(int argc, char* argv[]){
             break;
         case 0:
             //write and save
-            node1.check_node("5773");
             break;
         default:
             break;
