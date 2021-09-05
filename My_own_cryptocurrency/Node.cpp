@@ -6,6 +6,8 @@
 // My own dependencies
 #include "Node.h"
 
+#define TTL 240
+
 constexpr auto DB_NAME = "blockchain0";
 
 using namespace My_own_crypto;
@@ -32,13 +34,16 @@ void Node::check_node(std::string port) {
 	std::cout << "\x1B[2J\x1B[H\n\n";
 	std::cout << "Retrieved transactions: " << this->received_transactions.size() << std::endl;
 	std::cout << "Retrieved blocks: " << this->received_blocks.size() << std::endl;
-	/*
-	for (Transaction i : this->received_transactions) {
-		std::cout << i << std::endl;
+	
+	for (int i = 0; i < this->received_transactions.size(); i++) {
+		if (this->validate_tx(this->received_transactions[i])) {
+			this->received_transactions[i].compute_hash();
+			confirmed_tansactions.push_back(this->received_transactions[i]);
+		}
 	}
 	for (Block i : received_blocks) {
 		std::cout << i << std::endl;
-	}*/
+	}
 
 }
 
@@ -124,10 +129,26 @@ void Node::create_tx() {
 
 
 
-const void Node::create_block(Block& block) {
+const void Node::create_block() {
 
+	Block block;
 	Block father_blk;
 	Transaction aux;
+
+	this->blockchain_head = this->blockchain.get_head();
+
+	// Cleaning old transactions
+	for (int i = 0; i < this->confirmed_tansactions.size(); i++) {
+		if (Tools::avg_tpu(this->confirmed_tansactions[i].time, Tools::time_now()) > TTL)
+			this->confirmed_tansactions.erase(this->confirmed_tansactions.begin()+i);
+		if (this->confirmed_tansactions[i].fee <+ 0)
+			this->confirmed_tansactions.erase(this->confirmed_tansactions.begin() + i);
+	}
+
+	if (this->confirmed_tansactions.size() == 0) {
+		std::cout << " There are no valid transactions avaliable right now." << std::endl;
+		return;
+	}
 
 	// Getting more profitable transactions
 	for (int i = 0; i < this->confirmed_tansactions.size(); i++) {
@@ -139,8 +160,19 @@ const void Node::create_block(Block& block) {
 			}
 		}
 	}
-	for (Transaction i : this->confirmed_tansactions)
-		std::cout << i.fee << std::endl;
+
+	std::cout << "Valid transactions pool: \n\n";
+	for (Transaction i : this->confirmed_tansactions) {
+		i.compute_hash();
+		std::cout << " Hash: " << i << "  - Fee: " << i.fee << "\n\n";
+
+	}
+	std::cout << "Would you like continue the block creation? ";
+
+	if (!Tools::cont_loop())
+		return;
+
+
 	this->blockchain.get_block(father_blk, this->blockchain_head);
 
 	block.miner = this->wallet.get_compressedPublic();
@@ -148,7 +180,7 @@ const void Node::create_block(Block& block) {
 	block.time = Tools::time_now();
 	block.ID = this->blockchain_head + 1;
 	block.father_hash = father_blk.work_hash;
-	for (int i = 0; i < MAX_TX_IN_BLOCK; i++) {
+	for (int i = 0; i < MAX_TX_IN_BLOCK && (this->confirmed_tansactions.size() != 0); i++) {
 		if (this->confirmed_tansactions.size()) {
 			block.transaction_list.push_back(this->confirmed_tansactions.back());
 			this->confirmed_tansactions.pop_back();
@@ -156,18 +188,39 @@ const void Node::create_block(Block& block) {
 	}
 	
 	block.reward = block.compute_block_reward();
-	block.work_hash = "000062F515148AE88CC1112FBF7D6B41DCCC2135C9690CBD215CED9E6E98D599";
-
 	block.find_mt_root();
+	this->proof_of_work(block);
 
+	std::cout << block << std::endl;
 
-	for (Transaction i : this->confirmed_tansactions)
-		std::cout << i.fee << std::endl;
+	if (this->validate_block(block)) {
+		this->blockchain.insert_block(block);
+		std::cout << "\n\n Insertion success.\n" << std::endl;
+	}
+	else {
+		std::cout << "\n\n Insertion failed.\n" << std::endl;
+	}
+
+}
+
+const int Node::difficulty(Block right_blk) {
+	const int reach = 3;
+	Block left_blk;
+	int delta;
+	int ceros = 4;
+	if (right_blk.ID < 4)
+		return ceros;
+	this->blockchain.get_block(left_blk, right_blk.ID - reach);
+	delta = Tools::avg_tpu(left_blk.time, right_blk.time, reach);
+	if(60 - delta < 0)
+		ceros += 60 - delta;
+	return ceros;
 }
 
 
-
 const void Node::proof_of_work(Block& blk, int leading_ceros) {
+	if(leading_ceros < 0)
+		leading_ceros = difficulty(blk);
 	
 	std::string goal(leading_ceros, '0');
 	std::string pow;
@@ -194,6 +247,11 @@ const bool Node::validate_pow(Block blk) {
 	blk.work_hash = "";
 	blk.transaction_list.clear();
 	blk.work_hash = Tools::hash_sha256(blk.block_to_json(false));
+
+	int leading_ceros = difficulty(blk);
+	std::string goal(leading_ceros, '0');
+	if (pow.substr(0, leading_ceros) != goal)
+		return false;
 
 	return pow == blk.work_hash;
 }
@@ -229,12 +287,20 @@ const bool Node::validate_sign(Transaction tx) {
 const bool Node::validate_tx(Transaction tx) {
 
 	bool valid = true;
-
+	std::vector<std::string> duplicates;
+	
+	// aboiding first tx ever
 	if (tx.compute_hash() == this->origin_tx)
 		return true;
 
 	if (tx.version != "1.0.0")
 		valid = false;
+
+	// Checking duplicity
+	this->blockchain.get_tx_count(duplicates, tx.hash);
+	if (duplicates.size() > 0)
+		valid = false;
+	
 
 	// Checking for sign
 	if (!validate_sign(tx))
@@ -274,20 +340,27 @@ const bool Node::validate_block(Block block) {
 	if (block.version != "1.0.0")
 		valid = false;
 
+	if (Tools::is_older(block.time, Tools::time_now()) < 0)
+		valid = false;
+
 	// validating PoW
 	if (!this->validate_pow(block))
 		valid = false;
-
-	//if (block.ID != this->blockchain_head + 1)
-		//valid = false;
 
 	// validating chain continuity
 	if (block.ID != 1) {
 		Block father_block;
 		this->blockchain.get_block(father_block, block.ID - 1);
+		// Checking for father hash
 		if (father_block.work_hash != block.father_hash)
 			valid = false;
+		// Checking for father time
+		if (Tools::is_older(father_block.time, block.time) != 1)
+			valid = false;
 	}
+
+	//if (block.ID < this->blockchain_head + 1)
+		//valid = false;
 
 	// validating max tx per block
 	if (block.transaction_list.size() > MAX_TX_IN_BLOCK)
@@ -297,7 +370,7 @@ const bool Node::validate_block(Block block) {
 	for (Transaction i : block.transaction_list) {
 		if (!this->validate_tx(i))
 			valid = false;
-		if (1 != Tools::is_older(i.time, block.time))
+		if (Tools::is_older(i.time, block.time) < 0)
 			valid = false;		
 	}
 
@@ -332,6 +405,8 @@ const void Node::print_transaction() {
 	std::string tx_hash;
 	std::vector<std::string> tx_list;
 	Transaction tx;
+	bool hit = false;
+
 
 	do {
 

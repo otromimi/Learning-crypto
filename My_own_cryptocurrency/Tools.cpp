@@ -166,6 +166,21 @@ const int Tools::is_older(std::string older, std::string newer) {
 	return 0;
 }
 
+int Tools::avg_tpu(std::string older, std::string newer, int count) {
+	int delta = is_older(older, newer);
+	if (delta != 1)
+		return delta;
+
+	tm first = get_int_time(older);
+	tm second = get_int_time(newer);
+	
+	delta = (first.tm_hour - second.tm_hour) * 3600;
+	delta += (first.tm_min - second.tm_min) * 24;
+	delta += (first.tm_sec - second.tm_sec);
+
+	return floor(delta/count);
+}
+
 const tm Tools::get_int_time(std::string utc_time) {
 	
 	std::time_t rawtime;

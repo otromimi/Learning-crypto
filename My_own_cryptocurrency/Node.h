@@ -57,9 +57,11 @@ namespace My_own_crypto {
 		/// <returns>New created transaction.</returns>
 		void create_tx();
 
-		const void create_block(Block& block);
+		const void create_block();
 
-		const void proof_of_work(Block& blk, int leading_ceros);
+		const int difficulty(Block blk);
+
+		const void proof_of_work(Block& blk, int leading_ceros = -1);
 
 		const bool validate_pow(Block blk);
 

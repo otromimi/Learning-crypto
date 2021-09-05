@@ -68,14 +68,9 @@ int main(int argc, char* argv[]){
         Entity("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h",250000.0f),
         Entity("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h",250000.0f) };
    
-    std::cout << tx0 << std::endl;
+   
 
-    std::cout << tx0.hash << std::endl;
-
-
-    std::cout << "Validating primigen tx: " << node1.validate_tx(tx0) << std::endl;
-
-    
+    // Some testign data
     Transaction tx1("2021-07-23 18:40:25", MY_CRYPTO_VERSION, "02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h", 0.0f);
   
     tx1.inputs = { "0000000000000000000000000000000000000000000000000000000000000000" };
@@ -117,12 +112,7 @@ int main(int argc, char* argv[]){
 
 
 
-    
-    /*tx1.signature = node1.wallet.sign_tx(tx1.tx_to_json());
-    tx2.signature = node1.wallet.sign_tx(tx2.tx_to_json());
-    tx3.signature = node1.wallet.sign_tx(tx3.tx_to_json());
-    tx4.signature = node1.wallet.sign_tx(tx4.tx_to_json());*/
-
+    tx0.compute_hash();
     tx1.compute_hash();
     tx2.compute_hash();
     tx3.compute_hash();
@@ -134,20 +124,6 @@ int main(int argc, char* argv[]){
 
     
 
-    std::cout << node1.validate_sign(tx1) << std::endl;
-    std::cout << node1.validate_sign(tx2) << std::endl;
-    std::cout << node1.validate_sign(tx3) << std::endl;
-    std::cout << node1.validate_sign(tx4) << std::endl;
-
-
-    
-    std::cout << node1.validate_tx(tx1) << std::endl;
-    std::cout << node1.validate_tx(tx2) << std::endl;
-    std::cout << node1.validate_tx(tx3) << std::endl;
-    std::cout << node1.validate_tx(tx4) << std::endl;
-    
-  
-
 
     Block block("000000000000000000000000000000000000000000000000000000000000000000h");
     block.time = "2021-07-23 21:07:23";
@@ -157,55 +133,16 @@ int main(int argc, char* argv[]){
     block.father_hash = "000000000000000000000000000000000000000000000000";
     block.transaction_list = {tx0};
     block.reward = block.compute_block_reward();
-    block.work_hash = "000062F515148AE88CC1112FBF7D6B41DCCC2135C9690CBD215CED9E6E98D599";
-
     block.find_mt_root();
-
-    //block.work_hash = Tools::hash_sha256(block.block_to_json());
-    //node1.proof_of_work(block, 4);
-
-    std::cout << "block validaiton: " << node1.validate_block(block) << std::endl;
-
+    block.work_hash = "000062F515148AE88CC1112FBF7D6B41DCCC2135C9690CBD215CED9E6E98D599";
+    //node1.proof_of_work(block);
+    
     
     node1.blockchain.insert_block(block);
 
-    Block blk_back;
-
-    node1.blockchain.get_block(blk_back, 1);
-
-    //std::cout << blk_back.block_to_json(true) << std::endl;
-
-
-    
-    node1.blockchain_head = node1.blockchain.get_head();
+  
    
-
-    std::cout << node1.validate_block(block) << std::endl;
-   
-
-    std::cout << "...ea3h = " << node1.blockchain.get_balance("02d3df2c1aeedb13b9a29af0e3d42a4f19ac3187b49377c78fe9b7844c69bf1ea3h") << std::endl;
-    std::cout << "...e67h = " << node1.blockchain.get_balance("0390562eed62f9563117ffb2fa3b2e8814b901571cbbb6a2ac443afb777b299e67h") << std::endl;
-    std::cout << "...033h = " << node1.blockchain.get_balance("037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h") << std::endl;
-    std::cout << "...193h = " << node1.blockchain.get_balance("03d393e113c107d6aa1b710623f65ddb6abe7179a8ab595ce7587ad97b43acf193h") << std::endl;
-   
-
-    //node1.validate_inputs({ "B5D5A456F11269CD696378E21B2901FE86346CA4FE0EDF22897BFCE86B9AC26E" , "ACB7B78CC31F5E8F78F1C38E2A907A2437D68A759AFC498972AE824FB27C8D7C"}, "037e139da7567349dc47cfa32fec5774556addfdf110fd8eedae09f9ca678b0033h");
-   
-    //verifiying sign
-    //bool checking = Tools::sign_verifier(node1.wallet.get_compressedPublic(),tx.signature, tx.tx_to_json(false, false));
-
-    
-
-    //blockchain_db.insert(Element::TRANSACTION, tx.to_db_string());
-    //blockchain_db.select(Element::TRANSACTION, tx1.to_db_string());
-
-    //Transaction tx = node1.create_tx();
-
     ///////////////////Networking ///////////////////////////////////
-
-    /*std::vector<std::string> names;
-    Transaction jj = tx1;*/
-
     extern std::mutex server_mutex;
     extern std::mutex client_mutex;
     extern std::atomic<bool> server_running;
@@ -219,17 +156,13 @@ int main(int argc, char* argv[]){
 
     //server_running = true;
     //node1.run_server("5762");
-    node1.confirmed_tansactions.push_back(tx3);
+   /* node1.confirmed_tansactions.push_back(tx3);
     node1.confirmed_tansactions.push_back(tx2);
     node1.confirmed_tansactions.push_back(tx1);
     node1.confirmed_tansactions.push_back(tx4);
-    node1.confirmed_tansactions.push_back(tx0);
+    node1.confirmed_tansactions.push_back(tx0);*/
+    
 
-    Block blk1;
-   
-    node1.create_block(blk1);
-
-    std::cout << blk1 << std::endl;
    
 
     press2cont();
@@ -249,6 +182,8 @@ int main(int argc, char* argv[]){
             break;
         case 2:
             //mine block
+            node1.create_block();
+            press2cont();
             break;
         case 3:
             //sync node

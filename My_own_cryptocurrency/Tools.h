@@ -60,6 +60,8 @@ namespace My_own_crypto {
 		/// <returns>1 if older is older, -1 if newer is older and 0 if the same.</returns>
 		const int is_older(std::string older, std::string newer);
 
+		int avg_tpu(std::string older, std::string newer, int count = 1);
+
 		/// <summary>
 		/// Parse the string time created in <time_now> into a int struc.
 		/// </summary>
