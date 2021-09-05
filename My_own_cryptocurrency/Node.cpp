@@ -106,8 +106,9 @@ void Node::create_tx() {
 			if (total < 0) {
 				tx.outputs.push_back(Entity(tx.origin, (total * -1)));
 			}
-			tx.compute_hash();
+			
 			tx.signature = this->wallet.sign_tx(tx.tx_to_json(false));
+			tx.compute_hash();
 
 			std::cout << tx << std::endl;
 			if (this->validate_tx(tx))
@@ -372,6 +373,8 @@ const bool Node::validate_block(Block block) {
 			valid = false;
 		if (Tools::is_older(i.time, block.time) < 0)
 			valid = false;		
+		if (Tools::avg_tpu(i.time, block.time) <= TTL)
+			valid = false;
 	}
 
 	return valid;
