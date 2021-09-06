@@ -8,11 +8,11 @@
 
 #define TTL 240
 
-constexpr auto DB_NAME = "blockchain0";
+constexpr auto DB_NAME = "blockchain";
 
 using namespace My_own_crypto;
 
-Node::Node(const char* wallet_name, const char* version): wallet(Wallet(wallet_name)),version(version), blockchain(DB_operations(DB_NAME)), blockchain_head(0){
+Node::Node(const char* wallet_name, const char* version): wallet(Wallet(wallet_name)),version(version), blockchain(DB_operations((std::string("blockchain_")+wallet_name).c_str())), blockchain_head(0) {
 	this->blockchain_head = blockchain.get_head();
 }
 
@@ -30,10 +30,11 @@ void Node::check_node(std::string port) {
 
 	runClient("127.0.0.1", port, this->blockchain_head, this->received_transactions, this->received_blocks);
 	
-
+	mutex.lock();
 	std::cout << "\x1B[2J\x1B[H\n\n";
 	std::cout << "Retrieved transactions: " << this->received_transactions.size() << std::endl;
 	std::cout << "Retrieved blocks: " << this->received_blocks.size() << std::endl;
+	
 	
 	for (int i = 0; i < this->received_transactions.size(); i++) {
 		if (this->validate_tx(this->received_transactions[i])) {
@@ -42,9 +43,11 @@ void Node::check_node(std::string port) {
 		}
 	}
 	for (Block i : received_blocks) {
+		if (validate_block(i))
+			this->blockchain.insert_block(i);
 		std::cout << i << std::endl;
 	}
-
+	mutex.unlock();
 }
 
 void Node::create_tx() {
@@ -165,14 +168,14 @@ const void Node::create_block() {
 	std::cout << "Valid transactions pool: \n\n";
 	for (Transaction i : this->confirmed_tansactions) {
 		i.compute_hash();
-		std::cout << " Hash: " << i << "  - Fee: " << i.fee << "\n\n";
+		std::cout << " Hash: " << i.hash << "  - Fee: " << i.fee << "\n";
 
 	}
-	std::cout << "Would you like continue the block creation? ";
+	std::cout << "\nWould you like continue the block creation? ";
 
 	if (!Tools::cont_loop())
 		return;
-
+	
 
 	this->blockchain.get_block(father_blk, this->blockchain_head);
 
@@ -192,6 +195,7 @@ const void Node::create_block() {
 	block.find_mt_root();
 	this->proof_of_work(block);
 
+	std::cout << "\x1B[2J\x1B[H" << std::endl;
 	std::cout << block << std::endl;
 
 	if (this->validate_block(block)) {
@@ -295,17 +299,17 @@ const bool Node::validate_tx(Transaction tx) {
 		return true;
 
 	if (tx.version != "1.0.0")
-		valid = false;
+		return false;// valid = false;
 
 	// Checking duplicity
 	this->blockchain.get_tx_count(duplicates, tx.hash);
 	if (duplicates.size() > 0)
-		valid = false;
+		return false;// valid = false;
 	
 
 	// Checking for sign
 	if (!validate_sign(tx))
-		valid = false;
+		return false;// valid = false;
 
 	float check_inputs = validate_inputs(tx.inputs, tx.origin, tx.time);
 	float sum_outputs_and_fee = tx.fee;
@@ -314,23 +318,23 @@ const bool Node::validate_tx(Transaction tx) {
 
 	// Valid outputs, and same amount of value in|out.
 	if (check_inputs <= 0 || check_inputs != sum_outputs_and_fee)
-		valid = false;
+		return false;// valid = false;
 
 	// Outputs under threshold.
 	if (tx.outputs.size() > MAX_OUT_TX)
-		valid = false;
+		return false;// valid = false;
 	
 	// Only one output per address.
 	for (int i = 0; i < tx.outputs.size(); i++) {
 		for (int j = i; j < tx.outputs.size(); j++) {
 			if (tx.outputs[i].account == tx.outputs[j].account && i != j)
-				return false;
+				return false;// valid = false;
 		}
 	}
 
 	// Checking time integrity
 	if (!Tools::check_date(tx.time))
-		valid = false;
+		return false;// valid = false;
 
 	return valid;
 }
@@ -339,14 +343,14 @@ const bool Node::validate_block(Block block) {
 	bool valid = true;
 
 	if (block.version != "1.0.0")
-		valid = false;
+		return false;// valid = false;
 
 	if (Tools::is_older(block.time, Tools::time_now()) < 0)
-		valid = false;
+		return false;// valid = false;
 
 	// validating PoW
 	if (!this->validate_pow(block))
-		valid = false;
+		return false;// valid = false;
 
 	// validating chain continuity
 	if (block.ID != 1) {
@@ -354,10 +358,10 @@ const bool Node::validate_block(Block block) {
 		this->blockchain.get_block(father_block, block.ID - 1);
 		// Checking for father hash
 		if (father_block.work_hash != block.father_hash)
-			valid = false;
+			return false;// valid = false;
 		// Checking for father time
 		if (Tools::is_older(father_block.time, block.time) != 1)
-			valid = false;
+			return false;// valid = false;
 	}
 
 	//if (block.ID < this->blockchain_head + 1)
@@ -365,16 +369,16 @@ const bool Node::validate_block(Block block) {
 
 	// validating max tx per block
 	if (block.transaction_list.size() > MAX_TX_IN_BLOCK)
-		valid = false;
+		return false;// valid = false;
 
 	// validating each of the tx
 	for (Transaction i : block.transaction_list) {
 		if (!this->validate_tx(i))
-			valid = false;
+			return false;// valid = false;
 		if (Tools::is_older(i.time, block.time) < 0)
-			valid = false;		
-		if (Tools::avg_tpu(i.time, block.time) <= TTL)
-			valid = false;
+			return false;// valid = false;
+		if (Tools::avg_tpu(i.time, block.time) > TTL)
+			return false;// valid = false;
 	}
 
 	return valid;
@@ -416,6 +420,8 @@ const void Node::print_transaction() {
 		std::cout << "\x1B[2J\x1B[H\n" << "Transaction hash: ";
 		std::cin >> tx_hash;
 		tx_list.clear();
+		tx.inputs.clear();
+		tx.outputs.clear();
 		std::cout << "\x1B[2J\x1B[H\n";
 
 		this->blockchain.get_tx_count(tx_list, tx_hash);

@@ -308,12 +308,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\GuillermoLerioArroyo\source\repos\My_own_cryptocurrency\sqlite-amalgamation-3360000\shell.c" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Users\GuillermoLerioArroyo\source\repos\My_own_cryptocurrency\sqlite-amalgamation-3360000\win-build\ZERO_CHECK.vcxproj">
-      <Project>{8A41008F-C82D-3E59-8AB8-C3723054405C}</Project>
-      <Name>ZERO_CHECK</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </ProjectReference>
     <ProjectReference Include="C:\Users\GuillermoLerioArroyo\source\repos\My_own_cryptocurrency\sqlite-amalgamation-3360000\win-build\sqlite3.vcxproj">
       <Project>{FC2B766E-3620-3C8C-9756-96B220DC7205}</Project>
       <Name>sqlite3</Name>

@@ -12,6 +12,7 @@
 
 namespace My_own_crypto {
 
+	extern std::mutex mutex;
 	
 
 	struct Pool {

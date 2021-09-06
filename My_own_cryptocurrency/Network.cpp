@@ -26,8 +26,7 @@
 
 using namespace My_own_crypto;
 
-std::mutex server_mutex;
-std::mutex client_mutex;
+std::mutex My_own_crypto::mutex;
 
 //bool server_running = true;
 std::atomic<bool> server_running = true;
@@ -174,9 +173,9 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 
 
 		//Get updated pool
-		server_mutex.lock();
+		mutex.lock();
 		tx_pool.valid_tx = confirmed_tx_pool;
-		server_mutex.unlock();
+		mutex.unlock();
 
 		str_pool = tx_pool.pool_to_json(false);
 		size_str_pool = std::to_string(str_pool.size());
@@ -200,9 +199,9 @@ void My_own_crypto::runServer(DB_operations& blockchain, unsigned int& my_head, 
 			his_head++;
 
 			// Get block
-			server_mutex.lock();
+			mutex.lock();
 			blockchain.get_block(blk, his_head);
-			server_mutex.unlock();
+			mutex.unlock();
 			//std::cout << blk << std::endl;
 
 			// Prepare block data for sending
@@ -404,9 +403,9 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 	
 		Pool recieved_pool;
 		recieved_pool.json_to_pool("{\"tx_pool\":" + readStream.str() + "}");
-		client_mutex.lock();
+		mutex.lock();
 		recieved_transacitons = recieved_pool.valid_tx;
-		client_mutex.unlock();
+		mutex.unlock();
 	}
 	
 	sendResult = send(client_request, std::to_string(head).c_str(), 30, 0);
@@ -458,11 +457,11 @@ void My_own_crypto::runClient(std::string address, std::string port, unsigned in
 				std::cout << "Done block (length: " << readStream.str().length() << ") " << readStream.str() << std::endl;
 
 				
-				client_mutex.lock();
+				mutex.lock();
 				Block new_blk;
 				new_blk.json_to_block(readStream.str());
 				recieved_blocks.push_back(new_blk);
-				client_mutex.unlock();
+				mutex.unlock();
 				
 			}
 			free(buffer);

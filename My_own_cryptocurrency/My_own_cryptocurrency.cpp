@@ -49,6 +49,8 @@ int main(int argc, char* argv[]){
     std::string user = argc > 3 ? argv[3] : "User1";
 
 
+    std::cout << "\n Welcome to My_own_cryptocurrency\n\n\n";
+
     std::cout << "Client port: " << client_port << std::endl;
     std::cout << "Server port: " << server_port << std::endl;
     std::cout << "User: " << user << std::endl;
@@ -126,7 +128,7 @@ int main(int argc, char* argv[]){
 
 
     Block block("000000000000000000000000000000000000000000000000000000000000000000h");
-    block.time = "2021-07-23 21:07:23";
+    block.time = "2021-07-23 00:00:01";
     block.version = MY_CRYPTO_VERSION;
     block.ID = 1;
     block.nonce = 61337;
@@ -138,13 +140,12 @@ int main(int argc, char* argv[]){
     //node1.proof_of_work(block);
     
     
-    node1.blockchain.insert_block(block);
+    //node1.blockchain.insert_block(block);
 
   
    
     ///////////////////Networking ///////////////////////////////////
-    extern std::mutex server_mutex;
-    extern std::mutex client_mutex;
+    
     extern std::atomic<bool> server_running;
 
     
@@ -256,7 +257,7 @@ int menu() {
             "\t 4.- Print block\n" <<
             "\t 5.- Print transaction\n" <<
             "\t 6.- Wallet info\n" <<
-            "\t 0.- Write and save\n" <<
+            "\t 0.- Save and exit\n" <<
             "\n\t >>> ";
 
         std::cin >> str_selection;
